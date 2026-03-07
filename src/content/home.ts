@@ -3,21 +3,28 @@ export type SectionParagraph = {
   text: string;
 };
 
-export const heroIdentity =
-  'Alex Figueroa - Autonomous Systems & Simulation Engineer';
+export const heroName = 'Alex Figueroa';
 
-export const heroTitle =
-  'I build perceptual systems, recursive tooling, and simulation infrastructure that push software beyond static interfaces.';
+export const heroRole = 'Autonomous Systems & Simulation Engineer';
+
+export const heroTitleLines = [
+  'Perceptual systems,',
+  'recursive tooling,',
+  'simulation infrastructure.',
+] as const;
+
+export const heroDeck =
+  'For products that need to observe, infer, and act.';
 
 export const heroStats = [
-  { label: 'Coordinates', value: 'Dayton, OH / California roots' },
+  { label: 'Builds', value: 'Perceptual systems, recursive tooling, simulation infrastructure' },
   {
-    label: 'Focus',
-    value: 'Perception systems, simulation infrastructure, autonomous tooling',
+    label: 'Approach',
+    value: 'System-first engineering with strong interface judgment',
   },
   {
-    label: 'Availability',
-    value: 'Open to high-leverage engineering roles and frontier technical collaborations',
+    label: 'Open to',
+    value: 'Senior engineering roles and technically ambitious collaborations',
   },
 ] as const;
 
@@ -27,13 +34,13 @@ export const thesisParagraphs: SectionParagraph[] = [
     text: 'I do not build software as isolated screens. I build systems that observe, interpret, and respond.',
   },
   {
-    text: 'I am interested in software that carries more of the work: systems that watch state, infer context, model behavior, and help drive action in real time.',
+    text: 'I am interested in software that carries more of the work: systems that watch state, infer context, model behavior, and drive action in real time.',
   },
   {
-    text: 'That shows up in local-first agent tooling, perceptual systems built from gaze and geometry, and simulation infrastructure where the behavior matters as much as the rendering.',
+    text: 'That shows up in local-first agent tooling, perceptual systems built from gaze and geometry, and simulation infrastructure where behavior matters as much as rendering.',
   },
   {
-    text: 'The common thread is operational cognition. I care about products that can perceive more, synthesize more, and reduce operator burden without hiding the real constraints.',
+    text: 'The common thread is operational cognition: products that perceive more, synthesize more, and reduce operator burden without hiding the real constraints.',
   },
   {
     tone: 'closing',
@@ -50,10 +57,10 @@ export const ethosParagraphs: SectionParagraph[] = [
     text: 'I want to know where the cost is, where the uncertainty is, and where the brittleness lives. That usually means decomposing a problem until the real boundaries are explicit: memory movement, render cost, search quality, synchronization overhead, false context, or weak state models.',
   },
   {
-    text: 'Once those boundaries are visible, the design usually gets simpler. Good systems get better when the failure modes are legible instead of hidden behind abstraction.',
+    text: 'Once those boundaries are visible, the design usually gets simpler. Good systems improve when failure modes are legible instead of hidden behind abstraction.',
   },
   {
-    text: 'I also care about context quality. Most automation fails because it runs on thin or noisy inputs. A recurring part of my work is building the context pipeline first so the downstream reasoning has something solid to work from.',
+    text: 'I also care about context quality. Most automation fails because it runs on thin or noisy inputs. A recurring part of my work is building the context pipeline first so downstream reasoning has something solid to work from.',
   },
   {
     tone: 'closing',
@@ -90,7 +97,7 @@ export const technicalIntro: SectionParagraph[] = [
   },
   {
     tone: 'closing',
-    text: 'I am most useful when a product needs architecture, implementation, interaction design, and technical framing to reinforce each other.',
+    text: 'I am most useful when architecture, implementation, interaction design, and technical framing need to reinforce each other.',
   },
 ] as const;
 
@@ -107,10 +114,10 @@ export const workingStyleParagraphs: SectionParagraph[] = [
     text: 'I am strongest on cross-layer problems that do not fit neatly inside one engineering box.',
   },
   {
-    text: 'I do my best work when architecture, implementation, interface design, systems debugging, and product framing all need to happen in the same problem space.',
+    text: 'I do my best work when architecture, implementation, interface design, systems debugging, and product framing all have to happen in the same problem space.',
   },
   {
-    text: 'I am especially drawn to systems that move toward perception, simulation, intelligent tooling, and new computational interfaces.',
+    text: 'I am especially drawn to systems moving toward perception, simulation, intelligent tooling, and new computational interfaces.',
   },
   {
     tone: 'closing',

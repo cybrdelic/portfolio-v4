@@ -1,63 +1,60 @@
 import { ArrowUpRight } from 'lucide-react';
-import Magnetic from './Magnetic';
 
 export default function Footer() {
   return (
-    <footer className="pt-24 pb-12 px-6 md:px-12 text-[var(--color-ink)]">
+    <footer className="px-6 pb-12 pt-24 text-[var(--color-ink)] md:px-12">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-24">
+        <div className="mb-20 grid grid-cols-1 gap-12 lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <h2 className="font-mono text-sm text-[var(--color-muted)] uppercase tracking-widest">
-              7.0 / Contact
-            </h2>
+            <h2 className="section-label">7.0 / Contact</h2>
           </div>
 
-          <div className="lg:col-span-8">
-            <p className="font-sans text-xl md:text-2xl text-[var(--color-ink)] leading-relaxed mb-8">
-              Interested in systems, simulation, perception, or high-leverage tooling? Let’s talk.
+          <div className="lg:col-span-8 lg:max-w-[42rem]">
+            <p className="display-tight max-w-[14ch] text-[clamp(2rem,4vw,2.75rem)] text-[var(--color-ink)]">
+              Available for system-heavy engineering work.
             </p>
-            <p className="font-sans text-lg text-[var(--color-muted)] leading-relaxed mb-12">
-              I am open to roles and collaborations involving autonomous tooling, perceptual systems, simulation infrastructure, technical product engineering, and interface-heavy systems work. The best conversations are usually the ones where the problem is difficult, unusual, and still undefined enough to matter.
+            <p className="body-premium mt-5 max-w-[34rem] text-base md:text-[1.05rem]">
+              Roles and collaborations involving autonomous tooling, perceptual systems, simulation infrastructure, and interface-heavy technical products.
             </p>
-            <Magnetic strength={0.1}>
-              <a 
-                href="mailto:alexfigueroa.cybr@gmail.com" 
-                className="inline-flex items-center gap-2 font-mono text-sm uppercase tracking-widest border-b border-[var(--color-line)] pb-1 hover:text-[var(--color-muted)] hover:border-[var(--color-muted)] transition-colors p-2 -ml-2"
+            <div className="mt-10 grid grid-cols-1 gap-8 border-t border-[var(--color-line-strong)] pt-7 md:grid-cols-[minmax(0,1fr)_11rem] md:items-end">
+              <a
+                href="mailto:alexfigueroa.cybr@gmail.com"
+                className="group inline-flex w-fit items-center gap-3 text-[var(--color-ink)]"
               >
-                alexfigueroa.cybr@gmail.com <ArrowUpRight size={16} />
+                <span className="meta-rule font-mono text-[0.76rem] uppercase tracking-[0.16em]">
+                  alexfigueroa.cybr@gmail.com
+                </span>
+                <ArrowUpRight size={15} className="text-[var(--color-muted)] transition-transform duration-150 group-hover:-translate-y-px group-hover:translate-x-px" />
               </a>
-            </Magnetic>
+              <div className="space-y-2 md:text-right">
+                <p className="eyebrow">Availability</p>
+                <p className="text-sm leading-relaxed text-[var(--color-ink)]">
+                  Select roles and collaborations.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 pt-12 border-t border-[var(--color-line)]">
+        <div className="grid grid-cols-1 gap-10 border-t border-[var(--color-line-strong)] pt-8 md:grid-cols-12 md:pt-10">
           <div className="md:col-span-4">
-            <p className="font-mono text-xs text-[var(--color-muted)] mb-4 uppercase tracking-widest">Network</p>
-            <ul className="space-y-4 font-sans text-sm">
-              <li>
-                <Magnetic strength={0.3}>
-                  <a href="#" className="hover:text-[var(--color-muted)] transition-colors inline-block p-2 -ml-2">GitHub</a>
-                </Magnetic>
-              </li>
-              <li>
-                <Magnetic strength={0.3}>
-                  <a href="#" className="hover:text-[var(--color-muted)] transition-colors inline-block p-2 -ml-2">LinkedIn</a>
-                </Magnetic>
-              </li>
-              <li>
-                <Magnetic strength={0.3}>
-                  <a href="#" className="hover:text-[var(--color-muted)] transition-colors inline-block p-2 -ml-2">Resume</a>
-                </Magnetic>
-              </li>
-            </ul>
+            <p className="eyebrow mb-4">Base</p>
+            <p className="text-sm leading-relaxed text-[var(--color-ink)]">
+              Dayton, OH
+              <br />
+              California roots
+            </p>
           </div>
           <div className="md:col-span-4">
-            <p className="font-mono text-xs text-[var(--color-muted)] mb-4 uppercase tracking-widest">Coordinates</p>
-            <p className="font-sans text-sm text-[var(--color-ink)]">Dayton, OH<br />California roots</p>
+            <p className="eyebrow mb-4">Scope</p>
+            <p className="max-w-[18rem] text-sm leading-relaxed text-[var(--color-ink)]">
+              Autonomous tooling, perceptual systems, simulation infrastructure.
+            </p>
           </div>
-          <div className="md:col-span-4 flex flex-col justify-end items-start md:items-end">
-            <p className="font-mono text-xs text-[var(--color-muted)] uppercase tracking-widest text-left md:text-right">
-              System Status: Online.<br />
+          <div className="flex flex-col items-start justify-end md:col-span-4 md:items-end">
+            <p className="text-left font-mono text-[0.72rem] uppercase tracking-[0.16em] text-[var(--color-muted)] md:text-right">
+              Online.
+              <br />
               © {new Date().getFullYear()} Alex Figueroa.
             </p>
           </div>

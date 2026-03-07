@@ -5,7 +5,6 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import ScrollToTop from './components/ScrollToTop';
 import BootSequence from './components/BootSequence';
-import CustomCursor from './components/CustomCursor';
 import SmoothScroll from './components/SmoothScroll';
 
 const ProjectDetail = lazy(() => import('./pages/ProjectDetail'));
@@ -33,7 +32,6 @@ export default function App() {
     <div className="relative isolate text-[var(--color-ink)] selection:bg-[var(--color-ink)] selection:text-[var(--color-bg)]">
       <SmoothScroll />
       <BootSequence />
-      <CustomCursor />
       <ScrollToTop />
 
       <div className="relative z-10">

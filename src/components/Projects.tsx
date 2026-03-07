@@ -32,58 +32,59 @@ function ProjectFace({
       aria-hidden={!isInteractive}
       tabIndex={isInteractive ? 0 : -1}
       to={`/project/${project.id}`}
-      className="group relative block h-full w-full text-[var(--color-ink)] focus-visible:outline-none"
+      className="group relative block h-full w-full text-[var(--color-ink)]"
     >
-      <div className="absolute inset-x-0 top-0 h-px bg-[var(--color-line)]" />
-      <div className="absolute inset-x-0 bottom-0 h-px bg-[var(--color-line)]" />
-      <div className="absolute inset-y-0 left-0 w-px bg-[var(--color-line)]" />
-      <div className="absolute inset-y-0 right-0 w-px bg-[var(--color-line)]" />
-      <div className="absolute inset-y-0 left-[58.333333%] hidden w-px bg-[var(--color-line)] lg:block" />
-      <div className="absolute left-10 right-10 top-10 hidden h-px bg-[var(--color-line)] md:block" />
-      <div className="absolute bottom-10 left-10 right-10 hidden h-px bg-[var(--color-line)] md:block" />
+      <div className="pointer-events-none absolute inset-0 tone-panel opacity-90" />
+      <div className="absolute inset-x-0 top-0 h-px bg-[var(--color-line-strong)]" />
+      <div className="absolute inset-x-0 bottom-0 h-px bg-[var(--color-line-soft)]" />
+      <div className="absolute inset-y-0 left-0 w-px bg-[var(--color-line-strong)]" />
+      <div className="absolute inset-y-0 right-0 w-px bg-[var(--color-line-strong)]" />
+      <div className="absolute inset-y-0 left-[58.333333%] hidden w-px bg-[var(--color-line-soft)] lg:block" />
+      <div className="absolute left-10 right-10 top-10 hidden h-px bg-[var(--color-line-soft)] md:block" />
+      <div className="absolute bottom-10 left-10 right-10 hidden h-px bg-[var(--color-line-soft)] md:block" />
 
       <div className="relative z-10 grid h-full grid-cols-1 lg:grid-cols-12">
         <div className="flex flex-col justify-between gap-10 px-6 py-8 md:px-10 md:py-10 lg:col-span-7 lg:pr-12">
-          <div className="flex items-center justify-between gap-4 font-mono text-[11px] uppercase tracking-[0.34em] text-[var(--color-muted)]">
+          <div className="flex items-center justify-between gap-4 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--color-muted)]">
             <span>{project.type}</span>
             <span>{String(index + 1).padStart(2, '0')}</span>
           </div>
 
-          <div className="space-y-6">
-            <h3 className="max-w-5xl text-4xl font-normal leading-[0.92] tracking-[-0.05em] md:text-6xl lg:text-7xl">
+          <div className="space-y-5">
+            <h3 className="display-tight max-w-[11ch] text-4xl md:text-6xl lg:text-[4.6rem]">
               {project.title}
             </h3>
-            <p className="max-w-3xl text-lg leading-relaxed text-[var(--color-muted)] md:text-2xl">
+            <p className="body-premium max-w-[32rem] text-lg md:text-[1.5rem]">
               {project.subtitle}
             </p>
           </div>
 
-          <div className="flex items-center justify-between gap-6 border-t border-[var(--color-line)] pt-6">
-            <span className="font-mono text-[11px] uppercase tracking-[0.34em] text-[var(--color-muted)]">
+          <div className="flex items-center justify-between gap-6 border-t border-[var(--color-line-soft)] pt-6">
+            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--color-muted)]">
               View project
             </span>
             <ArrowUpRight
               size={18}
-              className="text-[var(--color-muted)] transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:text-[var(--color-ink)]"
+              className="text-[var(--color-muted)] transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-[var(--color-ink)]"
             />
           </div>
         </div>
 
-        <div className="flex flex-col justify-between gap-10 border-t border-[var(--color-line)] px-6 py-8 md:px-10 md:py-10 lg:col-span-5 lg:border-l lg:border-t-0 lg:pl-12">
+        <div className="flex flex-col justify-between gap-10 border-t border-[var(--color-line-soft)] px-6 py-8 md:px-10 md:py-10 lg:col-span-5 lg:border-l lg:border-t-0 lg:[border-left-color:var(--color-line-soft)] lg:pl-12">
           <div>
-            <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.34em] text-[var(--color-muted)]">
+            <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--color-muted)]">
               Stack
             </p>
-            <p className="max-w-xl text-xl leading-relaxed text-[var(--color-ink)] md:text-2xl">
+            <p className="max-w-[24rem] text-xl leading-[1.42] text-[var(--color-ink)] md:text-[1.7rem]">
               {project.tech}
             </p>
           </div>
 
           <div>
-            <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.34em] text-[var(--color-muted)]">
+            <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--color-muted)]">
               Overview
             </p>
-            <p className="max-w-xl text-base leading-relaxed text-[var(--color-muted)] md:text-lg">
+            <p className="body-premium max-w-[25rem] text-base md:text-[1.02rem]">
               {project.overview}
             </p>
           </div>
@@ -108,12 +109,12 @@ export default function Projects() {
   const localProgress = useTransform(phase, (value) => clamp(value - Math.floor(value), 0, 1));
   const rotation = useTransform(phase, (value) => (prefersReducedMotion ? 0 : -90 * value));
   const frontOpacity = useTransform(localProgress, (value) =>
-    prefersReducedMotion ? 1 : 1 - value * 0.12
+    prefersReducedMotion ? 1 : 1 - value * 0.08
   );
   const nextOpacity = useTransform(localProgress, (value) =>
-    prefersReducedMotion ? 1 : 0.76 + value * 0.24
+    prefersReducedMotion ? 1 : 0.84 + value * 0.16
   );
-  const gridOpacity = useTransform(scrollYProgress, [0, 1], [0.04, 0.08]);
+  const gridOpacity = useTransform(scrollYProgress, [0, 1], [0.025, 0.05]);
 
   useMotionValueEvent(phase, 'change', (value) => {
     const nextBaseIndex = clamp(Math.floor(value + 0.0001), 0, projects.length - 1);
@@ -133,7 +134,7 @@ export default function Projects() {
     >
       <div className="sticky top-0 h-[100svh] overflow-hidden">
         <motion.div
-          className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:48px_48px]"
+          className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:56px_56px]"
           style={{ opacity: gridOpacity }}
         />
 
@@ -156,8 +157,8 @@ export default function Projects() {
                     transform: `rotateY(${baseIndex * 90}deg) translateZ(calc(var(--cube-size) / 2))`,
                   }}
                 >
-                  <div className="absolute inset-y-0 left-0 z-10 w-[2px] bg-[var(--color-bg)]" />
-                  <div className="absolute inset-y-0 right-0 z-10 w-[2px] bg-[var(--color-bg)]" />
+                  <div className="absolute inset-y-0 left-0 z-10 w-[2px] bg-[color:rgba(186,186,186,0.92)]" />
+                  <div className="absolute inset-y-0 right-0 z-10 w-[2px] bg-[color:rgba(186,186,186,0.92)]" />
                   <ProjectFace
                     isInteractive
                     index={baseIndex}
@@ -174,8 +175,8 @@ export default function Projects() {
                       transform: `rotateY(${nextIndex * 90}deg) translateZ(calc(var(--cube-size) / 2))`,
                     }}
                   >
-                    <div className="absolute inset-y-0 left-0 z-10 w-[2px] bg-[var(--color-bg)]" />
-                    <div className="absolute inset-y-0 right-0 z-10 w-[2px] bg-[var(--color-bg)]" />
+                    <div className="absolute inset-y-0 left-0 z-10 w-[2px] bg-[color:rgba(186,186,186,0.92)]" />
+                    <div className="absolute inset-y-0 right-0 z-10 w-[2px] bg-[color:rgba(186,186,186,0.92)]" />
                     <ProjectFace
                       isInteractive={false}
                       index={nextIndex}
@@ -185,8 +186,8 @@ export default function Projects() {
                 )}
               </motion.div>
 
-              <div className="pointer-events-none absolute inset-y-0 left-0 w-px bg-[var(--color-line)]" />
-              <div className="pointer-events-none absolute inset-y-0 right-0 w-px bg-[var(--color-line)]" />
+              <div className="pointer-events-none absolute inset-y-0 left-0 w-px bg-[var(--color-line-strong)]" />
+              <div className="pointer-events-none absolute inset-y-0 right-0 w-px bg-[var(--color-line-strong)]" />
             </div>
           </div>
         </div>

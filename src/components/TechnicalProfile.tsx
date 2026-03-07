@@ -1,45 +1,29 @@
-import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion } from 'motion/react';
 import { useRef } from 'react';
 import { technicalIntro, technicalRows } from '../content/home';
-import TechAnimation from './animations/TechAnimation';
-import ScrambleText from './ScrambleText';
 
 export default function TechnicalProfile() {
   const ref = useRef(null);
-  const prefersReducedMotion = useReducedMotion();
-  const isInView = useInView(ref, { amount: 0.15 });
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"]
-  });
-  
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
 
   return (
     <section ref={ref} className="section-shell section-shell--framed">
-      <motion.div 
-        style={prefersReducedMotion ? undefined : { y: backgroundY }}
-        className="absolute bottom-0 right-0 w-[500px] h-[500px] pointer-events-none -z-10 translate-x-1/4 translate-y-1/4"
-        aria-hidden="true"
-      >
-        <TechAnimation isActive={!prefersReducedMotion && isInView} />
-      </motion.div>
       <div className="section-intro">
         <div className="section-rail">
           <h2 className="section-label">
-            <ScrambleText text="5.0 / Technical Profile" />
+            5.0 / Technical Profile
           </h2>
         </div>
-        <div className="section-content">
+        <div className="section-content section-copy">
+          <div aria-hidden="true" className="section-copy-rule" />
           {technicalIntro.map((paragraph, index) => (
             <p
               key={paragraph.text}
               className={
                 paragraph.tone === 'lead'
-                  ? 'mb-8 text-[var(--color-ink)]'
+                  ? 'section-copy-lead'
                   : index === technicalIntro.length - 1
-                    ? 'text-[var(--color-ink)]'
-                    : 'mb-8'
+                    ? 'section-copy-closing'
+                    : 'section-copy-body'
               }
             >
               {paragraph.text}
@@ -52,17 +36,17 @@ export default function TechnicalProfile() {
         {technicalRows.map(([label, value], i) => (
           <motion.div 
             key={label}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 6 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.8, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="data-row py-12"
+            transition={{ duration: 0.28, delay: i * 0.025, ease: [0.16, 1, 0.3, 1] }}
+            className="data-row py-10 md:py-11"
           >
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-              <div className="md:col-span-4 font-mono text-sm uppercase tracking-widest text-[var(--color-ink)]">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-12 md:items-start">
+              <div className="md:col-span-4 font-mono text-[0.68rem] uppercase tracking-[0.16em] text-[var(--color-muted)]">
                 {label}
               </div>
-              <div className="md:col-span-8 font-sans text-lg text-[var(--color-muted)]">
+              <div className="md:col-span-8 max-w-[36rem] font-sans text-[1rem] leading-[1.64] text-[var(--color-ink)] md:text-[1.04rem]">
                 {value}
               </div>
             </div>
