@@ -6,12 +6,12 @@
   --font-mono: "JetBrains Mono", monospace;
   --font-display: "Inter", system-ui, sans-serif;
   
-  --color-bg: #000000;
-  --color-ink: #ffffff;
-  --color-accent: #ffffff;
-  --color-muted: #888888;
-  --color-surface: #0a0a0a;
-  --color-line: #222222;
+  --color-bg: #bababa;
+  --color-ink: #060606;
+  --color-accent: #060606;
+  --color-muted: #4f4f4f;
+  --color-surface: #ababab;
+  --color-line: #959595;
 }
 
 body {
@@ -52,9 +52,98 @@ html.lenis, html.lenis body {
   outline-offset: 4px;
 }
 
-@media (pointer: fine) {
-  body, a, button, input, select, textarea {
-    cursor: none !important;
+body.has-custom-cursor,
+body.has-custom-cursor a,
+body.has-custom-cursor button,
+body.has-custom-cursor input,
+body.has-custom-cursor select,
+body.has-custom-cursor textarea {
+  cursor: none !important;
+}
+
+.section-shell {
+  position: relative;
+  padding: 6rem 1.5rem;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.section-shell--framed {
+  overflow: hidden;
+  z-index: 0;
+}
+
+.section-inner {
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+.section-grid {
+  display: grid;
+  gap: 3rem;
+}
+
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+.section-content {
+  font-family: var(--font-sans);
+  font-size: 1.125rem;
+  line-height: 1.75;
+  color: var(--color-muted);
+}
+
+.section-intro {
+  position: relative;
+  z-index: 10;
+  max-width: 80rem;
+  margin: 0 auto 4rem;
+  display: grid;
+  gap: 3rem;
+}
+
+.section-list {
+  position: relative;
+  z-index: 10;
+  max-width: 80rem;
+  margin: 0 auto;
+  border-top: 1px solid var(--color-line);
+}
+
+@media (min-width: 768px) {
+  .section-shell {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+
+  .section-content {
+    font-size: 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .section-grid,
+  .section-intro {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+
+  .section-rail {
+    grid-column: span 4 / span 4;
+  }
+
+  .section-content {
+    grid-column: span 8 / span 8;
+  }
+}
+
+@supports (content-visibility: auto) {
+  main > section:not(:first-child):not(.bridge-section) {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 960px;
   }
 }
 
@@ -71,11 +160,6 @@ html.lenis, html.lenis body {
 
 .data-row {
   border-bottom: 1px solid var(--color-line);
-  transition: background-color 0.2s ease;
-}
-
-.data-row:hover {
-  background-color: var(--color-surface);
 }
 
 ::-webkit-scrollbar {

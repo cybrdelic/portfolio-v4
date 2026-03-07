@@ -3,7 +3,7 @@ import Magnetic from './Magnetic';
 
 export default function Footer() {
   return (
-    <footer className="pt-24 pb-12 px-6 md:px-12 bg-[var(--color-bg)] text-[var(--color-ink)]">
+    <footer className="pt-24 pb-12 px-6 md:px-12 text-[var(--color-ink)]">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-24">
           <div className="lg:col-span-4">

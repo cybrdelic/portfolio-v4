@@ -19,8 +19,8 @@ export const projects: Project[] = [
     type: 'Autonomous Tooling',
     tech: 'TypeScript, Local-First, Userscripts',
     animationType: 'pipeline',
-    overview: 'JJUGG is a local web application and automation system designed to manage the job search as a live, evolving system rather than as a collection of tabs, copied links, and spreadsheets. Its distinguishing feature is that it seeds its own data by observing real applications through a userscript running in the browser. When an application is submitted, JJUGG captures the relevant details, preserves the associated job description, and stores the opportunity locally as structured data.',
-    whyItExists: 'The normal job search is fragmented, repetitive, and low-fidelity. Opportunities are spread across job boards, company sites, recruiter outreach, emails, notes, resumes, and browser tabs. Most tools in the space do not solve the actual problem. They either act as passive trackers or they try to automate discovery without context. JJUGG exists to build an always-on market presence layer: a system that understands the user’s profile, current work, and evolving goals well enough to find better opportunities and continuously improve the search process.',
+    overview: 'JJUGG treats the job search as a live local system instead of a pile of tabs and spreadsheets. A browser userscript captures applications as they happen, preserves the job description, and stores the opportunity as structured local data.',
+    whyItExists: 'Most job-search tools are passive trackers or shallow automation. JJUGG exists to keep a continuously improving picture of opportunities, profile fit, and search momentum without depending on a SaaS dashboard.',
     coreMechanisms: [
       'Userscript-seeded capture',
       'Local-first storage',
@@ -29,7 +29,7 @@ export const projects: Project[] = [
       'Job-pipeline analytics',
       'Agent-assisted enrichment'
     ],
-    roleInWork: 'JJUGG represents my interest in turning messy external processes into instrumented, autonomous workflows.'
+    roleInWork: 'JJUGG reflects my interest in turning messy external processes into instrumented, autonomous workflows.'
   },
   {
     id: 'outersense',
@@ -38,8 +38,8 @@ export const projects: Project[] = [
     type: 'Perceptual Systems',
     tech: 'Rust, WebGPU, Python',
     animationType: 'system',
-    overview: 'OuterSense is a perceptual computing system that tracks face state, eye state, gaze direction, and the user’s spatial relationship to a screen in real time. It maintains a digital twin of the head, neck, eyes, and display geometry, allowing the system to estimate gaze-ray intersections with the screen, detect off-screen attention, and maintain a richer model of user orientation than traditional webcam interaction systems.',
-    whyItExists: 'Traditional interfaces assume a static user. They rely entirely on explicit manual input (mouse, keyboard, touch). OuterSense exists to bridge the gap between human spatial presence and machine state. By modeling the physical geometry of the user relative to the display, the system can infer intent, manage attention-based interactions, and reduce the friction of context switching in complex environments.',
+    overview: 'OuterSense is a perceptual system that tracks face state, eye state, gaze direction, and screen geometry in real time. It maintains a digital twin of the head, eyes, and display so the system can estimate gaze intersection, detect off-screen attention, and reason about orientation instead of just raw webcam frames.',
+    whyItExists: 'Most interfaces assume a static user and wait for explicit input. OuterSense exists to bridge physical presence and machine state so the system can infer attention, reduce interaction friction, and respond to spatial context.',
     coreMechanisms: [
       '3D head/screen geometry',
       'Gaze-ray intersection',
@@ -48,7 +48,7 @@ export const projects: Project[] = [
       'Attention-state inference',
       'Real-time spatial computation'
     ],
-    roleInWork: 'OuterSense expresses the direction I care about most: software that begins to perceive and model the physical context of use.'
+    roleInWork: 'OuterSense is the clearest expression of the direction I care about most: software that perceives and models the physical context of use.'
   },
   {
     id: 'commitaura',
@@ -57,8 +57,8 @@ export const projects: Project[] = [
     type: 'Developer Tooling',
     tech: 'Rust, LLMs, CLI',
     animationType: 'network',
-    overview: 'CommitAura is a command-line tool that generates high-quality commit messages based on staged changes, but the real value is not the single output. The project reflects a broader interest in compressing repetitive developer effort while preserving clarity and intent. CommitAura interprets code diffs, synthesizes meaningful change narratives, and fits naturally into terminal-driven workflows.',
-    whyItExists: 'Writing good commit messages is a high-friction task that developers often skip or rush, leading to degraded repository history. CommitAura exists to remove that friction. It does not just summarize code; it infers the *intent* behind the diff, separating mechanical refactors from architectural shifts, and formats the output to match strict conventional commit standards.',
+    overview: 'CommitAura is a Rust CLI that generates commit messages from staged changes. The point is not novelty; it is reducing repetitive developer effort while preserving clarity, intent, and a repository history worth reading.',
+    whyItExists: 'Good commit messages are easy to skip when the workflow is already heavy. CommitAura exists to remove that friction by interpreting the diff, separating mechanical changes from real intent, and formatting the result for strict conventional-commit workflows.',
     coreMechanisms: [
       'CLI ergonomics',
       'LLM-assisted summarization',
@@ -75,8 +75,8 @@ export const projects: Project[] = [
     type: 'Simulation & Rendering',
     tech: 'GLSL, WebGL, TypeScript',
     animationType: 'timeseries',
-    overview: 'Tessellarity is a broader simulation and runtime concept centered on GPU-driven procedural systems, dynamic simulation logic, and a flexible substrate for modeling physical behavior. The long-term ambition is not a single visual demo but a reusable environment for simulation-heavy work: materials, fields, geometry refinement, dynamic interactions, and systems that can evolve beyond fixed asset pipelines.',
-    whyItExists: 'Most visual systems on the web rely on static assets or pre-baked animations. When physical interaction or emergent behavior is required, traditional DOM or canvas approaches hit performance walls. Tessellarity exists to push computation to the GPU, allowing for massive particle counts, fluid dynamics, and procedural generation that reacts in real-time to system state.',
+    overview: 'Tessellarity is a GPU-first simulation substrate for procedural systems, dynamic geometry, and physical behavior. It is intended as reusable runtime infrastructure, not a one-off visual demo.',
+    whyItExists: 'Most web visuals rely on fixed assets or pre-baked animation. Tessellarity exists to push more of the behavior to the GPU so procedural generation, large particle counts, and physical interaction can stay live and responsive.',
     coreMechanisms: [
       'GPU simulation',
       'Dynamic remeshing',
@@ -85,7 +85,7 @@ export const projects: Project[] = [
       'Runtime substrate design',
       'Simulation-first architecture'
     ],
-    roleInWork: 'Tessellarity represents my engine-level interests and my preference for systems built from computational principles rather than content pipelines.'
+    roleInWork: 'Tessellarity reflects my engine-level interests and my preference for systems built from computational principles rather than content pipelines.'
   },
   {
     id: 'demosnap',
@@ -94,8 +94,8 @@ export const projects: Project[] = [
     type: 'Systems UX',
     tech: 'React, Framer Motion, WebGL',
     animationType: 'system',
-    overview: 'DemoSnap is a system for turning technical products into high-quality visual narratives. Rather than treating demos as an afterthought, it treats them as part of the product surface: clear, cinematic, legible, and structured enough to communicate the system’s value without flattening the underlying complexity.',
-    whyItExists: 'Complex technical products often fail not because the engineering is bad, but because the system cannot explain itself. Screen recordings are messy, and slide decks are static. DemoSnap exists to provide a programmatic, reproducible way to orchestrate UI states, camera movements, and annotations, turning raw software into a comprehensible narrative.',
+    overview: 'DemoSnap is a presentation system for turning technical products into clear, cinematic software narratives. It treats demos as part of the product surface instead of an afterthought.',
+    whyItExists: 'Complex products often fail to explain themselves. DemoSnap exists to provide a programmatic way to orchestrate UI state, motion, and annotation so technical systems can present themselves without flattening the underlying complexity.',
     coreMechanisms: [
       'Visual communication',
       'Product framing',
@@ -103,6 +103,6 @@ export const projects: Project[] = [
       'Motion-driven interface presentation',
       'State orchestration'
     ],
-    roleInWork: 'DemoSnap reflects an important part of my engineering philosophy: if a system cannot present itself clearly, its leverage is limited.'
+    roleInWork: 'DemoSnap reflects a core part of my engineering philosophy: if a system cannot present itself clearly, its leverage is limited.'
   }
 ];

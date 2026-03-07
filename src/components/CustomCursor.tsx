@@ -1,82 +1,107 @@
 import { useEffect, useState } from 'react';
-import { motion } from 'motion/react';
+import { motion, useMotionValue, useSpring } from 'motion/react';
+import useFinePointer from '../hooks/useFinePointer';
 
 export default function CustomCursor() {
-  const [mousePosition, setMousePosition] = useState({ x: -100, y: -100 });
+  const canUseFinePointer = useFinePointer();
+  const mouseX = useMotionValue(-100);
+  const mouseY = useMotionValue(-100);
+  const cursorX = useSpring(mouseX, { stiffness: 1000, damping: 40, mass: 0.1 });
+  const cursorY = useSpring(mouseY, { stiffness: 1000, damping: 40, mass: 0.1 });
+  const ringX = useSpring(mouseX, { stiffness: 250, damping: 20, mass: 0.5 });
+  const ringY = useSpring(mouseY, { stiffness: 250, damping: 20, mass: 0.5 });
+  const [isEnabled, setIsEnabled] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
-    // Only show custom cursor on devices with a fine pointer (mouse)
-    if (window.matchMedia("(pointer: coarse)").matches) return;
-    
+    setIsEnabled(canUseFinePointer);
+
+    if (!canUseFinePointer) {
+      document.body.classList.remove('has-custom-cursor');
+      setIsHovering(false);
+      setIsVisible(false);
+      setIsActive(false);
+      return;
+    }
+
+    document.body.classList.add('has-custom-cursor');
     setIsVisible(true);
 
-    const updateMousePosition = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-    
-    const handleMouseOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (
-        target.tagName.toLowerCase() === 'a' || 
-        target.tagName.toLowerCase() === 'button' || 
-        target.closest('a') ||
-        target.closest('button') ||
-        target.closest('[data-interactive="true"]')
-      ) {
-        setIsHovering(true);
-      } else {
-        setIsHovering(false);
-      }
+    const updateMousePosition = (event: PointerEvent) => {
+      mouseX.set(event.clientX);
+      mouseY.set(event.clientY);
     };
 
-    const handleMouseDown = () => setIsActive(true);
-    const handleMouseUp = () => setIsActive(false);
-    const handleMouseLeave = () => setIsVisible(false);
-    const handleMouseEnter = () => setIsVisible(true);
+    const handlePointerOver = (event: PointerEvent) => {
+      const target = event.target as HTMLElement;
+      setIsHovering(
+        target.tagName.toLowerCase() === 'a' ||
+          target.tagName.toLowerCase() === 'button' ||
+          Boolean(
+            target.closest('a') ||
+            target.closest('button') ||
+            target.closest('[data-interactive="true"]')
+          )
+      );
+    };
 
-    window.addEventListener('mousemove', updateMousePosition);
-    window.addEventListener('mouseover', handleMouseOver);
-    window.addEventListener('mousedown', handleMouseDown);
-    window.addEventListener('mouseup', handleMouseUp);
-    document.addEventListener('mouseleave', handleMouseLeave);
-    document.addEventListener('mouseenter', handleMouseEnter);
+    const handlePointerDown = () => setIsActive(true);
+    const handlePointerUp = () => setIsActive(false);
+    const handlePointerLeave = () => setIsVisible(false);
+    const handlePointerEnter = () => setIsVisible(true);
+    const handleWindowBlur = () => {
+      setIsVisible(false);
+      setIsActive(false);
+    };
+    const handleWindowFocus = () => setIsVisible(true);
+
+    window.addEventListener('pointermove', updateMousePosition, { passive: true });
+    window.addEventListener('pointerover', handlePointerOver);
+    window.addEventListener('pointerdown', handlePointerDown);
+    window.addEventListener('pointerup', handlePointerUp);
+    window.addEventListener('blur', handleWindowBlur);
+    window.addEventListener('focus', handleWindowFocus);
+    document.documentElement.addEventListener('pointerleave', handlePointerLeave);
+    document.documentElement.addEventListener('pointerenter', handlePointerEnter);
 
     return () => {
-      window.removeEventListener('mousemove', updateMousePosition);
-      window.removeEventListener('mouseover', handleMouseOver);
-      window.removeEventListener('mousedown', handleMouseDown);
-      window.removeEventListener('mouseup', handleMouseUp);
-      document.removeEventListener('mouseleave', handleMouseLeave);
-      document.removeEventListener('mouseenter', handleMouseEnter);
+      document.body.classList.remove('has-custom-cursor');
+      window.removeEventListener('pointermove', updateMousePosition);
+      window.removeEventListener('pointerover', handlePointerOver);
+      window.removeEventListener('pointerdown', handlePointerDown);
+      window.removeEventListener('pointerup', handlePointerUp);
+      window.removeEventListener('blur', handleWindowBlur);
+      window.removeEventListener('focus', handleWindowFocus);
+      document.documentElement.removeEventListener('pointerleave', handlePointerLeave);
+      document.documentElement.removeEventListener('pointerenter', handlePointerEnter);
     };
-  }, []);
+  }, [canUseFinePointer, mouseX, mouseY]);
 
-  if (!isVisible && mousePosition.x === -100) return null;
+  if (!isEnabled) return null;
 
   return (
     <>
       <motion.div
-        className="fixed top-0 left-0 w-2 h-2 bg-[var(--color-ink)] rounded-full pointer-events-none z-[100] mix-blend-difference"
+        aria-hidden="true"
+        className="fixed top-0 left-0 w-2 h-2 -translate-x-1/2 -translate-y-1/2 bg-[var(--color-ink)] rounded-full pointer-events-none z-[100] mix-blend-difference will-change-transform"
+        style={{ x: cursorX, y: cursorY }}
         animate={{
-          x: mousePosition.x - 4,
-          y: mousePosition.y - 4,
           scale: isActive ? 0.5 : isHovering ? 3 : 1,
-          opacity: isVisible ? 1 : 0
+          opacity: isVisible ? 1 : 0,
         }}
-        transition={{ type: "spring", stiffness: 1000, damping: 40, mass: 0.1 }}
+        transition={{ type: 'spring', stiffness: 1000, damping: 40, mass: 0.1 }}
       />
       <motion.div
-        className="fixed top-0 left-0 w-8 h-8 border border-[var(--color-ink)] rounded-full pointer-events-none z-[99] mix-blend-difference opacity-30"
+        aria-hidden="true"
+        className="fixed top-0 left-0 w-8 h-8 -translate-x-1/2 -translate-y-1/2 border border-[var(--color-ink)] rounded-full pointer-events-none z-[99] mix-blend-difference opacity-30 will-change-transform"
+        style={{ x: ringX, y: ringY }}
         animate={{
-          x: mousePosition.x - 16,
-          y: mousePosition.y - 16,
           scale: isActive ? 0.8 : isHovering ? 1.5 : 1,
-          opacity: isVisible ? 1 : 0
+          opacity: isVisible ? 1 : 0,
         }}
-        transition={{ type: "spring", stiffness: 250, damping: 20, mass: 0.5 }}
+        transition={{ type: 'spring', stiffness: 250, damping: 20, mass: 0.5 }}
       />
     </>
   );

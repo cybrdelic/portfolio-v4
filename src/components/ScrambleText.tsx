@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useInView } from 'motion/react';
+import { useInView, useReducedMotion } from 'motion/react';
 
 const CHARS = '!<>-_\\/[]{}—=+*^?#________';
 
@@ -7,8 +7,14 @@ export default function ScrambleText({ text, className }: { text: string, classN
   const [displayText, setDisplayText] = useState(text.replace(/./g, ' '));
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
+    if (prefersReducedMotion) {
+      setDisplayText(text);
+      return;
+    }
+
     if (!isInView) return;
     
     let iteration = 0;
@@ -30,7 +36,7 @@ export default function ScrambleText({ text, className }: { text: string, classN
     }, 30);
     
     return () => clearInterval(interval);
-  }, [text, isInView]);
+  }, [text, isInView, prefersReducedMotion]);
 
   return <span ref={ref} className={className}>{displayText}</span>;
 }

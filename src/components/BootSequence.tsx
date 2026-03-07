@@ -1,47 +1,82 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { useEffect, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+
+const BOOT_SEQUENCE_STORAGE_KEY = 'boot-sequence-seen';
+const SEQUENCE = [
+  'INIT_SYSTEM_KERNEL...',
+  'LOADING_MODULES [OK]',
+  'MOUNTING_VFS [OK]',
+  'ESTABLISHING_NEURAL_LINK...',
+  'SYNCING_TOPOLOGY_DATA...',
+  'CALIBRATING_SENSORS [OK]',
+  'SYSTEM_READY.',
+];
 
 export default function BootSequence() {
+  const prefersReducedMotion = useReducedMotion();
   const [isVisible, setIsVisible] = useState(true);
   const [logs, setLogs] = useState<string[]>([]);
 
   useEffect(() => {
-    const sequence = [
-      "INIT_SYSTEM_KERNEL...",
-      "LOADING_MODULES [OK]",
-      "MOUNTING_VFS [OK]",
-      "ESTABLISHING_NEURAL_LINK...",
-      "SYNCING_TOPOLOGY_DATA...",
-      "CALIBRATING_SENSORS [OK]",
-      "SYSTEM_READY."
-    ];
+    if (prefersReducedMotion || sessionStorage.getItem(BOOT_SEQUENCE_STORAGE_KEY) === '1') {
+      setLogs(SEQUENCE);
+      setIsVisible(false);
+      return;
+    }
 
     let currentIndex = 0;
-    const interval = setInterval(() => {
-      if (currentIndex < sequence.length) {
-        setLogs(prev => [...prev, sequence[currentIndex]]);
-        currentIndex++;
-      } else {
-        clearInterval(interval);
-        setTimeout(() => setIsVisible(false), 400);
+    let exitTimeout: ReturnType<typeof setTimeout> | null = null;
+
+    const close = () => {
+      sessionStorage.setItem(BOOT_SEQUENCE_STORAGE_KEY, '1');
+      setIsVisible(false);
+    };
+
+    const handleSkip = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        close();
       }
+    };
+
+    const interval = setInterval(() => {
+      if (currentIndex < SEQUENCE.length) {
+        setLogs((prev) => [...prev, SEQUENCE[currentIndex]]);
+        currentIndex += 1;
+        return;
+      }
+
+      clearInterval(interval);
+      exitTimeout = setTimeout(close, 400);
     }, 150);
 
-    return () => clearInterval(interval);
-  }, []);
+    window.addEventListener('keydown', handleSkip);
+
+    return () => {
+      clearInterval(interval);
+      if (exitTimeout) {
+        clearTimeout(exitTimeout);
+      }
+      window.removeEventListener('keydown', handleSkip);
+    };
+  }, [prefersReducedMotion]);
 
   return (
     <AnimatePresence>
       {isVisible && (
-        <motion.div 
+        <motion.div
+          aria-hidden="true"
           className="fixed inset-0 z-[200] bg-[var(--color-bg)] flex flex-col justify-end p-8 md:p-12 font-mono text-xs md:text-sm text-[var(--color-muted)]"
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          onClick={() => {
+            sessionStorage.setItem(BOOT_SEQUENCE_STORAGE_KEY, '1');
+            setIsVisible(false);
+          }}
         >
           <div className="max-w-3xl">
-            {logs.map((log, i) => (
-              <motion.div 
-                key={i}
+            {logs.map((log, index) => (
+              <motion.div
+                key={index}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 className="mb-1"
@@ -49,11 +84,14 @@ export default function BootSequence() {
                 {`> ${log}`}
               </motion.div>
             ))}
-            <motion.div 
-              animate={{ opacity: [1, 0] }} 
+            <motion.div
+              animate={{ opacity: [1, 0] }}
               transition={{ repeat: Infinity, duration: 0.8 }}
               className="inline-block w-2 h-4 bg-[var(--color-ink)] mt-2"
             />
+            <p className="mt-6 text-[10px] uppercase tracking-[0.3em] text-[var(--color-line)]">
+              Click or press Escape to skip
+            </p>
           </div>
         </motion.div>
       )}

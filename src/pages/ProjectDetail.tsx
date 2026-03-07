@@ -22,7 +22,7 @@ export default function ProjectDetail() {
 
   return (
     <PageTransition>
-      <article className="min-h-screen pt-32 pb-32 px-6 md:px-12 bg-[var(--color-bg)] text-[var(--color-ink)]">
+      <article className="min-h-screen pt-32 pb-32 px-6 md:px-12 text-[var(--color-ink)]">
         <div className="max-w-7xl mx-auto">
           <Magnetic>
             <Link to="/" className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-[var(--color-muted)] hover:text-[var(--color-ink)] transition-colors mb-16 p-2 -ml-2">

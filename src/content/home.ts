@@ -1,0 +1,119 @@
+export type SectionParagraph = {
+  tone?: 'lead' | 'closing';
+  text: string;
+};
+
+export const heroIdentity =
+  'Alex Figueroa - Autonomous Systems & Simulation Engineer';
+
+export const heroTitle =
+  'I build perceptual systems, recursive tooling, and simulation infrastructure that push software beyond static interfaces.';
+
+export const heroStats = [
+  { label: 'Coordinates', value: 'Dayton, OH / California roots' },
+  {
+    label: 'Focus',
+    value: 'Perception systems, simulation infrastructure, autonomous tooling',
+  },
+  {
+    label: 'Availability',
+    value: 'Open to high-leverage engineering roles and frontier technical collaborations',
+  },
+] as const;
+
+export const thesisParagraphs: SectionParagraph[] = [
+  {
+    tone: 'lead',
+    text: 'I do not build software as isolated screens. I build systems that observe, interpret, and respond.',
+  },
+  {
+    text: 'I am interested in software that carries more of the work: systems that watch state, infer context, model behavior, and help drive action in real time.',
+  },
+  {
+    text: 'That shows up in local-first agent tooling, perceptual systems built from gaze and geometry, and simulation infrastructure where the behavior matters as much as the rendering.',
+  },
+  {
+    text: 'The common thread is operational cognition. I care about products that can perceive more, synthesize more, and reduce operator burden without hiding the real constraints.',
+  },
+  {
+    tone: 'closing',
+    text: 'The work is strongest when architecture, interaction, performance, and reasoning all have to hold together at once.',
+  },
+] as const;
+
+export const ethosParagraphs: SectionParagraph[] = [
+  {
+    tone: 'lead',
+    text: 'My work is driven by constraint visibility, first-principles decomposition, and aggressive context capture.',
+  },
+  {
+    text: 'I want to know where the cost is, where the uncertainty is, and where the brittleness lives. That usually means decomposing a problem until the real boundaries are explicit: memory movement, render cost, search quality, synchronization overhead, false context, or weak state models.',
+  },
+  {
+    text: 'Once those boundaries are visible, the design usually gets simpler. Good systems get better when the failure modes are legible instead of hidden behind abstraction.',
+  },
+  {
+    text: 'I also care about context quality. Most automation fails because it runs on thin or noisy inputs. A recurring part of my work is building the context pipeline first so the downstream reasoning has something solid to work from.',
+  },
+  {
+    tone: 'closing',
+    text: 'The objective is not novelty. It is software that becomes more capable and more useful under real constraints.',
+  },
+] as const;
+
+export const systemDomains = [
+  {
+    title: 'Autonomous Tooling',
+    desc: 'Systems that gather context, orchestrate work, and reduce operator effort over time.',
+  },
+  {
+    title: 'Perceptual Systems',
+    desc: 'Systems that model the relationship between a person, a screen, and surrounding space in real time.',
+  },
+  {
+    title: 'Simulation and Rendering',
+    desc: 'GPU-heavy systems where the visuals emerge from computation, not asset pipelines.',
+  },
+  {
+    title: 'Systems UX',
+    desc: 'Interfaces for technical systems that need to stay precise, legible, and fast under pressure.',
+  },
+] as const;
+
+export const technicalIntro: SectionParagraph[] = [
+  {
+    tone: 'lead',
+    text: 'I work across the stack, but the throughline is system behavior.',
+  },
+  {
+    text: 'My background spans product engineering, automation systems, backend services, local-first applications, rendering systems, shader work, GPU simulation, and interface architecture.',
+  },
+  {
+    tone: 'closing',
+    text: 'I am most useful when a product needs architecture, implementation, interaction design, and technical framing to reinforce each other.',
+  },
+] as const;
+
+export const technicalRows = [
+  ['Primary languages', 'Rust, Python, TypeScript, JavaScript, GLSL'],
+  ['Systems and infrastructure', 'PostgreSQL, Redis, Docker, Kubernetes, RabbitMQ, Terraform'],
+  ['Frontend and interface', 'React, WebGL, shader systems, interaction architecture, visual systems design'],
+  ['Current technical interests', 'Perceptual interfaces, local-first AI tooling, GPU-driven simulation, embodied computing systems'],
+] as const;
+
+export const workingStyleParagraphs: SectionParagraph[] = [
+  {
+    tone: 'lead',
+    text: 'I am strongest on cross-layer problems that do not fit neatly inside one engineering box.',
+  },
+  {
+    text: 'I do my best work when architecture, implementation, interface design, systems debugging, and product framing all need to happen in the same problem space.',
+  },
+  {
+    text: 'I am especially drawn to systems that move toward perception, simulation, intelligent tooling, and new computational interfaces.',
+  },
+  {
+    tone: 'closing',
+    text: 'I care about products that are technically serious, operationally useful, and difficult to forget.',
+  },
+] as const;
