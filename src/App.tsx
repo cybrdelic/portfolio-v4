@@ -12,6 +12,13 @@ const ProjectDetail = lazy(() => import('./pages/ProjectDetail'));
 export default function App() {
   const location = useLocation();
   const [bootSequenceComplete, setBootSequenceComplete] = useState(false);
+  const isHomeRoute = location.pathname === '/';
+
+  useEffect(() => {
+    if (!isHomeRoute) {
+      setBootSequenceComplete(true);
+    }
+  }, [isHomeRoute]);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -32,7 +39,7 @@ export default function App() {
   return (
     <div className="relative isolate text-[var(--color-ink)] selection:bg-[var(--color-ink)] selection:text-[var(--color-bg)]">
       <SmoothScroll />
-      <BootSequence onComplete={() => setBootSequenceComplete(true)} />
+      {isHomeRoute ? <BootSequence onComplete={() => setBootSequenceComplete(true)} /> : null}
       <ScrollToTop />
 
       <div className="relative z-10">

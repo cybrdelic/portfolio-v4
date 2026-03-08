@@ -26,7 +26,7 @@ function DomainRow({
   return (
     <motion.div
       ref={ref}
-      className="group relative block data-row py-10 md:py-12"
+      className="group relative block domain-row data-row py-12 md:py-14"
       style={
         prefersReducedMotion
           ? undefined
@@ -43,21 +43,21 @@ function DomainRow({
         style={prefersReducedMotion ? undefined : { scaleX: lineScaleX }}
       />
 
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-12 md:items-start">
-        <div className="flex items-baseline gap-4 md:col-span-4">
+      <div className="grid grid-cols-1 gap-7 md:grid-cols-12 md:items-start">
+        <div className="flex items-start gap-4 md:col-span-5">
           <motion.span
-            className="font-mono text-[0.62rem] uppercase tracking-[0.16em] text-[var(--color-muted)]"
+            className="hero-stat-index mt-[0.55rem]"
             style={prefersReducedMotion ? undefined : { opacity: indexOpacity }}
           >
             {String(index + 1).padStart(2, '0')}
           </motion.span>
-          <h3 className="max-w-[14ch] text-[1.2rem] font-normal tracking-[-0.03em] text-[var(--color-ink)] md:text-[1.7rem]">
+          <h3 className="domain-row-title">
             {title}
           </h3>
         </div>
 
-        <div className="md:col-span-8">
-          <p className="body-premium max-w-[34rem] text-[1rem] leading-[1.66] md:text-[1.06rem]">
+        <div className="md:col-span-7">
+          <p className="domain-row-copy">
             {description}
           </p>
         </div>
@@ -100,8 +100,8 @@ export default function SystemDomains() {
             className="mb-5 h-px w-14 origin-left bg-[var(--color-line-strong)]"
             style={prefersReducedMotion ? undefined : { scaleX: introLineScaleX }}
           />
-          <p className="max-w-[28rem] text-[1.05rem] text-[var(--color-ink)] md:text-[1.12rem]">
-            Four operating domains.
+          <p className="max-w-[34rem] text-[1.04rem] leading-[1.72] text-[var(--color-ink)] md:text-[1.14rem]">
+            Four operating domains where architecture, interaction, and system behavior matter as much as implementation.
           </p>
         </div>
       </motion.div>

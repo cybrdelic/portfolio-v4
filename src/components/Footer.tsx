@@ -10,25 +10,25 @@ export default function Footer() {
           </div>
 
           <div className="lg:col-span-8 lg:max-w-[42rem]">
-            <p className="display-tight max-w-[14ch] text-[clamp(2rem,4vw,2.75rem)] text-[var(--color-ink)]">
+            <p className="display-tight max-w-[13ch] text-[clamp(2.25rem,4.6vw,3.25rem)] text-[var(--color-ink)]">
               Available for system-heavy engineering work.
             </p>
-            <p className="body-premium mt-5 max-w-[34rem] text-base md:text-[1.05rem]">
+            <p className="body-premium mt-6 max-w-[35rem] text-[1.02rem] md:text-[1.1rem]">
               Roles and collaborations involving autonomous tooling, perceptual systems, simulation infrastructure, and interface-heavy technical products.
             </p>
-            <div className="mt-10 grid grid-cols-1 gap-8 border-t border-[var(--color-line-strong)] pt-7 md:grid-cols-[minmax(0,1fr)_11rem] md:items-end">
+            <div className="mt-10 grid grid-cols-1 gap-8 border-t border-[var(--color-line-strong)] pt-8 md:grid-cols-[minmax(0,1fr)_12rem] md:items-end">
               <a
                 href="mailto:alexfigueroa.cybr@gmail.com"
                 className="group inline-flex w-fit items-center gap-3 text-[var(--color-ink)]"
               >
-                <span className="meta-rule font-mono text-[0.76rem] uppercase tracking-[0.16em]">
+                <span className="meta-rule text-[0.94rem] tracking-[-0.02em] md:text-[1rem]">
                   alexfigueroa.cybr@gmail.com
                 </span>
                 <ArrowUpRight size={15} className="text-[var(--color-muted)] transition-transform duration-150 group-hover:-translate-y-px group-hover:translate-x-px" />
               </a>
               <div className="space-y-2 md:text-right">
                 <p className="eyebrow">Availability</p>
-                <p className="text-sm leading-relaxed text-[var(--color-ink)]">
+                <p className="text-[0.94rem] leading-relaxed text-[var(--color-ink)]">
                   Select roles and collaborations.
                 </p>
               </div>
@@ -39,7 +39,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-10 border-t border-[var(--color-line-strong)] pt-8 md:grid-cols-12 md:pt-10">
           <div className="md:col-span-4">
             <p className="eyebrow mb-4">Base</p>
-            <p className="text-sm leading-relaxed text-[var(--color-ink)]">
+            <p className="text-[0.96rem] leading-relaxed text-[var(--color-ink)]">
               Dayton, OH
               <br />
               California roots
@@ -47,7 +47,7 @@ export default function Footer() {
           </div>
           <div className="md:col-span-4">
             <p className="eyebrow mb-4">Scope</p>
-            <p className="max-w-[18rem] text-sm leading-relaxed text-[var(--color-ink)]">
+            <p className="max-w-[18rem] text-[0.96rem] leading-relaxed text-[var(--color-ink)]">
               Autonomous tooling, perceptual systems, simulation infrastructure.
             </p>
           </div>

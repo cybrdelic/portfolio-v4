@@ -181,6 +181,11 @@ button {
   max-width: 42rem;
 }
 
+.section-copy-stage {
+  position: relative;
+  padding-top: 0.25rem;
+}
+
 .section-copy-rule {
   margin-bottom: 2rem;
   height: 1px;
@@ -320,6 +325,23 @@ button {
   line-height: 1.72;
 }
 
+.domain-row-title {
+  max-width: 12ch;
+  font-family: var(--font-display);
+  font-size: clamp(1.7rem, 1.25rem + 1vw, 2.3rem);
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.domain-row-copy {
+  max-width: 35rem;
+  color: color-mix(in srgb, var(--color-muted-soft) 88%, var(--color-ink) 12%);
+  font-size: 1rem;
+  line-height: 1.72;
+}
+
 .hero-name {
   font-family: var(--font-sans);
   font-weight: 600;
@@ -359,6 +381,8 @@ button {
 .meta-rule {
   position: relative;
   padding-left: 1.25rem;
+  font-family: var(--font-sans);
+  font-weight: 560;
 }
 
 .meta-rule::before {
@@ -369,6 +393,22 @@ button {
   width: 0.7rem;
   height: 1px;
   background: var(--color-line-strong);
+}
+
+.profile-row-label {
+  max-width: 18rem;
+  font-size: 0.98rem;
+  font-weight: 560;
+  line-height: 1.45;
+  letter-spacing: -0.016em;
+  color: var(--color-ink);
+}
+
+.profile-row-value {
+  max-width: 38rem;
+  color: color-mix(in srgb, var(--color-muted-soft) 88%, var(--color-ink) 12%);
+  font-size: 1.02rem;
+  line-height: 1.72;
 }
 
 @media (max-height: 900px) {
@@ -486,6 +526,11 @@ button {
 
   .section-copy-closing {
     font-size: 1.08rem;
+  }
+
+  .domain-row-copy,
+  .profile-row-value {
+    font-size: 1.05rem;
   }
 }
 

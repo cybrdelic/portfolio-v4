@@ -50,12 +50,15 @@ function ProjectFace({
             <span>{String(index + 1).padStart(2, '0')}</span>
           </div>
 
-          <div className="space-y-5">
-            <h3 className="display-tight max-w-[11ch] text-4xl md:text-6xl lg:text-[4.6rem]">
+          <div className="space-y-6">
+            <h3 className="display-tight max-w-[10ch] text-[clamp(2.8rem,6vw,4.7rem)] leading-[0.92]">
               {project.title}
             </h3>
-            <p className="body-premium max-w-[32rem] text-lg md:text-[1.5rem]">
+            <p className="body-premium max-w-[31rem] text-[1.1rem] leading-[1.58] md:text-[1.46rem]">
               {project.subtitle}
+            </p>
+            <p className="max-w-[36rem] text-[0.98rem] leading-[1.72] text-[var(--color-muted-soft)] md:text-[1.04rem]">
+              {project.overview}
             </p>
           </div>
 
@@ -75,17 +78,26 @@ function ProjectFace({
             <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--color-muted)]">
               Stack
             </p>
-            <p className="max-w-[24rem] text-xl leading-[1.42] text-[var(--color-ink)] md:text-[1.7rem]">
+            <p className="max-w-[24rem] text-[1.08rem] leading-[1.54] text-[var(--color-ink)] md:text-[1.34rem]">
               {project.tech}
             </p>
           </div>
 
           <div>
             <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--color-muted)]">
-              Overview
+              Why it exists
             </p>
             <p className="body-premium max-w-[25rem] text-base md:text-[1.02rem]">
-              {project.overview}
+              {project.whyItExists}
+            </p>
+          </div>
+
+          <div className="border-t border-[var(--color-line-soft)] pt-6">
+            <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--color-muted)]">
+              Role in work
+            </p>
+            <p className="max-w-[25rem] text-[0.98rem] leading-[1.68] text-[var(--color-ink)]">
+              {project.roleInWork}
             </p>
           </div>
         </div>

@@ -26,7 +26,7 @@ export default function TextSection({
         <div className="section-rail">
           <h2 className="section-label lg:sticky lg:top-12">{label}</h2>
         </div>
-        <div className="section-content section-copy">
+        <div className="section-content section-copy section-copy-stage">
           <div aria-hidden="true" className="section-copy-rule" />
           {paragraphs.map((paragraph, index) => (
             <motion.p
