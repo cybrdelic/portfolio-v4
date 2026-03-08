@@ -32,6 +32,7 @@ function DomainRow({
           ? undefined
           : {
               opacity: shellOpacity,
+              position: 'relative',
               y: shellY,
             }
       }
@@ -81,6 +82,7 @@ export default function SystemDomains() {
     <section
       ref={ref}
       className="section-shell section-shell--framed"
+      style={{ position: 'relative' }}
     >
       <motion.div
         className="section-intro"

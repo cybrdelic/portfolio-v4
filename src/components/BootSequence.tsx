@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 
 const BOOT_SEQUENCE_STORAGE_KEY = 'boot-sequence-seen';
@@ -12,15 +12,23 @@ const SEQUENCE = [
   'SYSTEM_READY.',
 ];
 
-export default function BootSequence() {
+export default function BootSequence({ onComplete }: { onComplete?: () => void }) {
   const prefersReducedMotion = useReducedMotion();
   const [isVisible, setIsVisible] = useState(true);
   const [logs, setLogs] = useState<string[]>([]);
+  const completionNotifiedRef = useRef(false);
+
+  const notifyComplete = () => {
+    if (completionNotifiedRef.current) return;
+    completionNotifiedRef.current = true;
+    onComplete?.();
+  };
 
   useEffect(() => {
     if (prefersReducedMotion || sessionStorage.getItem(BOOT_SEQUENCE_STORAGE_KEY) === '1') {
       setLogs(SEQUENCE);
       setIsVisible(false);
+      notifyComplete();
       return;
     }
 
@@ -30,6 +38,7 @@ export default function BootSequence() {
     const close = () => {
       sessionStorage.setItem(BOOT_SEQUENCE_STORAGE_KEY, '1');
       setIsVisible(false);
+      notifyComplete();
     };
 
     const handleSkip = (event: KeyboardEvent) => {
@@ -58,7 +67,7 @@ export default function BootSequence() {
       }
       window.removeEventListener('keydown', handleSkip);
     };
-  }, [prefersReducedMotion]);
+  }, [onComplete, prefersReducedMotion]);
 
   return (
     <AnimatePresence>

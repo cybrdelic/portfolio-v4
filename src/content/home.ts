@@ -8,23 +8,27 @@ export const heroName = 'Alex Figueroa';
 export const heroRole = 'Autonomous Systems & Simulation Engineer';
 
 export const heroTitleLines = [
-  'Perceptual systems,',
-  'recursive tooling,',
-  'simulation infrastructure.',
+  'Systems that',
+  'perceive,',
+  'reason,',
+  'and respond.',
 ] as const;
 
 export const heroDeck =
-  'For products that need to observe, infer, and act.';
+  'For products where perception, context, and action have to hold together under real constraints.';
 
 export const heroStats = [
-  { label: 'Builds', value: 'Perceptual systems, recursive tooling, simulation infrastructure' },
   {
-    label: 'Approach',
-    value: 'System-first engineering with strong interface judgment',
+    label: 'Domains',
+    value: 'Autonomous tooling, perceptual interfaces, simulation systems',
   },
   {
-    label: 'Open to',
-    value: 'Senior engineering roles and technically ambitious collaborations',
+    label: 'Method',
+    value: 'Architecture, interaction, and performance resolved as one system',
+  },
+  {
+    label: 'Current scope',
+    value: 'Senior engineering roles, selective collaborations, ambitious technical products',
   },
 ] as const;
 

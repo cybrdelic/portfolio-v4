@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'motion/react';
 import Footer from './components/Footer';
@@ -11,6 +11,7 @@ const ProjectDetail = lazy(() => import('./pages/ProjectDetail'));
 
 export default function App() {
   const location = useLocation();
+  const [bootSequenceComplete, setBootSequenceComplete] = useState(false);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -31,7 +32,7 @@ export default function App() {
   return (
     <div className="relative isolate text-[var(--color-ink)] selection:bg-[var(--color-ink)] selection:text-[var(--color-bg)]">
       <SmoothScroll />
-      <BootSequence />
+      <BootSequence onComplete={() => setBootSequenceComplete(true)} />
       <ScrollToTop />
 
       <div className="relative z-10">
@@ -39,7 +40,7 @@ export default function App() {
           {/* @ts-ignore */}
           <Suspense fallback={<div className="min-h-screen" aria-hidden="true" />}>
             <Routes location={location} key={location.pathname}>
-              <Route path="/" element={<Home />} />
+              <Route path="/" element={<Home heroIntroReady={bootSequenceComplete} />} />
               <Route path="/project/:id" element={<ProjectDetail />} />
             </Routes>
           </Suspense>
