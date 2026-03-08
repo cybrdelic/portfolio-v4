@@ -378,6 +378,75 @@ button {
   letter-spacing: -0.012em;
 }
 
+.domain-card-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.domain-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 18rem;
+  border: 1px solid color-mix(in srgb, var(--color-line-strong) 70%, transparent);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.12), transparent 30%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0.03));
+  padding: 1.25rem;
+}
+
+.domain-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.2), transparent 35%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.018), transparent 54%);
+}
+
+.domain-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.domain-card-index {
+  margin-bottom: 2.2rem;
+}
+
+.domain-card-title {
+  max-width: 9ch;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.52rem + 1.1vw, 2.8rem);
+  font-weight: 500;
+  line-height: 0.96;
+  letter-spacing: -0.034em;
+  text-wrap: balance;
+}
+
+.domain-card-copy {
+  max-width: 28rem;
+  color: color-mix(in srgb, var(--color-muted-soft) 86%, var(--color-ink) 14%);
+  font-size: 0.98rem;
+  line-height: 1.72;
+}
+
+.domain-card-band {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-top: 1px solid color-mix(in srgb, var(--color-line-soft) 82%, transparent);
+  padding-top: 0.9rem;
+}
+
+.domain-card-band p:last-child {
+  max-width: 16ch;
+  text-align: right;
+  color: color-mix(in srgb, var(--color-ink) 86%, var(--color-muted) 14%);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
 .meta-rule {
   position: relative;
   padding-left: 1.25rem;
@@ -526,6 +595,16 @@ button {
 
   .section-copy-closing {
     font-size: 1.08rem;
+  }
+
+  .domain-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.15rem;
+  }
+
+  .domain-card:nth-child(2),
+  .domain-card:nth-child(4) {
+    transform: translateY(2rem);
   }
 
   .domain-row-copy,

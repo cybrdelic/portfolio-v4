@@ -2,7 +2,14 @@ import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react'
 import { useRef } from 'react';
 import { systemDomains } from '../content/home';
 
-function DomainRow({
+const domainSignals = [
+  'Operator load down',
+  'Spatial state live',
+  'Behavior over assets',
+  'Precision under pressure',
+] as const;
+
+function DomainCard({
   description,
   index,
   title,
@@ -15,54 +22,41 @@ function DomainRow({
   const prefersReducedMotion = Boolean(useReducedMotion());
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ['start 88%', 'end 48%'],
+    offset: ['start 88%', 'end 50%'],
   });
 
   const shellOpacity = useTransform(scrollYProgress, [0, 0.2, 1], [0, 1, 1]);
-  const shellY = useTransform(scrollYProgress, [0, 1], [12, 0]);
-  const lineScaleX = useTransform(scrollYProgress, [0, 1], [0.18, 1]);
-  const indexOpacity = useTransform(scrollYProgress, [0, 0.25, 0.5, 1], [0, 0.25, 0.8, 0.8]);
+  const shellY = useTransform(scrollYProgress, [0, 1], [16, 0]);
+  const shellScale = useTransform(scrollYProgress, [0, 1], [0.98, 1]);
 
   return (
-    <motion.div
+    <motion.article
       ref={ref}
-      className="group relative block domain-row data-row py-12 md:py-14"
+      className="domain-card"
       style={
         prefersReducedMotion
           ? undefined
           : {
               opacity: shellOpacity,
-              position: 'relative',
               y: shellY,
+              scale: shellScale,
             }
       }
     >
-      <motion.div
-        aria-hidden="true"
-        className="absolute inset-x-0 top-0 h-px origin-left bg-[var(--color-line-strong)]"
-        style={prefersReducedMotion ? undefined : { scaleX: lineScaleX }}
-      />
+      <p className="hero-stat-index domain-card-index">
+        {String(index + 1).padStart(2, '0')}
+      </p>
 
-      <div className="grid grid-cols-1 gap-7 md:grid-cols-12 md:items-start">
-        <div className="flex items-start gap-4 md:col-span-5">
-          <motion.span
-            className="hero-stat-index mt-[0.55rem]"
-            style={prefersReducedMotion ? undefined : { opacity: indexOpacity }}
-          >
-            {String(index + 1).padStart(2, '0')}
-          </motion.span>
-          <h3 className="domain-row-title">
-            {title}
-          </h3>
-        </div>
-
-        <div className="md:col-span-7">
-          <p className="domain-row-copy">
-            {description}
-          </p>
-        </div>
+      <div className="flex min-h-[8rem] flex-col justify-between gap-6">
+        <h3 className="domain-card-title">{title}</h3>
+        <p className="domain-card-copy">{description}</p>
       </div>
-    </motion.div>
+
+      <div className="domain-card-band mt-10">
+        <p className="eyebrow">Operating signal</p>
+        <p>{domainSignals[index]}</p>
+      </div>
+    </motion.article>
   );
 }
 
@@ -100,21 +94,23 @@ export default function SystemDomains() {
             className="mb-5 h-px w-14 origin-left bg-[var(--color-line-strong)]"
             style={prefersReducedMotion ? undefined : { scaleX: introLineScaleX }}
           />
-          <p className="max-w-[34rem] text-[1.04rem] leading-[1.72] text-[var(--color-ink)] md:text-[1.14rem]">
-            Four operating domains where architecture, interaction, and system behavior matter as much as implementation.
+          <p className="max-w-[36rem] text-[1.05rem] leading-[1.72] text-[var(--color-ink)] md:text-[1.16rem]">
+            Four operating territories where technical systems stop being passive software and start behaving like instruments.
           </p>
         </div>
       </motion.div>
 
-      <div className="section-list">
-        {systemDomains.map((domain, index) => (
-          <DomainRow
-            key={domain.title}
-            description={domain.desc}
-            index={index}
-            title={domain.title}
-          />
-        ))}
+      <div className="section-list border-t-0">
+        <div className="domain-card-grid">
+          {systemDomains.map((domain, index) => (
+            <DomainCard
+              key={domain.title}
+              description={domain.desc}
+              index={index}
+              title={domain.title}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );
