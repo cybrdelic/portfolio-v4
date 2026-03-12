@@ -24,6 +24,12 @@ export default function BootSequence({ onComplete }: { onComplete?: () => void }
     onComplete?.();
   };
 
+  const close = () => {
+    sessionStorage.setItem(BOOT_SEQUENCE_STORAGE_KEY, '1');
+    setIsVisible(false);
+    notifyComplete();
+  };
+
   useEffect(() => {
     if (prefersReducedMotion || sessionStorage.getItem(BOOT_SEQUENCE_STORAGE_KEY) === '1') {
       setLogs(SEQUENCE);
@@ -34,12 +40,6 @@ export default function BootSequence({ onComplete }: { onComplete?: () => void }
 
     let currentIndex = 0;
     let exitTimeout: ReturnType<typeof setTimeout> | null = null;
-
-    const close = () => {
-      sessionStorage.setItem(BOOT_SEQUENCE_STORAGE_KEY, '1');
-      setIsVisible(false);
-      notifyComplete();
-    };
 
     const handleSkip = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -77,10 +77,7 @@ export default function BootSequence({ onComplete }: { onComplete?: () => void }
           className="fixed inset-0 z-[200] bg-[var(--color-bg)] flex flex-col justify-end p-8 md:p-12 font-mono text-xs md:text-sm text-[var(--color-muted)]"
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          onClick={() => {
-            sessionStorage.setItem(BOOT_SEQUENCE_STORAGE_KEY, '1');
-            setIsVisible(false);
-          }}
+          onClick={close}
         >
           <div className="max-w-3xl">
             {logs.map((log, index) => (

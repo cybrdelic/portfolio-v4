@@ -1,6 +1,6 @@
-import { CSSProperties, useRef, useState } from 'react';
+import { CSSProperties, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { ArrowUpRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   motion,
   useMotionTemplate,
@@ -13,6 +13,8 @@ import { Project, projects } from '../data';
 
 const PROJECT_TRANSITIONS = Math.max(1, projects.length - 1);
 const PROJECT_STAGE_VH = 120;
+const PROJECT_INTRO =
+  'Selected systems where the interaction, architecture, and operating model are part of the same decision.';
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
@@ -20,37 +22,42 @@ function clamp(value: number, min: number, max: number) {
 
 function ProjectFace({
   isInteractive,
-  index,
+  onOpen,
   project,
 }: {
   isInteractive: boolean;
-  index: number;
+  onOpen?: () => void;
   project: Project;
 }) {
+  const techList = project.tech.split(',').map((item) => item.trim());
+  const mechanismPreview = project.coreMechanisms.slice(0, 3);
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (!isInteractive || !onOpen) {
+      return;
+    }
+
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      onOpen();
+    }
+  };
+
   return (
-    <Link
-      aria-hidden={!isInteractive}
-      tabIndex={isInteractive ? 0 : -1}
-      to={`/project/${project.id}`}
-      className="group relative block h-full w-full text-[var(--color-ink)]"
+    <div
+      aria-label={isInteractive ? `View project: ${project.title}` : undefined}
+      className={`project-face-shell group relative h-full w-full text-[var(--color-ink)] ${isInteractive ? 'is-interactive' : ''}`}
+      onClick={isInteractive ? onOpen : undefined}
+      onKeyDown={handleKeyDown}
+      role={isInteractive ? 'link' : undefined}
+      tabIndex={isInteractive ? 0 : undefined}
     >
       <div className="pointer-events-none absolute inset-0 tone-panel opacity-90" />
-      <div className="absolute inset-x-0 top-0 h-px bg-[var(--color-line-strong)]" />
-      <div className="absolute inset-x-0 bottom-0 h-px bg-[var(--color-line-soft)]" />
-      <div className="absolute inset-y-0 left-0 w-px bg-[var(--color-line-strong)]" />
-      <div className="absolute inset-y-0 right-0 w-px bg-[var(--color-line-strong)]" />
       <div className="absolute inset-y-0 left-[58.333333%] hidden w-px bg-[var(--color-line-soft)] lg:block" />
-      <div className="absolute left-10 right-10 top-10 hidden h-px bg-[var(--color-line-soft)] md:block" />
-      <div className="absolute bottom-10 left-10 right-10 hidden h-px bg-[var(--color-line-soft)] md:block" />
 
-      <div className="relative z-10 grid h-full grid-cols-1 lg:grid-cols-12">
-        <div className="flex flex-col justify-between gap-10 px-6 py-8 md:px-10 md:py-10 lg:col-span-7 lg:pr-12">
-          <div className="flex items-center justify-between gap-4 font-mono text-[10px] uppercase tracking-[0.22em] text-[var(--color-muted)]">
-            <span>{project.type}</span>
-            <span>{String(index + 1).padStart(2, '0')}</span>
-          </div>
-
-          <div className="space-y-6">
+      <div className="project-face-grid relative z-10 grid h-full grid-cols-1 lg:grid-cols-12">
+        <div className="project-face-primary flex flex-col gap-10 px-6 pb-8 pt-24 md:px-10 md:pb-10 md:pt-28 lg:col-span-7 lg:pr-12">
+          <div className="project-face-body space-y-6">
             <h3 className="display-tight max-w-[10ch] text-[clamp(2.8rem,6vw,4.7rem)] leading-[0.92]">
               {project.title}
             </h3>
@@ -62,25 +69,36 @@ function ProjectFace({
             </p>
           </div>
 
-          <div className="flex items-center justify-between gap-6 border-t border-[var(--color-line-soft)] pt-6">
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--color-muted)]">
-              View project
-            </span>
-            <ArrowUpRight
-              size={18}
-              className="text-[var(--color-muted)] transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-[var(--color-ink)]"
-            />
+          <div className="project-face-footer mt-auto grid gap-5 border-t border-[var(--color-line-soft)] pt-6 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+            <div className="flex flex-wrap gap-2">
+              {mechanismPreview.map((mechanism) => (
+                <span key={mechanism} className="signal-chip">
+                  {mechanism}
+                </span>
+              ))}
+            </div>
+            <div className="project-open-affordance inline-flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--color-muted)]">
+              <span>Open dossier</span>
+              <ArrowUpRight
+                size={18}
+                className="text-[var(--color-muted)] transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-[var(--color-ink)]"
+              />
+            </div>
           </div>
         </div>
 
-        <div className="flex flex-col justify-between gap-10 border-t border-[var(--color-line-soft)] px-6 py-8 md:px-10 md:py-10 lg:col-span-5 lg:border-l lg:border-t-0 lg:[border-left-color:var(--color-line-soft)] lg:pl-12">
+        <div className="project-face-secondary flex flex-col gap-10 border-t border-[var(--color-line-soft)] px-6 pb-8 pt-24 md:px-10 md:pb-10 md:pt-28 lg:col-span-5 lg:border-l lg:border-t-0 lg:[border-left-color:var(--color-line-soft)] lg:pl-12">
           <div>
             <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--color-muted)]">
               Stack
             </p>
-            <p className="max-w-[24rem] text-[1.08rem] leading-[1.54] text-[var(--color-ink)] md:text-[1.34rem]">
-              {project.tech}
-            </p>
+            <div className="project-meta-stack">
+              {techList.map((item) => (
+                <span key={item} className="project-meta-pill">
+                  {item}
+                </span>
+              ))}
+            </div>
           </div>
 
           <div>
@@ -92,7 +110,7 @@ function ProjectFace({
             </p>
           </div>
 
-          <div className="border-t border-[var(--color-line-soft)] pt-6">
+          <div className="mt-auto border-t border-[var(--color-line-soft)] pt-6">
             <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--color-muted)]">
               Role in work
             </p>
@@ -102,7 +120,7 @@ function ProjectFace({
           </div>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
 
@@ -110,7 +128,27 @@ export default function Projects() {
   const prefersReducedMotion = Boolean(useReducedMotion());
   const ref = useRef<HTMLElement>(null);
   const [baseIndex, setBaseIndex] = useState(0);
+  const [isMobileLayout, setIsMobileLayout] = useState(false);
+  const navigate = useNavigate();
   const totalHeightVh = projects.length * PROJECT_STAGE_VH;
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const mediaQuery = window.matchMedia('(max-width: 767px)');
+    const syncLayout = () => {
+      setIsMobileLayout(mediaQuery.matches);
+    };
+
+    syncLayout();
+    mediaQuery.addEventListener('change', syncLayout);
+
+    return () => {
+      mediaQuery.removeEventListener('change', syncLayout);
+    };
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -126,7 +164,7 @@ export default function Projects() {
   const nextOpacity = useTransform(localProgress, (value) =>
     prefersReducedMotion ? 1 : 0.84 + value * 0.16
   );
-  const gridOpacity = useTransform(scrollYProgress, [0, 1], [0.025, 0.05]);
+  const gridOpacity = useTransform(scrollYProgress, [0, 1], [0.018, 0.04]);
 
   useMotionValueEvent(phase, 'change', (value) => {
     const nextBaseIndex = clamp(Math.floor(value + 0.0001), 0, projects.length - 1);
@@ -138,42 +176,90 @@ export default function Projects() {
     transform: useMotionTemplate`translateZ(calc(var(--cube-size) / -2)) rotateY(${rotation}deg)`,
   };
 
+  if (prefersReducedMotion || isMobileLayout) {
+    return (
+      <section className="bridge-section relative border-b border-[var(--color-line)]">
+        <div className="mx-auto max-w-7xl px-6 py-16 md:px-12">
+          <div className="grid grid-cols-1 gap-4 border-b border-[var(--color-line-soft)]/85 pb-5 md:grid-cols-[12rem_minmax(0,1fr)_6rem] md:items-end">
+            <div>
+              <p className="section-label">3.0 / Selected Systems</p>
+            </div>
+            <p className="project-stage-intro">
+              {PROJECT_INTRO}
+            </p>
+            <div className="project-stage-counter">
+              <p className="project-stage-counter-index">
+                {String(projects.length).padStart(2, '0')} systems
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-8 space-y-5">
+            {projects.map((project) => (
+              <div key={project.id} className="min-h-[32rem]">
+                <ProjectFace
+                  isInteractive
+                  onOpen={() => navigate(`/project/${project.id}`)}
+                  project={project}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section
       ref={ref}
-      className="bridge-section relative border-b border-[var(--color-line)]"
+      className="bridge-section project-stage-shell relative border-b border-[var(--color-line)]"
       style={{ height: `${totalHeightVh}vh`, position: 'relative' }}
     >
-      <div className="sticky top-0 h-[100svh] overflow-hidden">
+      <div className="project-stage-sticky sticky top-0 h-[100svh] overflow-hidden">
         <motion.div
-          className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:56px_56px]"
+          className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:72px_72px]"
           style={{ opacity: gridOpacity }}
         />
 
-        <div className="relative z-10 h-full">
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-20 px-6 pt-5 md:px-12 md:pt-8">
+          <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 border-b border-[var(--color-line-soft)]/85 pb-5 md:grid-cols-[12rem_minmax(0,1fr)_6rem] md:items-end">
+            <div>
+              <p className="section-label">3.0 / Selected Systems</p>
+            </div>
+            <p className="project-stage-intro">
+              {PROJECT_INTRO}
+            </p>
+            <div className="project-stage-counter">
+              <p className="project-stage-counter-index">
+                {String(baseIndex + 1).padStart(2, '0')} / {String(projects.length).padStart(2, '0')}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="project-stage-frame relative z-10 mx-auto h-full w-full max-w-7xl px-6 pb-6 pt-28 md:px-12 md:pb-8 md:pt-32">
           <div className="relative h-full w-full">
             <div
-              className="relative h-full w-full"
+              className="project-stage-cube relative h-full w-full"
               style={
                 {
                   perspective: '2200px',
-                  ['--cube-size' as string]: '100vw',
                 } as CSSProperties
               }
             >
               <motion.div className="absolute inset-0 [transform-style:preserve-3d]" style={cubeStyle}>
                 <motion.div
-                  className="absolute inset-0 [backface-visibility:hidden]"
+                  className="absolute inset-0 z-10 [backface-visibility:hidden]"
                   style={{
                     opacity: frontOpacity,
+                    pointerEvents: 'auto',
                     transform: `rotateY(${baseIndex * 90}deg) translateZ(calc(var(--cube-size) / 2))`,
                   }}
                 >
-                  <div className="absolute inset-y-0 left-0 z-10 w-[2px] bg-[color:rgba(186,186,186,0.92)]" />
-                  <div className="absolute inset-y-0 right-0 z-10 w-[2px] bg-[color:rgba(186,186,186,0.92)]" />
                   <ProjectFace
                     isInteractive
-                    index={baseIndex}
+                    onOpen={() => navigate(`/project/${projects[baseIndex].id}`)}
                     project={projects[baseIndex]}
                   />
                 </motion.div>
@@ -187,19 +273,13 @@ export default function Projects() {
                       transform: `rotateY(${nextIndex * 90}deg) translateZ(calc(var(--cube-size) / 2))`,
                     }}
                   >
-                    <div className="absolute inset-y-0 left-0 z-10 w-[2px] bg-[color:rgba(186,186,186,0.92)]" />
-                    <div className="absolute inset-y-0 right-0 z-10 w-[2px] bg-[color:rgba(186,186,186,0.92)]" />
                     <ProjectFace
                       isInteractive={false}
-                      index={nextIndex}
                       project={projects[nextIndex]}
                     />
                   </motion.div>
                 )}
               </motion.div>
-
-              <div className="pointer-events-none absolute inset-y-0 left-0 w-px bg-[var(--color-line-strong)]" />
-              <div className="pointer-events-none absolute inset-y-0 right-0 w-px bg-[var(--color-line-strong)]" />
             </div>
           </div>
         </div>

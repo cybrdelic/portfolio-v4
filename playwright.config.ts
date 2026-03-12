@@ -1,18 +1,30 @@
 import { defineConfig } from '@playwright/test';
 
+const defaultPort = '42741';
+const defaultBaseUrl = `http://127.0.0.1:${defaultPort}`;
+const webServerCommand =
+  process.platform === 'win32'
+    ? `node scripts/serve-dist.mjs ${defaultPort}`
+    : `node scripts/serve-dist.mjs ${defaultPort}`;
+const useExternalServer = process.env.PLAYWRIGHT_EXTERNAL_SERVER === '1';
+
 export default defineConfig({
   testDir: './tests',
   timeout: 60_000,
   fullyParallel: false,
   reporter: 'line',
   use: {
-    baseURL: 'http://127.0.0.1:4173',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL ?? defaultBaseUrl,
     headless: true,
   },
-  webServer: {
-    command: 'npm run dev -- --host 127.0.0.1 --port 4173',
-    url: 'http://127.0.0.1:4173',
-    reuseExistingServer: true,
-    timeout: 120_000,
-  },
+  ...(useExternalServer
+    ? {}
+    : {
+        webServer: {
+          command: webServerCommand,
+          url: defaultBaseUrl,
+          reuseExistingServer: false,
+          timeout: 120_000,
+        },
+      }),
 });

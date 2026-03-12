@@ -7,9 +7,11 @@
     "dev": "vite --port=3000 --host=0.0.0.0",
     "build": "vite build",
     "preview": "vite preview",
+    "serve:playwright": "node scripts/serve-dist.mjs",
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit",
-    "audit:layout": "playwright test tests/layout-audit.spec.ts --reporter=line"
+    "audit:layout": "playwright test tests/layout-audit.spec.ts --reporter=line",
+    "visualize:hero": "playwright test tests/hero-visual.spec.ts --reporter=line"
   },
   "dependencies": {
     "@google/genai": "^1.29.0",

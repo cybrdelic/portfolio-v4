@@ -1,117 +1,120 @@
-import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
-import { useRef } from 'react';
+import { motion } from 'motion/react';
+import { ArrowUpRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { systemDomains } from '../content/home';
+import { getCatalogPath, homeDomainLinks } from '../content/projectCatalog';
+import {
+  EASE_STANDARD,
+  FLIP_LAYOUT_PROPS,
+  FLIP_LAYOUT_SCROLL_PROPS,
+  SPRING_FLIP,
+  REVEAL_ITEM_TRANSITION,
+  inViewViewport,
+  revealGroupVariants,
+  revealItemVariants,
+  revealRuleVariants,
+} from '../lib/motion';
 
-const domainSignals = [
-  'Operator load down',
-  'Spatial state live',
-  'Behavior over assets',
-  'Precision under pressure',
+const domainMeta = [
+  {
+    scope: 'Context capture, ranking, and operator relief',
+    signal: 'Load relief',
+  },
+  {
+    scope: 'Gaze, screen geometry, and spatial inference',
+    signal: 'Spatial inference',
+  },
+  {
+    scope: 'GPU runtime, emergent behavior, and light transport',
+    signal: 'Computed behavior',
+  },
+  {
+    scope: 'State clarity, control surfaces, and precision under pressure',
+    signal: 'Precision under pressure',
+  },
 ] as const;
 
-function DomainCard({
-  description,
-  index,
-  title,
-}: {
-  description: string;
-  index: number;
-  title: string;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const prefersReducedMotion = Boolean(useReducedMotion());
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start 88%', 'end 50%'],
-  });
-
-  const shellOpacity = useTransform(scrollYProgress, [0, 0.2, 1], [0, 1, 1]);
-  const shellY = useTransform(scrollYProgress, [0, 1], [16, 0]);
-  const shellScale = useTransform(scrollYProgress, [0, 1], [0.98, 1]);
-
-  return (
-    <motion.article
-      ref={ref}
-      className="domain-card"
-      style={
-        prefersReducedMotion
-          ? undefined
-          : {
-              opacity: shellOpacity,
-              y: shellY,
-              scale: shellScale,
-            }
-      }
-    >
-      <p className="hero-stat-index domain-card-index">
-        {String(index + 1).padStart(2, '0')}
-      </p>
-
-      <div className="flex min-h-[8rem] flex-col justify-between gap-6">
-        <h3 className="domain-card-title">{title}</h3>
-        <p className="domain-card-copy">{description}</p>
-      </div>
-
-      <div className="domain-card-band mt-10">
-        <p className="eyebrow">Operating signal</p>
-        <p>{domainSignals[index]}</p>
-      </div>
-    </motion.article>
-  );
-}
-
 export default function SystemDomains() {
-  const ref = useRef<HTMLElement>(null);
-  const prefersReducedMotion = Boolean(useReducedMotion());
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start end', 'end start'],
-  });
-
-  const introY = useTransform(scrollYProgress, [0, 0.35], [10, 0]);
-  const introOpacity = useTransform(scrollYProgress, [0, 0.2, 0.4], [0, 0.72, 1]);
-  const introLineScaleX = useTransform(scrollYProgress, [0, 0.35], [0.18, 1]);
-
   return (
-    <section
-      ref={ref}
-      className="section-shell section-shell--framed"
-      style={{ position: 'relative' }}
+    <motion.section
+      className="section-shell section-shell--dense section-shell--framed domains-shell"
+      {...FLIP_LAYOUT_SCROLL_PROPS}
     >
-      <motion.div
-        className="section-intro"
-        style={prefersReducedMotion ? undefined : { y: introY, opacity: introOpacity }}
-      >
-        <div className="section-rail">
+      <motion.div className="section-intro" {...FLIP_LAYOUT_PROPS}>
+        <div className="section-rail section-rail--sticky">
           <h2 className="section-label">
-            3.0 / System Domains
+            2.0 / System Domains
           </h2>
         </div>
 
-        <div className="section-content relative">
-          <motion.div
-            aria-hidden="true"
-            className="mb-5 h-px w-14 origin-left bg-[var(--color-line-strong)]"
-            style={prefersReducedMotion ? undefined : { scaleX: introLineScaleX }}
-          />
-          <p className="max-w-[36rem] text-[1.05rem] leading-[1.72] text-[var(--color-ink)] md:text-[1.16rem]">
-            Four operating territories where technical systems stop being passive software and start behaving like instruments.
-          </p>
-        </div>
+        <motion.div
+          className="section-content section-copy section-copy-stage"
+          initial="hidden"
+          whileInView="visible"
+          viewport={inViewViewport}
+          variants={revealGroupVariants}
+        >
+          <motion.div aria-hidden="true" className="section-copy-rule origin-left" variants={revealRuleVariants} />
+          <motion.p
+            variants={revealItemVariants}
+            transition={REVEAL_ITEM_TRANSITION}
+            className="section-copy-lead domains-lead"
+          >
+            Four operating territories where technical systems stop being passive software and
+            start behaving like instruments.
+          </motion.p>
+        </motion.div>
       </motion.div>
 
-      <div className="section-list border-t-0">
-        <div className="domain-card-grid">
-          {systemDomains.map((domain, index) => (
-            <DomainCard
+      <motion.div className="section-list" {...FLIP_LAYOUT_PROPS}>
+        {systemDomains.map((domain, index) => {
+          const meta = domainMeta[index];
+          const catalogKey = homeDomainLinks[domain.title as keyof typeof homeDomainLinks];
+
+          return (
+            <motion.article
               key={domain.title}
-              description={domain.desc}
-              index={index}
-              title={domain.title}
-            />
-          ))}
-        </div>
-      </div>
-    </section>
+              layout
+              initial={{ opacity: 0, y: 16, filter: 'blur(8px)' }}
+              whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              viewport={{ once: true, margin: '-50px' }}
+              transition={{ duration: 0.56, delay: index * 0.035, ease: EASE_STANDARD, layout: SPRING_FLIP }}
+              className="domains-row data-row py-10 md:py-11"
+            >
+              <motion.div className="domains-row-grid" {...FLIP_LAYOUT_PROPS}>
+                <motion.div className="domains-row-rail" {...FLIP_LAYOUT_PROPS}>
+                  <div className="flex items-start gap-4">
+                    <span className="hero-stat-index domains-row-index">
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                    <div className="space-y-4">
+                      <p className="profile-row-label">{domain.title}</p>
+                      <div className="technical-row-signal">
+                        <p className="technical-row-signal-label">Operating signal</p>
+                        <p>{meta.signal}</p>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+
+                <motion.div className="domains-row-body" {...FLIP_LAYOUT_PROPS}>
+                  <p className="technical-row-primary">{domain.desc}</p>
+                  <motion.div className="domains-row-meta" {...FLIP_LAYOUT_PROPS}>
+                    <div className="technical-row-signal">
+                      <p className="technical-row-signal-label">Scope</p>
+                      <p>{meta.scope}</p>
+                    </div>
+                    <Link to={getCatalogPath(catalogKey)} className="domains-row-target">
+                      <span>Open full project index</span>
+                      <ArrowUpRight size={16} />
+                    </Link>
+                  </motion.div>
+                </motion.div>
+              </motion.div>
+            </motion.article>
+          );
+        })}
+      </motion.div>
+    </motion.section>
   );
 }

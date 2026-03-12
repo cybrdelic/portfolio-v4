@@ -31,6 +31,7 @@ const viewports: ViewportSpec[] = [
 
 const routes: RouteSpec[] = [
   { name: 'home', path: '/' },
+  { name: 'projects-catalog', path: '/projects' },
   { name: 'project-jjugg', path: '/project/jjugg' },
 ];
 

@@ -477,6 +477,108 @@ fn fsMain(input: VertexOutput) -> @location(0) vec4f {
 const bufferUsage = globalThis.GPUBufferUsage;
 const textureUsage = globalThis.GPUTextureUsage;
 
+let sharedAdapterPromise: Promise<GPUAdapterLike | null> | null = null;
+let sharedDevicePromise: Promise<GPUDeviceLike | null> | null = null;
+let sharedWarmupPromise: Promise<boolean> | null = null;
+const sharedShaderModules = new WeakMap<GPUDeviceLike, GPUShaderModule>();
+const sharedPipelines = new WeakMap<GPUDeviceLike, Map<string, GPURenderPipeline>>();
+
+async function getSharedGpuDevice(gpu: NonNullable<(Navigator & {
+  gpu?: {
+    requestAdapter: () => Promise<GPUAdapterLike | null>;
+    getPreferredCanvasFormat: () => string;
+  };
+})['gpu']>) {
+  if (!sharedAdapterPromise) {
+    sharedAdapterPromise = gpu.requestAdapter();
+  }
+
+  const adapter = await sharedAdapterPromise;
+  if (!adapter) {
+    return null;
+  }
+
+  if (!sharedDevicePromise) {
+    sharedDevicePromise = adapter.requestDevice();
+    void sharedDevicePromise.then((device) => {
+      void device?.lost?.then(() => {
+        if (sharedDevicePromise) {
+          sharedDevicePromise = null;
+          sharedAdapterPromise = null;
+          sharedWarmupPromise = null;
+        }
+      });
+    });
+  }
+
+  return sharedDevicePromise;
+}
+
+function getSharedRenderPipeline(device: GPUDeviceLike, format: GPUTextureFormat) {
+  let pipelineMap = sharedPipelines.get(device);
+  if (!pipelineMap) {
+    pipelineMap = new Map<string, GPURenderPipeline>();
+    sharedPipelines.set(device, pipelineMap);
+  }
+
+  const cachedPipeline = pipelineMap.get(format);
+  if (cachedPipeline) {
+    return cachedPipeline;
+  }
+
+  let shaderModule = sharedShaderModules.get(device);
+  if (!shaderModule) {
+    shaderModule = device.createShaderModule({ code: shaderCode });
+    sharedShaderModules.set(device, shaderModule);
+  }
+
+  const pipeline = device.createRenderPipeline({
+    layout: 'auto',
+    vertex: {
+      module: shaderModule,
+      entryPoint: 'vsMain',
+    },
+    fragment: {
+      module: shaderModule,
+      entryPoint: 'fsMain',
+      targets: [{ format }],
+    },
+    primitive: {
+      topology: 'triangle-list',
+    },
+  });
+  pipelineMap.set(format, pipeline);
+  return pipeline;
+}
+
+export async function prewarmHeroRectLayerGpu() {
+  const gpu = (navigator as Navigator & {
+    gpu?: {
+      requestAdapter: () => Promise<GPUAdapterLike | null>;
+      getPreferredCanvasFormat: () => string;
+    };
+  }).gpu;
+
+  if (!gpu || !bufferUsage || !textureUsage) {
+    return false;
+  }
+
+  if (!sharedWarmupPromise) {
+    sharedWarmupPromise = (async () => {
+      const device = await getSharedGpuDevice(gpu);
+      if (!device) {
+        return false;
+      }
+
+      const format = gpu.getPreferredCanvasFormat() as GPUTextureFormat;
+      getSharedRenderPipeline(device, format);
+      return true;
+    })().catch(() => false);
+  }
+
+  return sharedWarmupPromise;
+}
+
 type HeroRectLayerProps = {
   className?: string;
   style?: CSSProperties;
@@ -496,6 +598,8 @@ type HeroRectLayerProps = {
 };
 
 const clamp01 = (value: number) => Math.max(0, Math.min(1, value));
+const HERO_RECT_LAYER_MAX_DPR = 1.25;
+const HERO_RECT_LAYER_TARGET_FRAME_MS = 1000 / 30;
 const smoothstep = (edge0: number, edge1: number, value: number) => {
   const t = clamp01((value - edge0) / (edge1 - edge0));
   return t * t * (3 - 2 * t);
@@ -606,6 +710,12 @@ export default function HeroRectLayer({
       return;
     }
 
+    if (canvas.clientWidth === 0 || canvas.clientHeight === 0) {
+      emitProfile('canvas-hidden');
+      notifyReady();
+      return;
+    }
+
     emitProfile('mount');
 
     let frameId = 0;
@@ -613,92 +723,75 @@ export default function HeroRectLayer({
     let isPaused = document.hidden;
     let cleanupEvents = () => {};
 
-    const getDpr = () => Math.min(window.devicePixelRatio || 1, 2);
+    const getDpr = () => Math.min(window.devicePixelRatio || 1, HERO_RECT_LAYER_MAX_DPR);
 
     const initialize = async () => {
-      const adapter = await gpu.requestAdapter();
-      emitProfile(adapter ? 'adapter' : 'adapter-missing');
-      if (!adapter || disposed) return;
+      try {
+        const device = await getSharedGpuDevice(gpu);
+        emitProfile(device ? 'device-shared' : 'adapter-missing');
+        if (!device || disposed) {
+          notifyReady();
+          return;
+        }
 
-      const device = await adapter.requestDevice();
-      emitProfile('device');
-      if (disposed) {
-        device.destroy?.();
-        return;
-      }
+        const context = canvas.getContext('webgpu') as GPUCanvasContextLike | null;
+        if (!context) {
+          emitProfile('context-missing');
+          notifyReady();
+          return;
+        }
+        emitProfile('context');
 
-      const context = canvas.getContext('webgpu') as GPUCanvasContextLike | null;
-      if (!context) {
-        emitProfile('context-missing');
-        device.destroy?.();
-        return;
-      }
-      emitProfile('context');
-
-      const uniformBuffer = device.createBuffer({
-        size: 80,
-        usage: bufferUsage.UNIFORM | bufferUsage.COPY_DST,
-      });
-      const format = gpu.getPreferredCanvasFormat();
-
-      const shaderModule = device.createShaderModule({ code: shaderCode });
-      const pipeline = device.createRenderPipeline({
-        layout: 'auto',
-        vertex: {
-          module: shaderModule,
-          entryPoint: 'vsMain',
-        },
-        fragment: {
-          module: shaderModule,
-          entryPoint: 'fsMain',
-          targets: [{ format }],
-        },
-        primitive: {
-          topology: 'triangle-list',
-        },
-      });
-      emitProfile('pipeline');
-
-      const bindGroup = device.createBindGroup({
-        layout: pipeline.getBindGroupLayout(0),
-        entries: [{ binding: 0, resource: { buffer: uniformBuffer } }],
-      });
-      const interactionProfile = INTERACTION_PROFILE[interactionMode];
-
-      const configure = () => {
-        const dpr = getDpr();
-        canvas.width = Math.max(1, Math.round(canvas.clientWidth * dpr));
-        canvas.height = Math.max(1, Math.round(canvas.clientHeight * dpr));
-
-        context.configure({
-          device,
-          format,
-          alphaMode: 'premultiplied',
-          usage: textureUsage.RENDER_ATTACHMENT,
+        const uniformBuffer = device.createBuffer({
+          size: 80,
+          usage: bufferUsage.UNIFORM | bufferUsage.COPY_DST,
         });
-        emitProfile('configure');
-      };
+        const format = gpu.getPreferredCanvasFormat() as GPUTextureFormat;
+        const pipeline = getSharedRenderPipeline(device, format);
+        emitProfile('pipeline-shared');
 
-      let firstFrameSubmitted = false;
-      let lastFrameTime = performance.now();
+        const bindGroup = device.createBindGroup({
+          layout: pipeline.getBindGroupLayout(0),
+          entries: [{ binding: 0, resource: { buffer: uniformBuffer } }],
+        });
+        const interactionProfile = INTERACTION_PROFILE[interactionMode];
+        const uniformData = new Float32Array(20);
 
-      const handlePointerMove = (event: PointerEvent) => {
-        const pointerState = pointerStateRef.current;
-        pointerState.pointerX = event.clientX;
-        pointerState.pointerY = event.clientY;
-      };
+        const configure = () => {
+          const dpr = getDpr();
+          canvas.width = Math.max(1, Math.round(canvas.clientWidth * dpr));
+          canvas.height = Math.max(1, Math.round(canvas.clientHeight * dpr));
 
-      const handlePointerLeave = () => {
-        const pointerState = pointerStateRef.current;
-        pointerState.pointerX = -9999;
-        pointerState.pointerY = -9999;
-        pointerState.pointerInside = false;
-      };
+          context.configure({
+            device,
+            format,
+            alphaMode: 'premultiplied',
+            usage: textureUsage.RENDER_ATTACHMENT,
+          });
+          emitProfile('configure');
+        };
 
-      const updateInteractionState = (dt: number) => {
-        const pointerState = pointerStateRef.current;
-        const container = containerRef.current;
-        if (!container) {
+        let firstFrameSubmitted = false;
+        let lastFrameTime = performance.now();
+        let lastSubmitTime = 0;
+
+        const handlePointerMove = (event: PointerEvent) => {
+          const pointerState = pointerStateRef.current;
+          pointerState.pointerX = event.clientX;
+          pointerState.pointerY = event.clientY;
+        };
+
+        const handlePointerLeave = () => {
+          const pointerState = pointerStateRef.current;
+          pointerState.pointerX = -9999;
+          pointerState.pointerY = -9999;
+          pointerState.pointerInside = false;
+        };
+
+        const updateInteractionState = (dt: number) => {
+          const pointerState = pointerStateRef.current;
+          const container = containerRef.current;
+          if (!container) {
           return {
             coherence: 0,
             energy: 0,
@@ -784,127 +877,135 @@ export default function HeroRectLayer({
           presence: pointerState.presence,
           velocityNorm: pointerState.velocityNorm,
         };
-      };
+        };
 
-      const render = () => {
-        if (disposed || isPaused) return;
-        const now = performance.now();
-        const dt = Math.min((now - lastFrameTime) / 1000, 0.1);
-        lastFrameTime = now;
-        const interaction = updateInteractionState(dt);
+        const render = () => {
+          if (disposed || isPaused) return;
+          const now = performance.now();
+          const dt = Math.min((now - lastFrameTime) / 1000, 0.1);
+          lastFrameTime = now;
+          if (firstFrameSubmitted && now - lastSubmitTime < HERO_RECT_LAYER_TARGET_FRAME_MS) {
+            frameId = window.requestAnimationFrame(render);
+            return;
+          }
+          lastSubmitTime = now;
+          const interaction = updateInteractionState(dt);
 
-        const data = new Float32Array([
-          canvas.width,
-          canvas.height,
-          now / 1000,
-          seed,
-          prefersReducedMotion ? 0.18 : 1,
-          ditherStrength,
-          ditherPixelSize,
-          comicStrength,
-          interaction.pointerUvX,
-          interaction.pointerUvY,
-          interaction.presence,
-          interaction.energy,
-          interaction.coherence,
-          interaction.memory,
-          interaction.phaseBias,
-          interactionMode === 'substrate' ? 1 : 0,
-          interaction.memoryUvX,
-          interaction.memoryUvY,
-          interaction.velocityNorm,
-          interaction.pointerInside,
-        ]);
-        device.queue.writeBuffer(uniformBuffer, 0, data);
+          uniformData[0] = canvas.width;
+          uniformData[1] = canvas.height;
+          uniformData[2] = now / 1000;
+          uniformData[3] = seed;
+          uniformData[4] = prefersReducedMotion ? 0.18 : 1;
+          uniformData[5] = ditherStrength;
+          uniformData[6] = ditherPixelSize;
+          uniformData[7] = comicStrength;
+          uniformData[8] = interaction.pointerUvX;
+          uniformData[9] = interaction.pointerUvY;
+          uniformData[10] = interaction.presence;
+          uniformData[11] = interaction.energy;
+          uniformData[12] = interaction.coherence;
+          uniformData[13] = interaction.memory;
+          uniformData[14] = interaction.phaseBias;
+          uniformData[15] = interactionMode === 'substrate' ? 1 : 0;
+          uniformData[16] = interaction.memoryUvX;
+          uniformData[17] = interaction.memoryUvY;
+          uniformData[18] = interaction.velocityNorm;
+          uniformData[19] = interaction.pointerInside;
+          device.queue.writeBuffer(uniformBuffer, 0, uniformData);
 
-        const encoder = device.createCommandEncoder();
-        const pass = encoder.beginRenderPass({
-          colorAttachments: [
-            {
-              view: context.getCurrentTexture().createView(),
-              clearValue: { r: 0, g: 0, b: 0, a: 0 },
-              loadOp: 'clear',
-              storeOp: 'store',
-            },
-          ],
-        });
+          const encoder = device.createCommandEncoder();
+          const pass = encoder.beginRenderPass({
+            colorAttachments: [
+              {
+                view: context.getCurrentTexture().createView(),
+                clearValue: { r: 0, g: 0, b: 0, a: 0 },
+                loadOp: 'clear',
+                storeOp: 'store',
+              },
+            ],
+          });
 
-        pass.setPipeline(pipeline);
-        pass.setBindGroup(0, bindGroup);
-        pass.draw(3);
-        pass.end();
+          pass.setPipeline(pipeline);
+          pass.setBindGroup(0, bindGroup);
+          pass.draw(3);
+          pass.end();
 
-        device.queue.submit([encoder.finish()]);
-        if (!firstFrameSubmitted) {
-          firstFrameSubmitted = true;
-          emitProfile('first-frame');
-        }
-        notifyReady();
-        frameId = window.requestAnimationFrame(render);
-      };
+          device.queue.submit([encoder.finish()]);
+          if (!firstFrameSubmitted) {
+            firstFrameSubmitted = true;
+            emitProfile('first-frame');
+          }
+          notifyReady();
+          frameId = window.requestAnimationFrame(render);
+        };
 
-      const clear = () => {
-        const encoder = device.createCommandEncoder();
-        const pass = encoder.beginRenderPass({
-          colorAttachments: [
-            {
-              view: context.getCurrentTexture().createView(),
-              clearValue: { r: 0, g: 0, b: 0, a: 0 },
-              loadOp: 'clear',
-              storeOp: 'store',
-            },
-          ],
-        });
-        pass.end();
-        device.queue.submit([encoder.finish()]);
-      };
+        const clear = () => {
+          const encoder = device.createCommandEncoder();
+          const pass = encoder.beginRenderPass({
+            colorAttachments: [
+              {
+                view: context.getCurrentTexture().createView(),
+                clearValue: { r: 0, g: 0, b: 0, a: 0 },
+                loadOp: 'clear',
+                storeOp: 'store',
+              },
+            ],
+          });
+          pass.end();
+          device.queue.submit([encoder.finish()]);
+        };
 
-      const handleResize = () => configure();
-      const handleVisibilityChange = () => {
-        isPaused = document.hidden;
-        window.cancelAnimationFrame(frameId);
+        const handleResize = () => configure();
+        const handleVisibilityChange = () => {
+          isPaused = document.hidden;
+          window.cancelAnimationFrame(frameId);
 
-        if (isPaused) {
+          if (isPaused) {
+            clear();
+            return;
+          }
+
+          frameId = window.requestAnimationFrame(render);
+        };
+
+        configure();
+
+        if (!isPaused) {
+          frameId = window.requestAnimationFrame(render);
+        } else {
           clear();
-          return;
+          notifyReady();
         }
 
-        frameId = window.requestAnimationFrame(render);
-      };
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('pointermove', handlePointerMove, { passive: true });
+        window.addEventListener('pointerleave', handlePointerLeave);
+        document.addEventListener('visibilitychange', handleVisibilityChange);
 
-      configure();
+        cleanupEvents = () => {
+          window.removeEventListener('resize', handleResize);
+          window.removeEventListener('pointermove', handlePointerMove);
+          window.removeEventListener('pointerleave', handlePointerLeave);
+          document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
 
-      if (!isPaused) {
-        frameId = window.requestAnimationFrame(render);
-      } else {
-        clear();
+        void device.lost?.then(() => {
+          emitProfile('device-lost');
+          disposed = true;
+          window.cancelAnimationFrame(frameId);
+          notifyReady();
+        });
+
+        return () => {
+          window.cancelAnimationFrame(frameId);
+          cleanupEvents();
+          context.unconfigure?.();
+        };
+      } catch {
+        emitProfile('error');
         notifyReady();
+        return;
       }
-
-      window.addEventListener('resize', handleResize);
-      window.addEventListener('pointermove', handlePointerMove, { passive: true });
-      window.addEventListener('pointerleave', handlePointerLeave);
-      document.addEventListener('visibilitychange', handleVisibilityChange);
-
-      cleanupEvents = () => {
-        window.removeEventListener('resize', handleResize);
-        window.removeEventListener('pointermove', handlePointerMove);
-        window.removeEventListener('pointerleave', handlePointerLeave);
-        document.removeEventListener('visibilitychange', handleVisibilityChange);
-      };
-
-      void device.lost?.then(() => {
-        emitProfile('device-lost');
-        disposed = true;
-        window.cancelAnimationFrame(frameId);
-      });
-
-      return () => {
-        window.cancelAnimationFrame(frameId);
-        cleanupEvents();
-        context.unconfigure?.();
-        device.destroy?.();
-      };
     };
 
     let cleanupRenderer: (() => void) | undefined;
@@ -927,6 +1028,20 @@ export default function HeroRectLayer({
       className={`pointer-events-none relative hidden h-[clamp(9.5rem,19svh,13rem)] w-[min(46rem,52vw)] min-w-[36rem] md:block lg:w-[min(50rem,48vw)] ${className}`}
       style={style}
     >
+      <div className="absolute inset-0 overflow-hidden">
+        <div
+          className={`absolute inset-0 ${
+            interactionMode === 'sensor'
+              ? 'bg-[radial-gradient(circle_at_24%_18%,rgba(255,255,255,0.16),transparent_24%),radial-gradient(circle_at_72%_26%,rgba(255,255,255,0.07),transparent_30%),linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.012)_42%,transparent)]'
+              : 'bg-[radial-gradient(circle_at_18%_72%,rgba(255,255,255,0.12),transparent_28%),radial-gradient(circle_at_78%_18%,rgba(255,255,255,0.08),transparent_26%),linear-gradient(180deg,rgba(255,255,255,0.035),rgba(255,255,255,0.01)_46%,transparent)]'
+          }`}
+        />
+        <div className="absolute inset-0 opacity-[0.1] [background-image:linear-gradient(rgba(17,17,17,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(17,17,17,0.08)_1px,transparent_1px)] [background-size:1.5rem_1.5rem]" />
+        <div className="absolute inset-x-[8%] bottom-[22%] h-px bg-[var(--color-line-strong)]/24" />
+        <div className="absolute inset-x-[12%] bottom-[16%] h-px bg-[var(--color-line-soft)]/18" />
+        <div className="absolute bottom-[14%] right-[12%] h-[18%] w-[16%] opacity-35 [background-image:linear-gradient(rgba(17,17,17,0.08)_1px,transparent_1px)] [background-size:100%_0.55rem]" />
+      </div>
+
       <canvas
         ref={canvasRef}
         className="absolute inset-0 h-full w-full"
