@@ -60,6 +60,10 @@
   --color-line: #a6a199;
   --color-line-strong: #7d786f;
   --color-line-soft: #bbb5ad;
+  /* Semantic text tokens — use these instead of inline color-mix() */
+  --color-text-body: #5a5750;
+  --color-text-secondary: #6e6b63;
+  --color-text-label: #7a776f;
 }
 
 html {
@@ -1748,6 +1752,14 @@ a {
 .cta-link {
   position: relative;
   padding-right: 0.25rem;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+  transition: text-decoration-color 200ms ease;
+}
+
+.cta-link:hover {
+  text-decoration-color: var(--color-accent);
 }
 
 .footer-inline-links {
@@ -1961,7 +1973,12 @@ a {
   transition: border-color 180ms ease, background-color 180ms ease, color 180ms ease;
 }
 
-.catalog-filter-chip.is-active,
+.catalog-filter-chip.is-active {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-ink);
+}
+
 .catalog-filter-chip:hover,
 .catalog-filter-chip:focus-visible {
   border-color: color-mix(in srgb, var(--color-line-strong) 90%, transparent);
@@ -2810,20 +2827,20 @@ a {
     gap: 0.72rem;
     align-items: start;
     margin-top: 0;
-    max-width: 15.5rem;
+    max-width: 20rem;
   }
 
   .ethos-body-copy {
-    max-width: 15.5rem;
-    font-size: 0.76rem;
-    line-height: 1.34;
+    max-width: 20rem;
+    font-size: 0.9rem;
+    line-height: 1.58;
   }
 
   .ethos-closing {
     margin-top: 0;
     max-width: 22rem;
-    font-size: 0.9rem;
-    line-height: 1.48;
+    font-size: 0.93rem;
+    line-height: 1.52;
   }
 
   .ethos-principle-grid {
@@ -2838,7 +2855,7 @@ a {
 
   .ethos-principle-card {
     min-height: 0;
-    gap: 0.28rem;
+    gap: 0.32rem;
     padding-top: 0.45rem;
   }
 
@@ -2849,17 +2866,17 @@ a {
 
   .ethos-principle-index,
   .ethos-principle-signal {
-    font-size: 0.5rem;
+    font-size: 0.6rem;
   }
 
   .ethos-principle-title {
-    font-size: clamp(0.84rem, 0.82rem + 0.14vw, 0.96rem);
+    font-size: clamp(0.88rem, 0.86rem + 0.14vw, 1rem);
   }
 
   .ethos-principle-copy {
-    max-width: 10.5rem;
-    font-size: 0.68rem;
-    line-height: 1.22;
+    max-width: 13rem;
+    font-size: 0.82rem;
+    line-height: 1.46;
   }
 
   .working-style-stage {
@@ -3024,7 +3041,7 @@ a {
   }
 
   .domain-card-frame {
-    min-height: 21rem;
+    min-height: 16rem;
     padding: 1.25rem;
   }
 
