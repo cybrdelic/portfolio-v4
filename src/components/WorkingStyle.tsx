@@ -4,10 +4,10 @@ import {
   workingStyleClosing,
   workingStyleLead,
   workingStylePullQuote,
+  workingStylePrinciples,
+  workingStyleRailNote,
 } from '../content/home';
 import {
-  FLIP_LAYOUT_PROPS,
-  FLIP_LAYOUT_SCROLL_PROPS,
   REVEAL_ITEM_TRANSITION,
   inViewViewport,
   revealGroupVariants,
@@ -19,11 +19,13 @@ export default function WorkingStyle() {
   return (
     <motion.section
       className="section-shell section-shell--closing working-style-shell"
-      {...FLIP_LAYOUT_SCROLL_PROPS}
     >
-      <motion.div className="section-inner section-grid" {...FLIP_LAYOUT_PROPS}>
-        <div className="section-rail">
-          <h2 className="section-label lg:sticky lg:top-12">6.0 / Working Style</h2>
+      <div className="section-inner section-grid">
+        <div className="section-rail section-rail--sticky working-style-rail">
+          <div className="working-style-rail-stack">
+            <h2 className="section-label">6.0 / Working Style</h2>
+            <p className="working-style-rail-note">{workingStyleRailNote}</p>
+          </div>
         </div>
 
         <motion.div
@@ -35,35 +37,52 @@ export default function WorkingStyle() {
         >
           <motion.div aria-hidden="true" className="section-copy-rule origin-left" variants={revealRuleVariants} />
 
-          <motion.p
-            variants={revealItemVariants}
-            className="section-copy-lead working-style-lead"
-          >
-            {workingStyleLead}
-          </motion.p>
+          <div className="working-style-top-grid">
+            <motion.div variants={revealItemVariants} className="working-style-overview">
+              <p className="section-copy-lead working-style-lead">{workingStyleLead}</p>
+            </motion.div>
 
-          <motion.p
-            variants={revealItemVariants}
-            className="working-style-pull"
-          >
-            {workingStylePullQuote}
-          </motion.p>
+            <motion.div variants={revealItemVariants} className="working-style-support">
+              <p className="working-style-pull">{workingStylePullQuote}</p>
 
-          <motion.div className="working-style-body-grid" {...FLIP_LAYOUT_PROPS}>
-            {workingStyleBody.map((paragraph, index) => (
-              <motion.p
-                key={paragraph.text}
+              <div className="working-style-body-grid">
+                {workingStyleBody.map((paragraph, index) => (
+                  <motion.p
+                    key={paragraph.text}
+                    variants={revealItemVariants}
+                    transition={{
+                      ...REVEAL_ITEM_TRANSITION,
+                      delay: 0.08 + index * 0.04,
+                    }}
+                    className="section-copy-body working-style-body-copy"
+                  >
+                    {paragraph.text}
+                  </motion.p>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+
+          <div className="working-style-principle-grid">
+            {workingStylePrinciples.map((principle, index) => (
+              <motion.article
+                key={principle.title}
                 variants={revealItemVariants}
                 transition={{
                   ...REVEAL_ITEM_TRANSITION,
-                  delay: 0.08 + index * 0.04,
+                  delay: 0.1 + index * 0.04,
                 }}
-                className="section-copy-body working-style-body-copy"
+                className="working-style-principle-card"
               >
-                {paragraph.text}
-              </motion.p>
+                <div className="working-style-principle-head">
+                  <span className="working-style-principle-index">{String(index + 1).padStart(2, '0')}</span>
+                  <span className="working-style-principle-signal">{principle.signal}</span>
+                </div>
+                <h3 className="working-style-principle-title">{principle.title}</h3>
+                <p className="working-style-principle-copy">{principle.detail}</p>
+              </motion.article>
             ))}
-          </motion.div>
+          </div>
 
           <motion.p
             variants={revealItemVariants}
@@ -76,7 +95,7 @@ export default function WorkingStyle() {
             {workingStyleClosing}
           </motion.p>
         </motion.div>
-      </motion.div>
+      </div>
     </motion.section>
   );
 }

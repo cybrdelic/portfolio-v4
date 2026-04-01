@@ -195,6 +195,14 @@ export default function AnimatedLogo({
         : phase === 'targets'
           ? 0.12
           : 0;
+  const resolvedTraceOpacity =
+    phase === 'logo'
+      ? 0.96
+      : phase === 'compact'
+        ? 0.3
+        : phase === 'targets'
+          ? 0.12
+          : 0;
   const resolvedTargets = targets;
   const useViewportCompactFrame = phase === 'compact' && Boolean(resolvedTargets);
   const frameTransform =
@@ -426,7 +434,7 @@ export default function AnimatedLogo({
               filter: phase === 'logo' ? 'drop-shadow(0px 15px 20px rgba(0,0,0,0.2))' : 'none',
             }}
           >
-            {logoPieces.map((piece) => (
+            {logoPieces.map((piece, index) => (
               (() => {
                 const target = resolvedTargets?.[piece.id];
                 const compactTarget = target ? buildCompactFromTarget(target) : null;
@@ -443,7 +451,7 @@ export default function AnimatedLogo({
                 d={piece.fillPhasePaths.logo}
                 initial={{
                   d: piece.fillPhasePaths.logo,
-                  opacity: 1,
+                  opacity: phase === 'logo' ? 0 : 1,
                 }}
                 animate={{
                   d: fillPath,
@@ -455,11 +463,86 @@ export default function AnimatedLogo({
                     ease: MORPH_EASE,
                   },
                   opacity: {
-                    duration: phase === 'hidden' ? 0.16 : 0.18,
+                    delay: phase === 'logo' ? 0.14 + index * 0.05 : 0,
+                    duration: phase === 'hidden' ? 0.16 : phase === 'logo' ? 0.42 : 0.18,
                     ease: MORPH_EASE,
                   },
                 }}
               />
+                );
+              })()
+            ))}
+          </g>
+
+          <g
+            fill="none"
+            stroke="#161616"
+            style={{
+              mixBlendMode: phase === 'logo' ? 'multiply' : 'normal',
+            }}
+          >
+            {logoPieces.map((piece, index) => (
+              (() => {
+                const target = resolvedTargets?.[piece.id];
+                const compactTarget = target ? buildCompactFromTarget(target) : null;
+                const strokePath =
+                  resolvedPhase === 'targets'
+                    ? target?.strokePath ?? piece.strokePhasePaths.targets
+                    : resolvedPhase === 'compact'
+                      ? compactTarget?.strokePath ?? piece.strokePhasePaths.compact
+                      : piece.strokePhasePaths[resolvedPhase];
+                const strokeWidth =
+                  resolvedPhase === 'targets'
+                    ? target?.strokeWidth ?? piece.strokeWidths.targets
+                    : resolvedPhase === 'compact'
+                      ? compactTarget?.strokeWidth ?? piece.strokeWidths.compact
+                      : piece.strokeWidths[resolvedPhase];
+
+                return (
+                  <motion.path
+                    key={`${piece.id}-trace`}
+                    d={piece.strokePhasePaths.logo}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    initial={{
+                      d: piece.strokePhasePaths.logo,
+                      opacity: 0,
+                      pathLength: 0,
+                      strokeWidth: Math.max(piece.strokeWidths.logo * 0.1, 2.6),
+                    }}
+                    animate={{
+                      d: strokePath,
+                      opacity: phase === 'hidden' ? 0 : resolvedTraceOpacity,
+                      pathLength: 1,
+                      strokeWidth: Math.max(strokeWidth * 0.11, phase === 'targets' ? 1.25 : 2.6),
+                    }}
+                    transition={{
+                      d: {
+                        duration: 1.02,
+                        ease: MORPH_EASE,
+                      },
+                      opacity:
+                        phase === 'hidden'
+                          ? {
+                              duration: 0.18,
+                              ease: MORPH_EASE,
+                            }
+                          : {
+                              delay: index * DRAW_STAGGER_MS,
+                              duration: 0.2,
+                              ease: MORPH_EASE,
+                            },
+                      pathLength: {
+                        delay: index * DRAW_STAGGER_MS,
+                        duration: DRAW_DURATION_S,
+                        ease: MORPH_EASE,
+                      },
+                      strokeWidth: {
+                        duration: 1.02,
+                        ease: MORPH_EASE,
+                      },
+                    }}
+                  />
                 );
               })()
             ))}

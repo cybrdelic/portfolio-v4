@@ -3,8 +3,6 @@ import { useRef } from 'react';
 import { technicalIntro, technicalRows } from '../content/home';
 import {
   EASE_STANDARD,
-  FLIP_LAYOUT_PROPS,
-  FLIP_LAYOUT_SCROLL_PROPS,
   SPRING_FLIP,
   REVEAL_ITEM_TRANSITION,
   inViewViewport,
@@ -20,9 +18,8 @@ export default function TechnicalProfile() {
     <motion.section
       ref={ref}
       className="section-shell section-shell--dense section-shell--framed technical-profile-shell"
-      {...FLIP_LAYOUT_SCROLL_PROPS}
     >
-      <motion.div className="section-intro" {...FLIP_LAYOUT_PROPS}>
+      <div className="section-intro">
         <div className="section-rail section-rail--sticky">
           <h2 className="section-label">
             5.0 / Technical Profile
@@ -56,45 +53,43 @@ export default function TechnicalProfile() {
             </motion.p>
           ))}
         </motion.div>
-      </motion.div>
+      </div>
 
-      <motion.div className="section-list" {...FLIP_LAYOUT_PROPS}>
+      <div className="technical-reference-list">
         {technicalRows.map((row, i) => {
           return (
-          <motion.div
+          <motion.article
             key={row.label}
             layout
             initial={{ opacity: 0, y: 16, filter: 'blur(8px)' }}
             whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.56, delay: i * 0.035, ease: EASE_STANDARD, layout: SPRING_FLIP }}
-            className="profile-row data-row py-10 md:py-11"
+            className="technical-reference-item"
           >
-            <motion.div className="technical-row-grid" {...FLIP_LAYOUT_PROPS}>
-              <motion.div className="technical-row-rail" {...FLIP_LAYOUT_PROPS}>
-                <div className="flex items-start gap-4">
-                  <span className="hero-stat-index technical-row-index">
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                  <div className="space-y-4">
-                    <p className="profile-row-label">{row.label}</p>
-                    <div className="technical-row-signal">
-                      <p className="technical-row-signal-label">Operating signal</p>
-                      <p>{row.signal}</p>
-                    </div>
-                  </div>
+            <div className="technical-reference-grid">
+              <div className="technical-reference-rail">
+                <span className="hero-stat-index technical-reference-index">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <div className="technical-reference-meta">
+                  <p className="technical-reference-label">{row.label}</p>
+                  <p className="technical-reference-signal">{row.signal}</p>
                 </div>
-              </motion.div>
+              </div>
 
-              <motion.div className="technical-row-body" {...FLIP_LAYOUT_PROPS}>
-                <p className="technical-row-primary">{row.primary}</p>
-                <p className="technical-row-detail">{row.detail}</p>
-              </motion.div>
-            </motion.div>
-          </motion.div>
+              <div className="technical-reference-primary-block">
+                <p className="technical-reference-primary">{row.primary}</p>
+              </div>
+
+              <div className="technical-reference-detail-block">
+                <p className="technical-reference-detail">{row.detail}</p>
+              </div>
+            </div>
+          </motion.article>
           );
         })}
-      </motion.div>
+      </div>
     </motion.section>
   );
 }

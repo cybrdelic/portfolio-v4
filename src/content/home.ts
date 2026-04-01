@@ -7,6 +7,12 @@ export type EthosBodyParagraph = {
   text: string;
 };
 
+export type EthosPrinciple = {
+  detail: string;
+  signal: string;
+  title: string;
+};
+
 export type TechnicalRow = {
   detail: string;
   label: string;
@@ -21,7 +27,6 @@ export type ExperienceHighlight = {
 
 export type ExperienceRole = {
   company: string;
-  duration: string;
   highlights: ExperienceHighlight[];
   location: string;
   period: string;
@@ -31,7 +36,7 @@ export type ExperienceRole = {
 
 export const heroName = 'Alex Figueroa';
 
-export const heroRole = 'Autonomous Systems, Perception & Simulation Engineer';
+export const heroRole = 'Autonomous Systems & Simulation Engineer';
 
 export const heroTitleLines = [
   'Systems that',
@@ -41,7 +46,7 @@ export const heroTitleLines = [
 ] as const;
 
 export const heroDeck =
-  'For systems where perception, context, and action have to hold under real constraints.';
+  'For products where perception, context, and action have to survive real constraints.';
 
 export const heroStats = [
   {
@@ -65,130 +70,149 @@ export const thesisParagraphs: SectionParagraph[] = [
   },
   {
     tone: 'featured',
-    text: 'The point is software that carries more of the work: local-first tooling that gathers context before it acts, perceptual systems that model people and space in real time, and simulation infrastructure where performance, interface, and system behavior all have to hold together under load.',
+    text: 'The point is software that carries more of the work.',
+  },
+  {
+    tone: 'closing',
+    text: 'That shows up in local-first agent tooling, perceptual systems, and simulation infrastructure where architecture, interaction, performance, and reasoning all have to hold together under real constraints.',
   },
 ] as const;
 
 export const ethosLead =
-  'I make systems legible before I make them clever.';
+  'Meaningful autonomy scales with how much of the environment is made legible, assignable, and actionable.';
+
+export const ethosRailNote =
+  'Autonomy becomes real when environments expose state, boundaries, and valid intervention surfaces.';
 
 export const ethosPullQuote =
-  'Real constraints come first.';
+  'Meaningful autonomy scales with how much of the environment is made legible, assignable, and actionable.';
+
+export const ethosPrinciples: EthosPrinciple[] = [
+  {
+    title: 'Legible',
+    signal: 'Expose the real state',
+    detail: 'Make constraints, failure modes, and system boundaries visible before asking software to reason over them.',
+  },
+  {
+    title: 'Assignable',
+    signal: 'Give the world structure',
+    detail: 'Partition the environment into explicit entities, responsibilities, and control surfaces that can be addressed without ambiguity.',
+  },
+  {
+    title: 'Actionable',
+    signal: 'Build reliable handles',
+    detail: 'Create fixtures, APIs, harnesses, and simulation layers that let a system intervene, validate outcomes, and recover safely.',
+  },
+] as const;
 
 export const ethosBody: EthosBodyParagraph[] = [
   {
-    text: 'I want to know where the cost is, where the uncertainty is, and where the brittleness lives. That usually means decomposing a problem until the real boundaries are explicit: memory movement, render cost, search quality, synchronization overhead, false context, or weak state models.',
+    text: 'My first move is usually to expose the actual operating surface: where the state lives, where the cost hides, where uncertainty enters, and where brittle assumptions are smuggling themselves in as architecture.',
   },
   {
-    text: 'Most automation fails because it runs on thin or noisy inputs. A recurring part of my work is building the context pipeline first, so downstream reasoning is grounded in something real.',
+    text: 'That is why so much of my work ends up around fixtures, autonomy APIs, simulation tooling, workflow state, and validation loops. Before agency can compound, the environment has to become something a system can inspect, perturb, and verify.',
   },
 ] as const;
 
 export const ethosClosing =
-  'The goal is not abstraction for its own sake. It is software that becomes more capable as the constraints become clearer.';
+  'I build systems that turn software and hardware environments into machine-operable substrates, so autonomous behavior can emerge under real constraints instead of surviving only inside demos.';
 
 export const systemDomains = [
   {
     title: 'Autonomous Tooling',
-    desc: 'Systems that gather context, orchestrate work, and reduce operator load without hiding the machine.',
+    desc: 'Systems that gather context, orchestrate work, and steadily reduce operator load.',
   },
   {
     title: 'Perceptual Systems',
-    desc: 'Systems that model the relationship between a person, a screen, and surrounding space in real time.',
+    desc: 'Systems that model the relationship between a person, a screen, and surrounding space live.',
   },
   {
     title: 'Simulation and Rendering',
-    desc: 'GPU-driven systems where behavior and visuals emerge from computation, not asset pipelines.',
+    desc: 'GPU-heavy systems where visuals emerge from computation, not asset pipelines.',
   },
   {
     title: 'Systems UX',
-    desc: 'Interfaces for technical systems that have to remain precise, legible, and fast under pressure.',
+    desc: 'Interfaces for technical systems that must stay precise, legible, and fast under pressure.',
   },
 ] as const;
 
 export const technicalIntro: SectionParagraph[] = [
   {
     tone: 'lead',
-    text: 'I work across layers, but the throughline is system behavior.',
+    text: 'I work across the stack, but the real throughline is system behavior.',
   },
   {
-    text: 'The work spans enterprise SaaS, automation systems, backend services, local-first applications, rendering systems, shader logic, GPU simulation, and interface architecture.',
+    text: 'The work spans product engineering, automation systems, backend services, local-first applications, rendering systems, shader work, GPU simulation, and interface architecture.',
   },
   {
     tone: 'closing',
-    text: 'I am most useful where architecture, implementation, interaction design, and technical framing all need to reinforce each other.',
+    text: 'I am most useful when architecture, implementation, interaction design, and technical framing all need to reinforce each other.',
   },
 ] as const;
 
 export const experienceIntro: SectionParagraph[] = [
   {
     tone: 'lead',
-    text: 'I have spent the last four-plus years shipping production software at TalentNow while building independent systems work in parallel.',
+    text: 'My experience sits where ambiguous product direction meets hard systems constraints.',
   },
   {
-    text: 'That matters because the portfolio is not just experimentation. It is backed by enterprise analytics, cross-service integration, release discipline, and the operational reality of software people depend on every day.',
+    text: 'The work tends to span implementation, runtime behavior, interaction design, and the operational machinery needed to make technical systems trustworthy under pressure.',
   },
   {
     tone: 'closing',
-    text: 'The same throughline runs through both: make the system more legible, more capable, and more trustworthy under real constraints.',
+    text: 'What matters most is not the stack in isolation, but the ability to turn unstable, high-context problems into systems that can be reasoned about, operated, and extended cleanly.',
   },
 ] as const;
 
 export const experienceRoles: ExperienceRole[] = [
   {
-    title: 'Software Engineer',
-    company: 'TalentNow',
-    period: 'February 2025 - Present',
-    duration: 'Current role',
-    location: 'Cincinnati, Ohio / Fully Remote',
-    summary:
-      'Promoted into a broader engineering role focused on harder analytics problems, deeper investigations, and architecture changes that move reporting and operational visibility closer to real time.',
+    title: 'Autonomous Systems Engineering',
+    company: 'Local-first tooling, execution systems, and operator-facing automation',
+    period: 'Current focus',
+    location: 'Software systems',
+    summary: 'I build systems that capture context, expose action surfaces, and reduce operator burden without flattening the actual machine beneath the interface.',
     highlights: [
       {
-        title: 'Real-time analytics migration',
-        detail:
-          'Migrated a nightly-snapshot time-series reporting system toward a real-time architecture through database modeling changes, query optimization, and timestamp-based rewindable design.',
+        title: 'Context-rich workflows',
+        detail: 'Designing systems that gather the right state before acting so downstream automation is grounded instead of decorative.',
       },
       {
-        title: 'Diversity tracking and RBAC reporting',
-        detail:
-          'Implemented complex diversity tracking, analytics, and visualization with time-period filtering and role-based access control.',
-      },
-      {
-        title: 'Deep SQL investigations',
-        detail:
-          'Ran multi-environment SQL investigations across dev, test, and local data to isolate analytics issues and clarify system behavior.',
+        title: 'Operable interfaces',
+        detail: 'Building fixtures, APIs, and control layers that let software be inspected, driven, and validated with repeatable behavior.',
       },
     ],
   },
   {
-    title: 'Associate Software Developer',
-    company: 'TalentNow',
-    period: 'September 2021 - February 2025',
-    duration: '3 years 5 months',
-    location: 'Cincinnati, Ohio / Fully Remote',
-    summary:
-      'Built full-stack features across a remote enterprise SaaS team, contributing heavily to UI flows, gateway logic, internal APIs, database changes, release work, and platform capabilities.',
+    title: 'Perceptual and Spatial Computing',
+    company: 'Gaze, geometry, and screen-aware interaction systems',
+    period: 'Ongoing',
+    location: 'Human-machine boundary',
+    summary: 'I work on systems that infer relationships between a person, a device, and surrounding space in real time, where UX quality depends on geometry, latency, and model discipline all holding at once.',
     highlights: [
       {
-        title: '500+ PRs and 100+ releases',
-        detail:
-          'Shipped features across the full stack and participated directly in release handling and post-release manual validation.',
+        title: 'Real-time inference',
+        detail: 'Combining geometry, state estimation, and interface design so perceptual behavior stays legible and useful while the system is live.',
       },
       {
-        title: 'Cross-service auth bridge',
-        detail:
-          'Reverse-engineered Flask signed-token behavior and reimplemented it in pure TypeScript for cross-language service authentication without a browser context; it ran for years with zero auth failures.',
+        title: 'Embodied interaction',
+        detail: 'Treating the screen, camera, and user as one coupled environment rather than separate implementation layers.',
+      },
+    ],
+  },
+  {
+    title: 'Simulation, Rendering, and Systems UX',
+    company: 'GPU-heavy visual systems and technical product surfaces',
+    period: 'Across recent projects',
+    location: 'Runtime to interface',
+    summary: 'I build interfaces and rendering systems that have to remain precise under load, where performance, clarity, and behavioral correctness are part of the same design problem.',
+    highlights: [
+      {
+        title: 'Computation as medium',
+        detail: 'Using rendering and simulation as active system components, not just presentation layers pasted on at the end.',
       },
       {
-        title: 'Communications and workflow systems',
-        detail:
-          'Owned much of the email and communications work: user-flow integration, notifications, templating, and cross-service Celery worker behavior.',
-      },
-      {
-        title: 'AI and product surface work',
-        detail:
-          'Built a voice-chat feature into the company AI assistant at a hackathon and helped shape Flex Teams early as one of its earliest contributors.',
+        title: 'Cross-layer product judgment',
+        detail: 'Resolving architecture, interaction, and technical framing as one system so the product stays coherent under real constraints.',
       },
     ],
   },
@@ -197,21 +221,15 @@ export const experienceRoles: ExperienceRole[] = [
 export const technicalRows: TechnicalRow[] = [
   {
     label: 'Primary languages',
-    primary: 'TypeScript and JavaScript for production product surfaces, Python for research and backend workflows, Rust for systems and tooling, GLSL and WGSL for live GPU behavior.',
-    detail: 'The point is range without fragmentation: enterprise product work, fast iteration, local-first systems, and rendering logic can all live inside the same problem space.',
+    primary: 'Rust for systems and tooling, Python for research and automation, TypeScript and JavaScript for product surfaces, GLSL for live GPU behavior.',
+    detail: 'The point is range without fragmentation: low-level systems work, fast iteration, production interfaces, and rendering logic can all live inside the same problem space.',
     signal: 'From runtime to interface',
   },
   {
     label: 'Systems and infrastructure',
-    primary: 'PostgreSQL, SQLite, Redis, Docker, Kubernetes, Celery-style worker systems, and service-to-service integration where durability, queues, and release discipline matter.',
-    detail: 'I use infrastructure as part of the product architecture, not an afterthought: state models, background work, data migrations, service boundaries, and operational reliability all have to support the interaction model.',
+    primary: 'PostgreSQL, Redis, Docker, Kubernetes, RabbitMQ, and Terraform where durability, orchestration, queues, and deployment discipline matter.',
+    detail: 'I use infrastructure as part of the product architecture, not an afterthought: state models, background work, service boundaries, and operational reliability all have to support the interaction model.',
     signal: 'Operational backbone',
-  },
-  {
-    label: 'Enterprise platform work',
-    primary: 'Analytics systems, RBAC, cross-service authentication, email and notification workflows, search infrastructure, and full-stack product delivery inside an enterprise SaaS environment.',
-    detail: 'TalentNow is where I learned how to make software hold up in production: multi-tenant constraints, release cadence, operational debugging, and feature work spanning UI, APIs, background jobs, and data design.',
-    signal: 'Production credibility',
   },
   {
     label: 'Frontend and interface',
@@ -222,7 +240,7 @@ export const technicalRows: TechnicalRow[] = [
   {
     label: 'Current technical interests',
     primary: 'Perceptual interfaces, local-first AI tooling, GPU-driven simulation, and embodied computing systems.',
-    detail: 'The common thread is software that perceives more, models more context, and carries more of the operational burden without flattening the real constraints.',
+    detail: 'The common thread is software that perceives more, models more context, and takes on more of the operational burden without flattening the real constraints.',
     signal: 'Where the work is heading',
   },
 ] as const;
@@ -230,8 +248,29 @@ export const technicalRows: TechnicalRow[] = [
 export const workingStyleLead =
   'I am strongest where architecture, product judgment, and implementation have to move as one system.';
 
+export const workingStyleRailNote =
+  'The work is best when interface decisions, systems constraints, and execution strategy can be resolved in the same frame.';
+
 export const workingStylePullQuote =
   'Cross-layer problems are where the real leverage is.';
+
+export const workingStylePrinciples: EthosPrinciple[] = [
+  {
+    title: 'Resolve the real constraint',
+    signal: 'No ornamental complexity',
+    detail: 'Expose the actual bottleneck first, then remove layers that only disguise it as sophistication.',
+  },
+  {
+    title: 'Keep judgment cross-layer',
+    signal: 'Architecture to surface',
+    detail: 'Product behavior, interface tone, and runtime design should reinforce one another instead of being handed off blindly.',
+  },
+  {
+    title: 'Prefer operable clarity',
+    signal: 'Systems that can be used',
+    detail: 'The best work is precise enough to reason about, useful enough to operate, and strong enough to survive real constraints.',
+  },
+] as const;
 
 export const workingStyleBody: EthosBodyParagraph[] = [
   {
@@ -243,4 +282,4 @@ export const workingStyleBody: EthosBodyParagraph[] = [
 ] as const;
 
 export const workingStyleClosing =
-  'The best projects are technically serious, operationally useful, and built so the interaction model and system model reinforce each other.';
+  'The best projects are technically serious, operationally useful, and difficult to forget.';

@@ -12,7 +12,7 @@ import {
 import { Project, projects } from '../data';
 
 const PROJECT_TRANSITIONS = Math.max(1, projects.length - 1);
-const PROJECT_STAGE_VH = 120;
+const PROJECT_STAGE_VH = 100;
 const PROJECT_INTRO =
   'Selected systems where the interaction, architecture, and operating model are part of the same decision.';
 
@@ -58,10 +58,13 @@ function ProjectFace({
       <div className="project-face-grid relative z-10 grid h-full grid-cols-1 lg:grid-cols-12">
         <div className="project-face-primary flex flex-col gap-10 px-6 pb-8 pt-24 md:px-10 md:pb-10 md:pt-28 lg:col-span-7 lg:pr-12">
           <div className="project-face-body space-y-6">
-            <h3 className="display-tight max-w-[10ch] text-[clamp(2.8rem,6vw,4.7rem)] leading-[0.92]">
+            <div className="project-face-kicker">
+              <p className="project-face-type">{project.type}</p>
+            </div>
+            <h3 className="project-face-title display-tight max-w-[11ch] leading-[0.96]">
               {project.title}
             </h3>
-            <p className="body-premium max-w-[31rem] text-[1.1rem] leading-[1.58] md:text-[1.46rem]">
+            <p className="body-premium max-w-[31rem] text-[1.02rem] leading-[1.56] md:text-[1.18rem]">
               {project.subtitle}
             </p>
             <p className="max-w-[36rem] text-[0.98rem] leading-[1.72] text-[var(--color-muted-soft)] md:text-[1.04rem]">
@@ -70,11 +73,12 @@ function ProjectFace({
           </div>
 
           <div className="project-face-footer mt-auto grid gap-5 border-t border-[var(--color-line-soft)] pt-6 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
-            <div className="flex flex-wrap gap-2">
-              {mechanismPreview.map((mechanism) => (
-                <span key={mechanism} className="signal-chip">
-                  {mechanism}
-                </span>
+            <div className="project-mechanism-list">
+              {mechanismPreview.map((mechanism, index) => (
+                <div key={mechanism} className="project-mechanism-item">
+                  <span className="project-mechanism-index">{String(index + 1).padStart(2, '0')}</span>
+                  <span className="project-mechanism-label">{mechanism}</span>
+                </div>
               ))}
             </div>
             <div className="project-open-affordance inline-flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--color-muted)]">
@@ -90,15 +94,9 @@ function ProjectFace({
         <div className="project-face-secondary flex flex-col gap-10 border-t border-[var(--color-line-soft)] px-6 pb-8 pt-24 md:px-10 md:pb-10 md:pt-28 lg:col-span-5 lg:border-l lg:border-t-0 lg:[border-left-color:var(--color-line-soft)] lg:pl-12">
           <div>
             <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--color-muted)]">
-              Stack
+              Technical frame
             </p>
-            <div className="project-meta-stack">
-              {techList.map((item) => (
-                <span key={item} className="project-meta-pill">
-                  {item}
-                </span>
-              ))}
-            </div>
+            <p className="project-meta-copy">{techList.join(' / ')}</p>
           </div>
 
           <div>
@@ -157,14 +155,14 @@ export default function Projects() {
 
   const phase = useTransform(scrollYProgress, [0, 1], [0, PROJECT_TRANSITIONS]);
   const localProgress = useTransform(phase, (value) => clamp(value - Math.floor(value), 0, 1));
-  const rotation = useTransform(phase, (value) => (prefersReducedMotion ? 0 : -90 * value));
+  const rotation = useTransform(phase, (value) => (prefersReducedMotion ? 0 : -82 * value));
   const frontOpacity = useTransform(localProgress, (value) =>
-    prefersReducedMotion ? 1 : 1 - value * 0.08
+    prefersReducedMotion ? 1 : 1 - value * 0.06
   );
   const nextOpacity = useTransform(localProgress, (value) =>
-    prefersReducedMotion ? 1 : 0.84 + value * 0.16
+    prefersReducedMotion ? 1 : 0.88 + value * 0.12
   );
-  const gridOpacity = useTransform(scrollYProgress, [0, 1], [0.018, 0.04]);
+  const gridOpacity = useTransform(scrollYProgress, [0, 1], [0.008, 0.018]);
 
   useMotionValueEvent(phase, 'change', (value) => {
     const nextBaseIndex = clamp(Math.floor(value + 0.0001), 0, projects.length - 1);
@@ -178,11 +176,11 @@ export default function Projects() {
 
   if (prefersReducedMotion || isMobileLayout) {
     return (
-      <section className="bridge-section relative border-b border-[var(--color-line)]">
-        <div className="mx-auto max-w-7xl px-6 py-16 md:px-12">
-          <div className="grid grid-cols-1 gap-4 border-b border-[var(--color-line-soft)]/85 pb-5 md:grid-cols-[12rem_minmax(0,1fr)_6rem] md:items-end">
+      <section className="bridge-section project-stage-shell project-stage-shell--static relative border-b border-[var(--color-line)]">
+        <div className="mx-auto max-w-7xl px-6 pt-28 pb-20 md:px-12 md:pt-32 md:pb-24">
+          <div className="grid grid-cols-1 gap-4 border-b border-[var(--color-line-soft)]/85 pb-5 md:grid-cols-[12rem_minmax(0,1fr)_6rem] md:items-start">
             <div>
-              <p className="section-label">3.0 / Selected Systems</p>
+              <p className="section-label project-stage-label">3.0 / Selected Systems</p>
             </div>
             <p className="project-stage-intro">
               {PROJECT_INTRO}
@@ -225,7 +223,7 @@ export default function Projects() {
         <div className="pointer-events-none absolute inset-x-0 top-0 z-20 px-6 pt-5 md:px-12 md:pt-8">
           <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 border-b border-[var(--color-line-soft)]/85 pb-5 md:grid-cols-[12rem_minmax(0,1fr)_6rem] md:items-end">
             <div>
-              <p className="section-label">3.0 / Selected Systems</p>
+              <p className="section-label project-stage-label">3.0 / Selected Systems</p>
             </div>
             <p className="project-stage-intro">
               {PROJECT_INTRO}

@@ -1,4 +1,5 @@
 import { AnimatePresence, LayoutGroup, motion } from 'motion/react';
+import Footer from '../components/Footer';
 import { ArrowLeft, ArrowUpRight, ExternalLink } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
 import {
@@ -56,17 +57,21 @@ export default function ProjectsCatalog() {
           className="section-shell section-shell--catalog section-shell--framed border-b-0"
           {...FLIP_LAYOUT_SCROLL_PROPS}
         >
+          <motion.div className="section-inner" {...FLIP_LAYOUT_PROPS}>
+            <Link to="/" className="catalog-back-link catalog-back-link--section">
+              <ArrowLeft size={16} />
+              <span>Back Home</span>
+            </Link>
+          </motion.div>
+
           <motion.div className="section-intro" {...FLIP_LAYOUT_PROPS}>
             <div className="section-rail">
-              <Link to="/" className="catalog-back-link">
-                <ArrowLeft size={16} />
-                <span>Back Home</span>
-              </Link>
-              <h1 className="catalog-page-title">Project Index</h1>
+              <p className="section-label">2.0 / Project Index</p>
             </div>
 
-            <div className="section-content relative">
-              <p className="section-label">All public work</p>
+            <div className="section-content relative catalog-hero-copy">
+              <p className="eyebrow">All public work</p>
+              <h1 className="catalog-page-title">Project Index</h1>
               <p className="catalog-page-deck">{activeDomainMeta.summary}</p>
               <motion.div className="catalog-stats-grid" {...FLIP_LAYOUT_PROPS}>
                 <motion.div className="catalog-stat" {...FLIP_LAYOUT_PROPS}>
@@ -196,6 +201,15 @@ export default function ProjectsCatalog() {
             <motion.div className="catalog-table-shell hidden xl:block" {...FLIP_LAYOUT_PROPS}>
               <motion.div className="catalog-table-scroll" {...FLIP_LAYOUT_PROPS}>
                 <motion.table className="catalog-table" layout transition={FLIP_LAYOUT_TRANSITION}>
+                  <colgroup>
+                    <col className="catalog-col-project" />
+                    <col className="catalog-col-domain" />
+                    <col className="catalog-col-status" />
+                    <col className="catalog-col-stack" />
+                    <col className="catalog-col-updated" />
+                    <col className="catalog-col-source" />
+                    <col className="catalog-col-links" />
+                  </colgroup>
                   <thead>
                     <tr>
                       <th>Project</th>
@@ -280,6 +294,7 @@ export default function ProjectsCatalog() {
           </motion.div>
         </motion.section>
       </motion.main>
+      <Footer />
     </LayoutGroup>
   );
 }

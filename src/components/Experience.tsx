@@ -2,8 +2,6 @@ import { motion } from 'motion/react';
 import { experienceIntro, experienceRoles } from '../content/home';
 import {
   EASE_STANDARD,
-  FLIP_LAYOUT_PROPS,
-  FLIP_LAYOUT_SCROLL_PROPS,
   SPRING_FLIP,
   REVEAL_ITEM_TRANSITION,
   inViewViewport,
@@ -16,9 +14,8 @@ export default function Experience() {
   return (
     <motion.section
       className="section-shell section-shell--dense section-shell--framed experience-shell"
-      {...FLIP_LAYOUT_SCROLL_PROPS}
     >
-      <motion.div className="section-intro" {...FLIP_LAYOUT_PROPS}>
+      <div className="section-intro">
         <div className="section-rail section-rail--sticky">
           <h2 className="section-label">
             4.0 / Experience
@@ -52,59 +49,60 @@ export default function Experience() {
             </motion.p>
           ))}
         </motion.div>
-      </motion.div>
+      </div>
 
-      <motion.div className="section-list" {...FLIP_LAYOUT_PROPS}>
+      <div className="experience-stack">
         {experienceRoles.map((role, index) => {
           return (
           <motion.article
             key={`${role.company}-${role.title}`}
             layout
-            initial={{ opacity: 0, y: 16, filter: 'blur(8px)' }}
+            initial={{ opacity: 0, y: 12, filter: 'blur(4px)' }}
             whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 0.58, delay: index * 0.04, ease: EASE_STANDARD, layout: SPRING_FLIP }}
-            className="experience-row data-row py-10 md:py-11"
+            transition={{ duration: 0.5, delay: index * 0.03, ease: EASE_STANDARD, layout: SPRING_FLIP }}
+            className="experience-card"
           >
-            <motion.div className="experience-row-grid" {...FLIP_LAYOUT_PROPS}>
-              <motion.div className="experience-row-rail" {...FLIP_LAYOUT_PROPS}>
-                <div className="flex items-start gap-4">
-                  <span className="hero-stat-index experience-row-index">
+            <div className="experience-card-frame">
+              <div className="experience-card-top">
+                <div className="experience-card-title-block">
+                  <span className="hero-stat-index experience-card-index">
                     {String(index + 1).padStart(2, '0')}
                   </span>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <p className="profile-row-label">{role.title}</p>
-                      <p className="experience-row-company">{role.company}</p>
-                    </div>
-                    <div className="technical-row-signal">
-                      <p className="technical-row-signal-label">Period</p>
-                      <p>{role.period}</p>
-                    </div>
-                    <div className="technical-row-signal">
-                      <p className="technical-row-signal-label">Base</p>
-                      <p>{role.location}</p>
-                    </div>
+                  <div className="experience-card-title-copy">
+                    <p className="experience-card-title">{role.title}</p>
+                    <p className="experience-row-company">{role.company}</p>
                   </div>
                 </div>
-              </motion.div>
 
-              <motion.div className="experience-row-body" {...FLIP_LAYOUT_PROPS}>
-                <p className="technical-row-primary">{role.summary}</p>
-                <motion.div className="experience-highlight-list" {...FLIP_LAYOUT_PROPS}>
+                <div className="experience-card-meta-grid">
+                  <div className="technical-row-signal">
+                    <p className="technical-row-signal-label">Period</p>
+                    <p>{role.period}</p>
+                  </div>
+                  <div className="technical-row-signal">
+                    <p className="technical-row-signal-label">Base</p>
+                    <p>{role.location}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="experience-card-body">
+                <p className="experience-card-summary">{role.summary}</p>
+                <div className="experience-highlight-grid">
                   {role.highlights.map((highlight) => (
-                    <motion.div key={highlight.title} className="experience-highlight" {...FLIP_LAYOUT_PROPS}>
+                    <div key={highlight.title} className="experience-highlight-card">
                       <p className="experience-highlight-title">{highlight.title}</p>
                       <p className="experience-highlight-detail">{highlight.detail}</p>
-                    </motion.div>
+                    </div>
                   ))}
-                </motion.div>
-              </motion.div>
-            </motion.div>
+                </div>
+              </div>
+            </div>
           </motion.article>
           );
         })}
-      </motion.div>
+      </div>
     </motion.section>
   );
 }

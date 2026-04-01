@@ -681,6 +681,7 @@ export default function HeroRectLayer({
   useEffect(() => {
     const startTime = typeof performance !== 'undefined' ? performance.now() : 0;
     const canvas = canvasRef.current;
+    const container = containerRef.current;
     const gpu = (navigator as Navigator & {
       gpu?: {
         requestAdapter: () => Promise<GPUAdapterLike | null>;
@@ -704,7 +705,7 @@ export default function HeroRectLayer({
       onReadyRef.current?.();
     };
 
-    if (!canvas || !gpu || !bufferUsage || !textureUsage) {
+    if (!canvas || !container || !gpu || !bufferUsage || !textureUsage) {
       emitProfile('fallback');
       notifyReady();
       return;
@@ -721,7 +722,9 @@ export default function HeroRectLayer({
     let frameId = 0;
     let disposed = false;
     let isPaused = document.hidden;
+    let isViewportVisible = true;
     let cleanupEvents = () => {};
+    let cleanupObserver = () => {};
 
     const getDpr = () => Math.min(window.devicePixelRatio || 1, HERO_RECT_LAYER_MAX_DPR);
 
@@ -790,8 +793,8 @@ export default function HeroRectLayer({
 
         const updateInteractionState = (dt: number) => {
           const pointerState = pointerStateRef.current;
-          const container = containerRef.current;
-          if (!container) {
+          const activeContainer = containerRef.current;
+          if (!activeContainer) {
           return {
             coherence: 0,
             energy: 0,
@@ -807,7 +810,7 @@ export default function HeroRectLayer({
           };
         }
 
-        const rect = container.getBoundingClientRect();
+        const rect = activeContainer.getBoundingClientRect();
         const width = Math.max(rect.width, 1);
         const height = Math.max(rect.height, 1);
         const diagonal = Math.max(Math.hypot(width, height), 1);
@@ -956,8 +959,8 @@ export default function HeroRectLayer({
         };
 
         const handleResize = () => configure();
-        const handleVisibilityChange = () => {
-          isPaused = document.hidden;
+        const syncPauseState = () => {
+          isPaused = document.hidden || !isViewportVisible;
           window.cancelAnimationFrame(frameId);
 
           if (isPaused) {
@@ -968,7 +971,27 @@ export default function HeroRectLayer({
           frameId = window.requestAnimationFrame(render);
         };
 
+        const handleVisibilityChange = () => {
+          syncPauseState();
+        };
+
+        if (typeof IntersectionObserver !== 'undefined') {
+          const observer = new IntersectionObserver(
+            ([entry]) => {
+              isViewportVisible = entry?.isIntersecting ?? true;
+              syncPauseState();
+            },
+            {
+              threshold: 0.05,
+            }
+          );
+          observer.observe(container);
+          cleanupObserver = () => observer.disconnect();
+        }
+
         configure();
+
+        isPaused = document.hidden || !isViewportVisible;
 
         if (!isPaused) {
           frameId = window.requestAnimationFrame(render);
@@ -987,6 +1010,7 @@ export default function HeroRectLayer({
           window.removeEventListener('pointermove', handlePointerMove);
           window.removeEventListener('pointerleave', handlePointerLeave);
           document.removeEventListener('visibilitychange', handleVisibilityChange);
+          cleanupObserver();
         };
 
         void device.lost?.then(() => {
@@ -1017,6 +1041,7 @@ export default function HeroRectLayer({
       disposed = true;
       window.cancelAnimationFrame(frameId);
       cleanupEvents();
+      cleanupObserver();
       cleanupRenderer?.();
     };
   }, [comicStrength, debugLabel, ditherPixelSize, ditherStrength, interactionMode, prefersReducedMotion, seed]);

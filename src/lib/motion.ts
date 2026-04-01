@@ -31,17 +31,17 @@ export const PAGE_CURTAIN_TRANSITION: Transition = {
 };
 
 export const PAGE_CONTENT_TRANSITION: Transition = {
-  duration: 0.72,
+  duration: 0.62,
   ease: EASE_STANDARD,
 };
 
 export const REVEAL_ITEM_TRANSITION: Transition = {
-  duration: 0.72,
+  duration: 0.54,
   ease: EASE_STANDARD,
 };
 
 export const REVEAL_RULE_TRANSITION: Transition = {
-  duration: 0.7,
+  duration: 0.56,
   ease: EASE_FLIP,
 };
 
@@ -57,8 +57,8 @@ export const revealGroupVariants: Variants = {
   visible: {
     opacity: 1,
     transition: {
-      delayChildren: 0.05,
-      staggerChildren: 0.08,
+      delayChildren: 0.03,
+      staggerChildren: 0.05,
     },
   },
 };
@@ -66,9 +66,9 @@ export const revealGroupVariants: Variants = {
 export const revealItemVariants: Variants = {
   hidden: {
     opacity: 0,
-    y: 18,
-    scale: 0.985,
-    filter: 'blur(10px)',
+    y: 12,
+    scale: 0.992,
+    filter: 'blur(4px)',
   },
   visible: {
     opacity: 1,

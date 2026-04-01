@@ -1,7 +1,6 @@
 import { Suspense, lazy, useEffect, useState } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'motion/react';
-import Footer from './components/Footer';
 import Home from './pages/Home';
 import BootSequence from './components/BootSequence';
 import SmoothScroll from './components/SmoothScroll';
@@ -92,7 +91,6 @@ export default function App() {
           </PageTransition>
         </AnimatePresence>
 
-        <Footer />
       </div>
     </div>
   );

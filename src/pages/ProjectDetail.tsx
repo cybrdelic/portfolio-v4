@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import Footer from '../components/Footer';
 import { LayoutGroup, motion } from 'motion/react';
 import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react';
 import { projects } from '../data';
@@ -287,6 +288,7 @@ export default function ProjectDetail() {
           </motion.div>
         </motion.div>
       </motion.article>
+      <Footer />
     </LayoutGroup>
   );
 }
