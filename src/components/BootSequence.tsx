@@ -25,13 +25,13 @@ export default function BootSequence({ onComplete }: { onComplete?: () => void }
   };
 
   const close = () => {
-    sessionStorage.setItem(BOOT_SEQUENCE_STORAGE_KEY, '1');
+    localStorage.setItem(BOOT_SEQUENCE_STORAGE_KEY, '1');
     setIsVisible(false);
     notifyComplete();
   };
 
   useEffect(() => {
-    if (prefersReducedMotion || sessionStorage.getItem(BOOT_SEQUENCE_STORAGE_KEY) === '1') {
+    if (prefersReducedMotion || localStorage.getItem(BOOT_SEQUENCE_STORAGE_KEY) === '1') {
       setLogs(SEQUENCE);
       setIsVisible(false);
       notifyComplete();

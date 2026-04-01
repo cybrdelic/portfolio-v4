@@ -10,6 +10,23 @@ import { projects } from './data';
 
 const ProjectDetail = lazy(() => import('./pages/ProjectDetail'));
 const ProjectsCatalog = lazy(() => import('./pages/ProjectsCatalog'));
+const NotFound = lazy(() => import('./pages/NotFound'));
+
+function PageLoader() {
+  return (
+    <div className="flex min-h-screen items-center justify-center" aria-label="Loading">
+      <div className="flex gap-1.5">
+        {[0, 1, 2].map((i) => (
+          <span
+            key={i}
+            className="block h-1 w-1 rounded-full bg-[var(--color-line-strong)] opacity-60"
+            style={{ animation: `pulse 1.2s ease-in-out ${i * 0.2}s infinite` }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function App() {
   const location = useLocation();
@@ -48,18 +65,7 @@ export default function App() {
   }, [isHomeRoute]);
 
   useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        document.title = "System Paused — Alex Figueroa";
-      } else {
-        document.title = activeTitle;
-      }
-    };
-    
     document.title = activeTitle;
-    
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, [activeTitle]);
 
   return (
@@ -75,12 +81,12 @@ export default function App() {
       <div className="relative z-10">
         <AnimatePresence initial={false} mode="wait" onExitComplete={scrollViewportToTop}>
           <PageTransition key={location.pathname}>
-            {/* @ts-ignore */}
-            <Suspense fallback={<div className="min-h-screen" aria-hidden="true" />}>
+            <Suspense fallback={<PageLoader />}>
               <Routes location={location}>
                 <Route path="/" element={<Home heroIntroReady={bootSequenceComplete} />} />
                 <Route path="/projects" element={<ProjectsCatalog />} />
                 <Route path="/project/:id" element={<ProjectDetail />} />
+                <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
           </PageTransition>

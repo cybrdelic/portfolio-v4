@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { LayoutGroup, motion } from 'motion/react';
 import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react';
 import { projects } from '../data';
@@ -29,7 +29,6 @@ export default function ProjectDetail() {
       <div className="min-h-screen flex items-center justify-center font-mono text-sm uppercase tracking-widest">
         <p>System not found.</p>
         <Link
-          preventScrollReset
           to="/"
           className="ml-4 text-[var(--color-muted)] transition-colors hover:text-[var(--color-ink)] hover:underline"
         >
@@ -55,14 +54,28 @@ export default function ProjectDetail() {
       >
         <motion.div className="mx-auto max-w-7xl" {...FLIP_LAYOUT_PROPS}>
           <Magnetic>
-            <Link preventScrollReset to="/projects" className="catalog-back-link mb-14 md:mb-18">
+            <Link to="/projects" className="catalog-back-link catalog-back-link--section">
               <ArrowLeft size={16} /> Back to Project Index
             </Link>
           </Magnetic>
 
-          <motion.div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-start" {...FLIP_LAYOUT_PROPS}>
+          <motion.section className="section-grid project-detail-intro-shell" {...FLIP_LAYOUT_PROPS}>
             <motion.div
-              className="lg:col-span-5"
+              className="section-rail"
+              layout
+              initial="hidden"
+              whileInView="visible"
+              viewport={inViewViewport}
+              variants={revealGroupVariants}
+              transition={{ layout: SPRING_FLIP }}
+            >
+              <motion.p className="section-label" variants={revealItemVariants}>
+                Project dossier
+              </motion.p>
+            </motion.div>
+
+            <motion.div
+              className="section-content project-detail-intro-content"
               layout
               initial="hidden"
               whileInView="visible"
@@ -74,22 +87,12 @@ export default function ProjectDetail() {
                 System dossier / {String(projectIndex + 1).padStart(2, '0')}
               </motion.p>
               <motion.h1
-                className="display-tight max-w-[10ch] text-[clamp(3rem,8vw,5.8rem)] text-[var(--color-ink)]"
+                className="project-detail-title display-tight max-w-[10ch] text-[clamp(3rem,8vw,5.8rem)] text-[var(--color-ink)]"
                 variants={revealItemVariants}
               >
                 {project.title}
               </motion.h1>
-            </motion.div>
 
-            <motion.div
-              className="lg:col-span-7"
-              layout
-              initial="hidden"
-              whileInView="visible"
-              viewport={inViewViewport}
-              variants={revealGroupVariants}
-              transition={{ layout: SPRING_FLIP }}
-            >
               <motion.p className="project-detail-subtitle" variants={revealItemVariants}>
                 {project.subtitle}
               </motion.p>
@@ -108,11 +111,11 @@ export default function ProjectDetail() {
                 </motion.div>
                 <motion.div variants={revealItemVariants} layout transition={{ layout: SPRING_FLIP }}>
                   <p className="eyebrow mb-3">Stack</p>
-                  <p className="project-detail-meta-value max-w-[22rem]">{project.tech}</p>
+                  <p className="project-detail-meta-value max-w-[18rem]">{project.tech}</p>
                 </motion.div>
                 <motion.div variants={revealItemVariants} layout transition={{ layout: SPRING_FLIP }}>
                   <p className="eyebrow mb-3">Mechanisms</p>
-                  <p className="project-detail-meta-value max-w-[22rem]">
+                  <p className="project-detail-meta-value max-w-[18rem]">
                     {String(project.coreMechanisms.length).padStart(2, '0')} active building blocks in the current system.
                   </p>
                 </motion.div>
@@ -140,106 +143,104 @@ export default function ProjectDetail() {
                 ))}
               </motion.div>
             </motion.div>
-          </motion.div>
+          </motion.section>
 
-          <motion.div className="mt-20 border-t border-[var(--color-line-strong)] pt-10 md:mt-24 md:pt-12" {...FLIP_LAYOUT_PROPS}>
-            <motion.div className="grid grid-cols-1 gap-18 lg:grid-cols-12" {...FLIP_LAYOUT_PROPS}>
-              <div className="lg:col-span-4">
-                <p className="section-label lg:sticky lg:top-12">Project dossier</p>
-              </div>
-              <div className="lg:col-span-8">
-                <motion.div className="space-y-18" {...FLIP_LAYOUT_PROPS}>
-                  {sections.slice(0, 1).map((section) => (
-                    <section key={section.label} className="project-detail-section">
-                      <motion.h2
-                        className="section-label mb-7"
-                        initial={{ opacity: 0, y: 10, filter: 'blur(8px)' }}
+          <motion.div
+            className="project-detail-section-stack mt-20 border-t border-[var(--color-line-strong)] pt-10 md:mt-24 md:pt-12"
+            {...FLIP_LAYOUT_PROPS}
+          >
+            <motion.div className="space-y-18" {...FLIP_LAYOUT_PROPS}>
+              {sections.slice(0, 1).map((section) => (
+                <section key={section.label} className="project-detail-section project-detail-section-grid">
+                  <motion.h2
+                    className="project-detail-section-label"
+                    initial={{ opacity: 0, y: 10, filter: 'blur(8px)' }}
+                    whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    viewport={inViewViewport}
+                    transition={{ duration: 0.56, ease: EASE_STANDARD }}
+                  >
+                    {section.label}
+                  </motion.h2>
+                  <motion.p
+                    className="project-detail-copy project-detail-section-body"
+                    initial={{ opacity: 0, y: 16, filter: 'blur(8px)' }}
+                    whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    viewport={inViewViewport}
+                    transition={{ duration: 0.6, delay: 0.04, ease: EASE_STANDARD }}
+                  >
+                    {section.body}
+                  </motion.p>
+                </section>
+              ))}
+
+              <section className="project-detail-section project-detail-section-grid">
+                <motion.h2
+                  className="project-detail-section-label"
+                  initial={{ opacity: 0, y: 10, filter: 'blur(8px)' }}
+                  whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                  viewport={inViewViewport}
+                  transition={{ duration: 0.56, ease: EASE_STANDARD }}
+                >
+                  2.0 / Core Mechanisms
+                </motion.h2>
+                <div className="project-detail-section-body">
+                  <motion.p
+                    className="mb-7 max-w-[34rem] text-[0.96rem] leading-[1.7] text-[var(--color-muted-soft)]"
+                    initial={{ opacity: 0, y: 12, filter: 'blur(8px)' }}
+                    whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    viewport={inViewViewport}
+                    transition={{ duration: 0.56, delay: 0.02, ease: EASE_STANDARD }}
+                  >
+                    The system is organized around the mechanisms below. They are the parts doing the actual work, not interface garnish.
+                  </motion.p>
+                  <motion.ul className="grid gap-4 md:grid-cols-2" {...FLIP_LAYOUT_PROPS}>
+                    {project.coreMechanisms.map((mechanism, i) => (
+                      <motion.li
+                        key={mechanism}
+                        layout
+                        className="project-detail-card flex gap-4"
+                        initial={{ opacity: 0, y: 14, filter: 'blur(8px)' }}
                         whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                         viewport={inViewViewport}
-                        transition={{ duration: 0.56, ease: EASE_STANDARD }}
+                        transition={{ duration: 0.52, delay: i * 0.03, ease: EASE_STANDARD, layout: SPRING_FLIP }}
                       >
-                        {section.label}
-                      </motion.h2>
-                      <motion.p
-                        className="project-detail-copy"
-                        initial={{ opacity: 0, y: 16, filter: 'blur(8px)' }}
-                        whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                        viewport={inViewViewport}
-                        transition={{ duration: 0.6, delay: 0.04, ease: EASE_STANDARD }}
-                      >
-                        {section.body}
-                      </motion.p>
-                    </section>
-                  ))}
+                        <span className="hero-stat-index mt-[0.15rem]">{String(i + 1).padStart(2, '0')}</span>
+                        <div>
+                          <p className="text-[1rem] leading-[1.55] text-[var(--color-ink)]">{mechanism}</p>
+                        </div>
+                      </motion.li>
+                    ))}
+                  </motion.ul>
+                </div>
+              </section>
 
-                  <section className="project-detail-section">
-                    <motion.h2
-                      className="section-label mb-7"
-                      initial={{ opacity: 0, y: 10, filter: 'blur(8px)' }}
-                      whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                      viewport={inViewViewport}
-                      transition={{ duration: 0.56, ease: EASE_STANDARD }}
-                    >
-                      2.0 / Core Mechanisms
-                    </motion.h2>
-                    <motion.p
-                      className="mb-7 max-w-[34rem] text-[0.96rem] leading-[1.7] text-[var(--color-muted-soft)]"
-                      initial={{ opacity: 0, y: 12, filter: 'blur(8px)' }}
-                      whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                      viewport={inViewViewport}
-                      transition={{ duration: 0.56, delay: 0.02, ease: EASE_STANDARD }}
-                    >
-                      The system is organized around the mechanisms below. They are the parts doing the actual work, not interface garnish.
-                    </motion.p>
-                    <motion.ul className="grid gap-4 md:grid-cols-2" {...FLIP_LAYOUT_PROPS}>
-                      {project.coreMechanisms.map((mechanism, i) => (
-                        <motion.li
-                          key={mechanism}
-                          layout
-                          className="project-detail-card flex gap-4"
-                          initial={{ opacity: 0, y: 14, filter: 'blur(8px)' }}
-                          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                          viewport={inViewViewport}
-                          transition={{ duration: 0.52, delay: i * 0.03, ease: EASE_STANDARD, layout: SPRING_FLIP }}
-                        >
-                          <span className="hero-stat-index mt-[0.15rem]">{String(i + 1).padStart(2, '0')}</span>
-                          <div>
-                            <p className="text-[1rem] leading-[1.55] text-[var(--color-ink)]">{mechanism}</p>
-                          </div>
-                        </motion.li>
-                      ))}
-                    </motion.ul>
-                  </section>
-
-                  <section className="project-detail-section">
-                    <motion.h2
-                      className="section-label mb-7"
-                      initial={{ opacity: 0, y: 10, filter: 'blur(8px)' }}
-                      whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                      viewport={inViewViewport}
-                      transition={{ duration: 0.56, ease: EASE_STANDARD }}
-                    >
-                      {sections[1].label}
-                    </motion.h2>
-                    <motion.p
-                      className="project-detail-closing"
-                      initial={{ opacity: 0, y: 16, filter: 'blur(8px)' }}
-                      whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                      viewport={inViewViewport}
-                      transition={{ duration: 0.6, delay: 0.04, ease: EASE_STANDARD }}
-                    >
-                      {sections[1].body}
-                    </motion.p>
-                  </section>
-                </motion.div>
-              </div>
+              <section className="project-detail-section project-detail-section-grid">
+                <motion.h2
+                  className="project-detail-section-label"
+                  initial={{ opacity: 0, y: 10, filter: 'blur(8px)' }}
+                  whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                  viewport={inViewViewport}
+                  transition={{ duration: 0.56, ease: EASE_STANDARD }}
+                >
+                  {sections[1].label}
+                </motion.h2>
+                <motion.p
+                  className="project-detail-closing project-detail-section-body"
+                  initial={{ opacity: 0, y: 16, filter: 'blur(8px)' }}
+                  whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                  viewport={inViewViewport}
+                  transition={{ duration: 0.6, delay: 0.04, ease: EASE_STANDARD }}
+                >
+                  {sections[1].body}
+                </motion.p>
+              </section>
             </motion.div>
           </motion.div>
 
           <motion.div className="mt-20 border-t border-[var(--color-line-strong)] pt-10 md:mt-24 md:pt-12" {...FLIP_LAYOUT_PROPS}>
             <motion.div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]" {...FLIP_LAYOUT_PROPS}>
               <motion.div {...FLIP_LAYOUT_PROPS}>
-                <Link preventScrollReset to={`/project/${previousProject.id}`} className="detail-nav-card group">
+                <Link to={`/project/${previousProject.id}`} className="detail-nav-card group">
                   <p className="eyebrow">Previous system</p>
                   <div className="mt-4 flex items-start justify-between gap-6">
                     <div>
@@ -254,7 +255,7 @@ export default function ProjectDetail() {
               </motion.div>
 
               <motion.div {...FLIP_LAYOUT_PROPS}>
-                <Link preventScrollReset to={`/project/${nextProject.id}`} className="detail-nav-card group">
+                <Link to={`/project/${nextProject.id}`} className="detail-nav-card group">
                   <p className="eyebrow">Next system</p>
                   <div className="mt-4 flex items-start justify-between gap-6">
                     <div>
