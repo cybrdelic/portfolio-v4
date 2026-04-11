@@ -3,11 +3,29 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Google AI Studio App</title>
+    <title>Alex Figueroa — Autonomous Systems</title>
+    <script>
+      // Single-page app routing on GitHub Pages.
+      // Restores the path that was encoded by 404.html into the query string.
+      (function(l) {
+        if (l.search[1] === '/') {
+          var decoded = l.search.slice(1).split('&').map(function(s) {
+            return s.replace(/~and~/g, '&');
+          });
+          window.history.replaceState(
+            null, null,
+            // Remove the trailing slash from pathname (e.g. '/portfolio-v4/')
+            // then append the restored deep-link path from the query string.
+            l.pathname.replace(/\/$/, '') + decoded[0] +
+            (decoded[1] ? '?' + decoded[1] : '') +
+            l.hash
+          );
+        }
+      }(window.location));
+    </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-
