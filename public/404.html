@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Alex Figueroa — Autonomous Systems</title>
+    <script>
+      // Single-page app redirect for GitHub Pages.
+      // Encodes the current path/query/hash into the redirect query param
+      // so the main index.html can restore it after loading.
+      var l = window.location;
+      // Preserve 2 path segments: the leading empty string and the repo name
+      // (e.g. '' and 'portfolio-v4' from '/portfolio-v4/project/foo').
+      var segmentsToPreserve = 2;
+      l.replace(
+        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+        l.pathname.split('/').slice(0, segmentsToPreserve).join('/') + '/?/' +
+        l.pathname.slice(1).split('/').slice(1).join('/').replace(/&/g, '~and~') +
+        (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+        l.hash
+      );
+    </script>
+  </head>
+  <body></body>
+</html>
