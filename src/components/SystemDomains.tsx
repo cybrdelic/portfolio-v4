@@ -22,11 +22,11 @@ function DomainRow({
   });
 
   const shellOpacity = useTransform(scrollYProgress, [0, 0.2, 1], [0, 1, 1]);
-  const shellY = useTransform(scrollYProgress, [0, 1], [110, 0]);
-  const shellRotateX = useTransform(scrollYProgress, [0, 1], [16, 0]);
-  const shellScale = useTransform(scrollYProgress, [0, 1], [0.92, 1]);
-  const titleX = useTransform(scrollYProgress, [0, 1], [-80, 0]);
-  const bodyX = useTransform(scrollYProgress, [0, 1], [120, 0]);
+  const shellY = useTransform(scrollYProgress, [0, 1], [58, 0]);
+  const shellRotateX = useTransform(scrollYProgress, [0, 1], [7, 0]);
+  const shellScale = useTransform(scrollYProgress, [0, 1], [0.965, 1]);
+  const titleX = useTransform(scrollYProgress, [0, 1], [-36, 0]);
+  const bodyX = useTransform(scrollYProgress, [0, 1], [54, 0]);
   const lineScaleX = useTransform(scrollYProgress, [0, 1], [0.08, 1]);
   const indexOpacity = useTransform(scrollYProgress, [0, 0.2, 0.5, 1], [0, 0.35, 1, 1]);
 
@@ -41,6 +41,7 @@ function DomainRow({
               position: 'relative',
               opacity: shellOpacity,
               transformPerspective: 1600,
+              transformOrigin: '50% 0%',
               y: shellY,
               rotateX: shellRotateX,
               scale: shellScale,
@@ -91,12 +92,12 @@ export default function SystemDomains() {
     offset: ['start end', 'end start'],
   });
 
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ['-24%', '24%']);
-  const backgroundX = useTransform(scrollYProgress, [0, 1], ['-4%', '10%']);
-  const backgroundRotate = useTransform(scrollYProgress, [0, 1], [-8, 8]);
-  const backgroundScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.82, 1, 1.18]);
-  const backgroundOpacity = useTransform(scrollYProgress, [0, 0.15, 0.8, 1], [0.12, 0.3, 0.24, 0.12]);
-  const introY = useTransform(scrollYProgress, [0, 0.35], [90, 0]);
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ['-18%', '18%']);
+  const backgroundX = useTransform(scrollYProgress, [0, 1], ['-3%', '8%']);
+  const backgroundRotate = useTransform(scrollYProgress, [0, 1], [-5, 5]);
+  const backgroundScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.9, 1.04, 1.12]);
+  const backgroundOpacity = useTransform(scrollYProgress, [0, 0.15, 0.8, 1], [0.1, 0.24, 0.2, 0.1]);
+  const introY = useTransform(scrollYProgress, [0, 0.35], [54, 0]);
   const introOpacity = useTransform(scrollYProgress, [0, 0.2, 0.4], [0, 0.65, 1]);
   const introLabelX = useTransform(scrollYProgress, [0, 0.35], [-72, 0]);
   const introBodyX = useTransform(scrollYProgress, [0, 0.35], [96, 0]);

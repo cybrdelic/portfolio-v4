@@ -2,6 +2,7 @@ import { CSSProperties, useRef, useState } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import {
+  MotionValue,
   motion,
   useMotionTemplate,
   useMotionValueEvent,
@@ -19,13 +20,17 @@ function clamp(value: number, min: number, max: number) {
 }
 
 function ProjectFace({
+  contentOpacity = 1,
   isInteractive,
   index,
   project,
+  wireOpacity = 0,
 }: {
+  contentOpacity?: MotionValue<number> | number;
   isInteractive: boolean;
   index: number;
   project: Project;
+  wireOpacity?: MotionValue<number> | number;
 }) {
   return (
     <Link
@@ -45,7 +50,16 @@ function ProjectFace({
       <div className="absolute left-10 right-10 top-10 hidden h-px bg-[var(--color-line)] md:block" />
       <div className="absolute bottom-10 left-10 right-10 hidden h-px bg-[var(--color-line)] md:block" />
 
-      <div className="relative z-10 grid h-full grid-cols-1 lg:grid-cols-12">
+      <motion.div className="project-cube-wireframe" style={{ opacity: wireOpacity }}>
+        <span>{project.type}</span>
+        <strong>{String(index + 1).padStart(2, '0')}</strong>
+        <i />
+      </motion.div>
+
+      <motion.div
+        className="relative z-10 grid h-full grid-cols-1 lg:grid-cols-12"
+        style={{ opacity: contentOpacity }}
+      >
         <div className="flex flex-col justify-between gap-10 px-6 py-8 md:px-10 md:py-10 lg:col-span-7 lg:pr-12">
           <div className="flex items-center justify-between gap-4 font-mono text-[11px] uppercase tracking-[0.34em] text-[var(--color-muted)]">
             <span>{project.type}</span>
@@ -91,7 +105,7 @@ function ProjectFace({
             </p>
           </div>
         </div>
-      </div>
+      </motion.div>
     </Link>
   );
 }
@@ -110,12 +124,18 @@ export default function Projects() {
   const phase = useTransform(scrollYProgress, [0, 1], [0, PROJECT_TRANSITIONS]);
   const localProgress = useTransform(phase, (value) => clamp(value - Math.floor(value), 0, 1));
   const rotation = useTransform(phase, (value) => (prefersReducedMotion ? 0 : -90 * value));
+  const cubePitch = useTransform(localProgress, [0, 0.5, 1], [0, -1.4, 0]);
   const frontOpacity = useTransform(localProgress, (value) =>
-    prefersReducedMotion ? 1 : 1 - value * 0.12
+    prefersReducedMotion ? 1 : 1 - value * 0.08
   );
   const nextOpacity = useTransform(localProgress, (value) =>
-    prefersReducedMotion ? 1 : 0.76 + value * 0.24
+    prefersReducedMotion ? 1 : 0.82 + value * 0.18
   );
+  const frontContentOpacity = useTransform(localProgress, [0, 0.14, 0.28, 1], [1, 1, 0, 0]);
+  const nextContentOpacity = useTransform(localProgress, [0, 0.7, 0.88, 0.97, 1], [0, 0, 0.18, 1, 1]);
+  const frontWireOpacity = useTransform(localProgress, [0, 0.24, 0.42, 0.64, 1], [0, 0, 0.68, 0, 0]);
+  const nextWireOpacity = useTransform(localProgress, [0, 0.18, 0.52, 0.72, 0.86, 1], [0, 0.36, 0.82, 0.28, 0, 0]);
+  const cubeDepthOpacity = useTransform(localProgress, [0, 0.2, 0.5, 0.82, 1], [0, 0, 0.62, 0.16, 0]);
   const gridOpacity = useTransform(scrollYProgress, [0, 1], [0.04, 0.08]);
 
   useMotionValueEvent(phase, 'change', (value) => {
@@ -125,7 +145,7 @@ export default function Projects() {
 
   const nextIndex = clamp(baseIndex + 1, 0, projects.length - 1);
   const cubeStyle = {
-    transform: useMotionTemplate`translateZ(calc(var(--cube-size) / -2)) rotateY(${rotation}deg)`,
+    transform: useMotionTemplate`translateZ(calc(var(--cube-size) / -2)) rotateX(${cubePitch}deg) rotateY(${rotation}deg)`,
   };
 
   return (
@@ -153,6 +173,7 @@ export default function Projects() {
               }
             >
               <motion.div className="absolute inset-0 [transform-style:preserve-3d]" style={cubeStyle}>
+                <motion.div className="project-cube-depth-map" style={{ opacity: cubeDepthOpacity }} />
                 <motion.div
                   className="absolute inset-0 [backface-visibility:hidden]"
                   style={{
@@ -163,9 +184,11 @@ export default function Projects() {
                   <div className="absolute inset-y-0 left-0 z-10 w-[2px] bg-[var(--color-bg)]" />
                   <div className="absolute inset-y-0 right-0 z-10 w-[2px] bg-[var(--color-bg)]" />
                   <ProjectFace
+                    contentOpacity={frontContentOpacity}
                     isInteractive
                     index={baseIndex}
                     project={projects[baseIndex]}
+                    wireOpacity={frontWireOpacity}
                   />
                 </motion.div>
 
@@ -181,9 +204,11 @@ export default function Projects() {
                     <div className="absolute inset-y-0 left-0 z-10 w-[2px] bg-[var(--color-bg)]" />
                     <div className="absolute inset-y-0 right-0 z-10 w-[2px] bg-[var(--color-bg)]" />
                     <ProjectFace
+                      contentOpacity={nextContentOpacity}
                       isInteractive={false}
                       index={nextIndex}
                       project={projects[nextIndex]}
+                      wireOpacity={nextWireOpacity}
                     />
                   </motion.div>
                 )}

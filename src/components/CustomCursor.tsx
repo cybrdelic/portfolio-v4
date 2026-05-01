@@ -18,6 +18,10 @@ type ViewportState = {
   width: number;
 };
 
+function clamp(value: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, value));
+}
+
 function getFieldTarget(target: EventTarget | null): FieldTarget | null {
   if (!(target instanceof HTMLElement)) {
     return null;
@@ -201,17 +205,20 @@ export default function CustomCursor() {
     ? `${projectionRect.left + depthX},${projectionRect.top + depthY} ${right + depthX},${projectionRect.top + depthY} ${right + depthX},${bottom + depthY} ${projectionRect.left + depthX},${bottom + depthY}`
     : '';
   const pressureDepth = isActive ? 0.82 : fieldTarget ? 1.24 : 1;
-  const readoutX = Math.max(
-    18,
-    Math.min(
-      isLargeSurface ? pointer.x - 92 : pointer.x + 18,
-      viewport.width - 220
-    )
-  );
+  const readoutX =
+    projectionRect && !isLargeSurface
+      ? clamp(
+          projectionRect.left < viewport.width * 0.56 ? right + 14 : projectionRect.left - 224,
+          18,
+          viewport.width - 220
+        )
+      : clamp(pointer.x - 92, 18, viewport.width - 220);
   const readoutY =
-    pointer.y > viewport.height - 128
-      ? Math.max(18, pointer.y - 96)
-      : Math.min(pointer.y + 18, viewport.height - 88);
+    projectionRect && !isLargeSurface
+      ? clamp(projectionRect.top > viewport.height - 220 ? projectionRect.top - 84 : bottom + 14, 18, viewport.height - 92)
+      : pointer.y > viewport.height - 128
+        ? Math.max(18, pointer.y - 96)
+        : Math.min(pointer.y + 18, viewport.height - 88);
 
   return (
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-[96]">
@@ -226,7 +233,21 @@ export default function CustomCursor() {
       />
 
       <motion.div
-        className={`field-core${isScrolling ? ' field-core--scrolling' : ''}`}
+        className={`field-axes${fieldTarget ? ' field-axes--target' : ''}`}
+        style={{ x: springX, y: springY }}
+        animate={{
+          opacity: isVisible ? (fieldTarget ? 0.62 : 0.32) : 0,
+          scale: fieldTarget ? 1 : 0.78,
+        }}
+        transition={{ duration: 0.16 }}
+      />
+
+      <motion.div
+        className={[
+          'field-core',
+          fieldTarget ? 'field-core--target' : '',
+          isScrolling ? 'field-core--scrolling' : '',
+        ].filter(Boolean).join(' ')}
         style={{ x: springX, y: springY }}
         animate={{
           opacity: isVisible ? 1 : 0,

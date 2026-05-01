@@ -113,6 +113,8 @@ export default function HeroThesisTransition() {
   const zoom = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.92, 1]);
   const frontOpacity = useTransform(scrollYProgress, [0, 0.7, 1], [1, 1, 0.55]);
   const nextOpacity = useTransform(scrollYProgress, [0, 0.2, 1], [0.35, 0.75, 1]);
+  const hingeOpacity = useTransform(scrollYProgress, [0, 0.18, 0.42, 0.72, 1], [0, 0, 0.58, 0.28, 0]);
+  const hingeY = useTransform(scrollYProgress, [0, 1], ['72%', '25%']);
   const cubeTransform = useMotionTemplate`translateZ(calc(var(--hero-thesis-cube) / -2)) rotateX(${rotation}deg) scale(${zoom})`;
 
   return (
@@ -158,6 +160,14 @@ export default function HeroThesisTransition() {
             <ThesisFace />
           </motion.div>
         </motion.div>
+
+        {!prefersReducedMotion && (
+          <motion.div
+            aria-hidden="true"
+            className="hero-cube-hinge"
+            style={{ opacity: hingeOpacity, top: hingeY }}
+          />
+        )}
 
         {prefersReducedMotion && <ThesisFace />}
       </div>

@@ -1,4 +1,5 @@
-import { motion } from 'motion/react';
+import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { useRef } from 'react';
 import { SectionParagraph } from '../content/home';
 
 export default function TextSection({
@@ -8,13 +9,35 @@ export default function TextSection({
   label: string;
   paragraphs: readonly SectionParagraph[];
 }) {
+  const ref = useRef<HTMLElement>(null);
+  const prefersReducedMotion = Boolean(useReducedMotion());
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ['start 88%', 'end 35%'],
+  });
+  const railX = useTransform(scrollYProgress, [0, 0.38], [-44, 0]);
+  const bodyY = useTransform(scrollYProgress, [0, 0.42], [46, 0]);
+  const bodyOpacity = useTransform(scrollYProgress, [0, 0.16, 0.42], [0, 0.68, 1]);
+  const ruleScale = useTransform(scrollYProgress, [0, 0.4], [0.08, 1]);
+
   return (
-    <section className="section-shell">
+    <section ref={ref} className="section-shell section-motion-shell">
       <div className="section-inner section-grid">
-        <div className="section-rail">
+        <motion.div
+          className="section-rail"
+          style={prefersReducedMotion ? undefined : { x: railX }}
+        >
           <h2 className="section-label lg:sticky lg:top-12">{label}</h2>
-        </div>
-        <div className="section-content">
+        </motion.div>
+        <motion.div
+          className="section-content"
+          style={prefersReducedMotion ? undefined : { opacity: bodyOpacity, y: bodyY }}
+        >
+          <motion.div
+            aria-hidden="true"
+            className="section-motion-rule"
+            style={prefersReducedMotion ? undefined : { scaleX: ruleScale }}
+          />
           {paragraphs.map((paragraph, index) => (
             <motion.p
               key={paragraph.text}
@@ -33,7 +56,7 @@ export default function TextSection({
               {paragraph.text}
             </motion.p>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
