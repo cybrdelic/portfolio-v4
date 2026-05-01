@@ -24,9 +24,7 @@ function clamp(value: number, min: number, max: number) {
 
 const TARGET_PRISM_DEPTH_X = 8;
 const TARGET_PRISM_DEPTH_Y = -6;
-const TARGET_PRISM_CLOTH_RUN = 39;
-const TARGET_PRISM_CLOTH_ANGLE = 53;
-const TARGET_PRISM_CLOTH_EDGE = 65;
+const TARGET_PRISM_FACE_SKEW = -3;
 
 function getFieldTarget(target: EventTarget | null): FieldTarget | null {
   if (!(target instanceof HTMLElement)) {
@@ -233,9 +231,8 @@ export default function CustomCursor() {
     '--readout-depth-x': `${readoutDepthX}px`,
     '--readout-depth-y': `${readoutDepthY}px`,
     '--readout-depth-rise': `${Math.abs(readoutDepthY)}px`,
-    '--readout-cloth-run': `${projectionRect && !isLargeSurface ? TARGET_PRISM_CLOTH_RUN : 22}px`,
-    '--readout-cloth-angle': `${TARGET_PRISM_CLOTH_ANGLE}deg`,
-    '--readout-cloth-edge': `${TARGET_PRISM_CLOTH_EDGE}px`,
+    '--readout-face-skew': `${TARGET_PRISM_FACE_SKEW}deg`,
+    '--readout-counter-skew': `${-TARGET_PRISM_FACE_SKEW}deg`,
   } as CSSProperties;
 
   return (
