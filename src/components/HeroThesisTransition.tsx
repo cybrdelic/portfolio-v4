@@ -139,17 +139,6 @@ export default function HeroThesisTransition() {
   const stageRadius = useTransform(scrollYProgress, [0, 0.5, 1], ['0px', '5px', '8px']);
   const stageOpacity = useTransform(scrollYProgress, [0, 0.64, 0.76, 0.82], [1, 1, 0.12, 0]);
   const stageClipPath = useMotionTemplate`inset(${stageInset}px round ${stageRadius})`;
-  const stageRotateX = useTransform(
-    scrollYProgress,
-    [0, 0.34, 0.7, 0.82],
-    [0, 0, isCompactViewport ? -2 : -10, isCompactViewport ? -4 : -18]
-  );
-  const stageRotateY = useTransform(
-    scrollYProgress,
-    [0, 0.42, 0.74, 0.82],
-    [0, 0, isCompactViewport ? 0.4 : 3.5, isCompactViewport ? 0.8 : 6]
-  );
-  const cubeDepthOpacity = useTransform(scrollYProgress, [0, 0.32, 0.64, 0.82], [0, 0, 0.92, 0]);
   const frameOpacity = useTransform(scrollYProgress, [0, 0.18, 0.58, 0.82], [0, 0, 0.76, 0]);
   const frameScaleX = useTransform(scrollYProgress, [0.2, 1], [0.08, 1]);
   const nextOpacity = useTransform(scrollYProgress, [0, 0.76, 0.88, 1], [0, 0, 0.9, 1]);
@@ -190,37 +179,24 @@ export default function HeroThesisTransition() {
         </motion.div>
 
         <motion.div
-          className="hero-cube-stage absolute inset-0"
+          className="hero-stage-shell absolute inset-0 overflow-hidden border-y border-[var(--color-line)] bg-[var(--color-bg)]"
           style={{
+            borderRadius: stageRadius,
+            clipPath: stageClipPath,
             opacity: stageOpacity,
-            rotateX: stageRotateX,
-            rotateY: stageRotateY,
             scale: stageScale,
             y: stageY,
           }}
         >
+          <HeroFace />
           <motion.div
             aria-hidden="true"
-            className="hero-cube-depth"
-            style={{ opacity: cubeDepthOpacity }}
-          />
-          <motion.div
-            className="hero-stage-shell absolute inset-0 overflow-hidden border-y border-[var(--color-line)] bg-[var(--color-bg)]"
-            style={{
-              borderRadius: stageRadius,
-              clipPath: stageClipPath,
-            }}
+            className="hero-stage-chrome"
+            style={{ opacity: frameOpacity }}
           >
-            <HeroFace />
-            <motion.div
-              aria-hidden="true"
-              className="hero-stage-chrome"
-              style={{ opacity: frameOpacity }}
-            >
-              <motion.span style={{ scaleX: frameScaleX }} />
-              <i>Scroll field</i>
-              <b>Thesis handoff</b>
-            </motion.div>
+            <motion.span style={{ scaleX: frameScaleX }} />
+            <i>Scroll field</i>
+            <b>Thesis handoff</b>
           </motion.div>
         </motion.div>
       </div>

@@ -86,7 +86,6 @@ html.lenis, html.lenis body {
 }
 
 .hero-scroll-sticky {
-  perspective: 1800px;
   background:
     linear-gradient(180deg, rgba(6, 6, 6, 0.08), transparent 18%, transparent 82%, rgba(6, 6, 6, 0.08)),
     var(--color-bg);
@@ -117,57 +116,9 @@ html.lenis, html.lenis body {
   opacity: 0.78;
 }
 
-.hero-cube-stage {
-  transform-origin: center;
-  transform-style: preserve-3d;
-  will-change: transform, opacity;
-}
-
-.hero-cube-depth {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  transform: translateZ(-72px);
-  transform-style: preserve-3d;
-}
-
-.hero-cube-depth::before,
-.hero-cube-depth::after {
-  content: "";
-  position: absolute;
-  pointer-events: none;
-  mix-blend-mode: multiply;
-}
-
-.hero-cube-depth::before {
-  inset: 0;
-  border: 1px solid rgba(6, 6, 6, 0.22);
-  background:
-    linear-gradient(90deg, transparent 0 12%, rgba(6, 6, 6, 0.1) 12% calc(12% + 1px), transparent calc(12% + 1px) 88%, rgba(6, 6, 6, 0.1) 88% calc(88% + 1px), transparent calc(88% + 1px)),
-    linear-gradient(0deg, transparent 0 16%, rgba(6, 6, 6, 0.1) 16% calc(16% + 1px), transparent calc(16% + 1px) 84%, rgba(6, 6, 6, 0.1) 84% calc(84% + 1px), transparent calc(84% + 1px)),
-    rgba(6, 6, 6, 0.018);
-  transform: translate3d(46px, -34px, -64px);
-}
-
-.hero-cube-depth::after {
-  left: 0;
-  right: 0;
-  bottom: -56px;
-  height: 76px;
-  border-left: 1px solid rgba(6, 6, 6, 0.2);
-  border-right: 1px solid rgba(6, 6, 6, 0.16);
-  border-bottom: 1px solid rgba(6, 6, 6, 0.22);
-  background: rgba(6, 6, 6, 0.018);
-  transform: translate3d(28px, 0, -42px) skewX(-8deg);
-  transform-origin: bottom center;
-}
-
 .hero-stage-shell {
-  z-index: 2;
   transform-origin: center;
-  transform: translateZ(34px);
-  will-change: clip-path;
+  will-change: transform, clip-path, opacity;
   box-shadow:
     0 0 0 1px rgba(6, 6, 6, 0.16),
     0 26px 80px rgba(6, 6, 6, 0.12);
@@ -220,14 +171,6 @@ html.lenis, html.lenis body {
     box-shadow:
       0 0 0 1px rgba(6, 6, 6, 0.12),
       0 18px 48px rgba(6, 6, 6, 0.08);
-  }
-
-  .hero-cube-stage {
-    transform-style: flat;
-  }
-
-  .hero-cube-depth {
-    display: none;
   }
 
   .hero-stage-chrome {
