@@ -405,17 +405,31 @@ html.lenis, html.lenis body {
 
 .field-readout-panel {
   position: relative;
-  border-left: 1px solid var(--color-ink);
-  border-top: 1px solid rgba(6, 6, 6, 0.16);
-  padding: 8px 10px;
-  background:
-    linear-gradient(135deg, rgba(6, 6, 6, 0.055), transparent 42%),
-    color-mix(in srgb, var(--color-bg) 90%, transparent);
   color: var(--color-ink);
   font-family: var(--font-mono);
   text-transform: uppercase;
+  isolation: isolate;
+}
+
+.field-readout-surface {
+  position: relative;
+  z-index: 1;
+  padding: 10px calc(12px + var(--readout-depth-x)) 9px calc(10px + var(--readout-depth-x));
+  background:
+    linear-gradient(135deg, rgba(6, 6, 6, 0.055), transparent 42%),
+    color-mix(in srgb, var(--color-bg) 90%, transparent);
   box-shadow:
-    0 0 0 1px rgba(6, 6, 6, 0.08);
+    inset 1px 0 0 var(--color-ink),
+    inset 0 1px 0 rgba(6, 6, 6, 0.16),
+    inset 0 -1px 0 rgba(6, 6, 6, 0.08);
+  clip-path: polygon(
+    0 var(--readout-depth-rise),
+    var(--readout-depth-x) 0,
+    100% 0,
+    100% calc(100% - var(--readout-depth-rise)),
+    calc(100% - var(--readout-depth-x)) 100%,
+    0 100%
+  );
 }
 
 .field-readout-panel::before {
@@ -423,8 +437,17 @@ html.lenis, html.lenis body {
   position: absolute;
   inset: 0;
   z-index: -2;
-  border: 1px solid rgba(6, 6, 6, 0.12);
   background: rgba(6, 6, 6, 0.018);
+  box-shadow:
+    inset 0 0 0 1px rgba(6, 6, 6, 0.12);
+  clip-path: polygon(
+    0 var(--readout-depth-rise),
+    var(--readout-depth-x) 0,
+    100% 0,
+    100% calc(100% - var(--readout-depth-rise)),
+    calc(100% - var(--readout-depth-x)) 100%,
+    0 100%
+  );
   transform: translate(var(--readout-depth-x), var(--readout-depth-y));
 }
 
@@ -450,14 +473,14 @@ html.lenis, html.lenis body {
     inset 0 1px 0 rgba(6, 6, 6, 0.1);
 }
 
-.field-readout-panel span,
-.field-readout-panel strong {
+.field-readout-surface span,
+.field-readout-surface strong {
   position: relative;
   z-index: 1;
   display: block;
 }
 
-.field-readout-panel span {
+.field-readout-surface span {
   margin-bottom: 5px;
   color: var(--color-muted);
   font-size: 9px;
@@ -465,7 +488,7 @@ html.lenis, html.lenis body {
   letter-spacing: 0.26em;
 }
 
-.field-readout-panel strong {
+.field-readout-surface strong {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

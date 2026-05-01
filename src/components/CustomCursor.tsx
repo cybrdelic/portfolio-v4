@@ -335,8 +335,10 @@ export default function CustomCursor() {
           animate={{ opacity: isActive ? 0.55 : 1, y: isActive ? 2 : 0 }}
         >
           <div className="field-readout-panel">
-            <span>{isScrolling ? 'resample' : fieldTarget.kind}</span>
-            <strong>{fieldTarget.label}</strong>
+            <div className="field-readout-surface">
+              <span>{isScrolling ? 'resample' : fieldTarget.kind}</span>
+              <strong>{fieldTarget.label}</strong>
+            </div>
           </div>
         </motion.div>
       )}
