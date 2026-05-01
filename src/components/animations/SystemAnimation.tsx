@@ -7,9 +7,9 @@ type SystemAnimationProps = {
 };
 
 const planes = [
-  { height: 116, width: 220, x: 110, y: 98 },
-  { height: 132, width: 256, x: 146, y: 156 },
-  { height: 102, width: 198, x: 86, y: 226 },
+  { height: 116, label: 'INPUT', width: 220, x: 110, y: 98 },
+  { height: 132, label: 'STATE', width: 256, x: 146, y: 156 },
+  { height: 102, label: 'OUTPUT', width: 198, x: 86, y: 226 },
 ];
 
 const nodes = [
@@ -78,6 +78,23 @@ export default function SystemAnimation({
                 <polygon points={path.rear} fill="var(--color-ink)" opacity="0.022" stroke="var(--color-ink)" strokeOpacity="0.16" strokeDasharray="8 7" />
                 <polygon points={path.front} fill="transparent" stroke="var(--color-ink)" strokeOpacity="0.18" />
                 <path d={path.connectors} stroke="var(--color-ink)" strokeOpacity="0.12" strokeDasharray="4 6" />
+                <path
+                  d={`M ${plane.x + 18} ${plane.y + 26} L ${plane.x + plane.width - 22} ${plane.y + 26} M ${plane.x + 18} ${plane.y + plane.height - 24} L ${plane.x + plane.width - 58} ${plane.y + plane.height - 24}`}
+                  stroke="var(--color-ink)"
+                  strokeOpacity="0.1"
+                  strokeDasharray="1 8"
+                />
+                <text
+                  x={plane.x + 18}
+                  y={plane.y + 50}
+                  fill="var(--color-ink)"
+                  fillOpacity="0.34"
+                  fontFamily="monospace"
+                  fontSize="10"
+                  letterSpacing="4"
+                >
+                  {plane.label}
+                </text>
               </motion.g>
             );
           })}

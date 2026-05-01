@@ -51,6 +51,7 @@ export default function CustomCursor() {
   const springX = useSpring(pressureX, { stiffness: 320, damping: 34, mass: 0.2 });
   const springY = useSpring(pressureY, { stiffness: 320, damping: 34, mass: 0.2 });
   const [isActive, setIsActive] = useState(false);
+  const [isScrolling, setIsScrolling] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [pointer, setPointer] = useState<PointerState>({ x: -200, y: -200 });
   const [fieldTarget, setFieldTarget] = useState<FieldTarget | null>(null);
@@ -66,32 +67,47 @@ export default function CustomCursor() {
     }
 
     let frame = 0;
+    let scrollTimeout = 0;
     let nextPointer: PointerState = { x: -200, y: -200 };
-    let nextTarget: EventTarget | null = null;
 
     const flush = () => {
       frame = 0;
       const { x, y } = nextPointer;
+      const element =
+        x >= 0 && y >= 0 && x <= window.innerWidth && y <= window.innerHeight
+          ? document.elementFromPoint(x, y)
+          : null;
+
       pressureX.set(x);
       pressureY.set(y);
       setPointer({ x, y });
-      setFieldTarget(getFieldTarget(nextTarget));
+      setFieldTarget(getFieldTarget(element));
       document.documentElement.style.setProperty('--field-x', `${x}px`);
       document.documentElement.style.setProperty('--field-y', `${y}px`);
     };
 
+    const scheduleFlush = () => {
+      if (!frame) {
+        frame = window.requestAnimationFrame(flush);
+      }
+    };
+
     const updateViewport = () => {
       setViewport({ height: window.innerHeight, width: window.innerWidth });
+      scheduleFlush();
     };
 
     const handlePointerMove = (event: PointerEvent) => {
       nextPointer = { x: event.clientX, y: event.clientY };
-      nextTarget = event.target;
       setIsVisible(true);
+      scheduleFlush();
+    };
 
-      if (!frame) {
-        frame = window.requestAnimationFrame(flush);
-      }
+    const handleScroll = () => {
+      setIsScrolling(true);
+      window.clearTimeout(scrollTimeout);
+      scrollTimeout = window.setTimeout(() => setIsScrolling(false), 140);
+      scheduleFlush();
     };
 
     const handlePointerDown = () => setIsActive(true);
@@ -113,7 +129,7 @@ export default function CustomCursor() {
     window.addEventListener('pointerup', handlePointerUp);
     window.addEventListener('blur', handleWindowBlur);
     window.addEventListener('resize', updateViewport);
-    window.addEventListener('scroll', flush, { passive: true });
+    window.addEventListener('scroll', handleScroll, { passive: true });
     document.documentElement.addEventListener('pointerleave', handlePointerLeave);
     document.documentElement.addEventListener('pointerenter', handlePointerEnter);
 
@@ -121,12 +137,13 @@ export default function CustomCursor() {
       if (frame) {
         window.cancelAnimationFrame(frame);
       }
+      window.clearTimeout(scrollTimeout);
       window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('pointerdown', handlePointerDown);
       window.removeEventListener('pointerup', handlePointerUp);
       window.removeEventListener('blur', handleWindowBlur);
       window.removeEventListener('resize', updateViewport);
-      window.removeEventListener('scroll', flush);
+      window.removeEventListener('scroll', handleScroll);
       document.documentElement.removeEventListener('pointerleave', handlePointerLeave);
       document.documentElement.removeEventListener('pointerenter', handlePointerEnter);
       document.documentElement.style.removeProperty('--field-x');
@@ -174,6 +191,9 @@ export default function CustomCursor() {
   const depthY = projectionRect ? -Math.min(24, Math.max(14, projectionRect.height * 0.06)) : 0;
   const routeBreakX = projectionRect ? (pointer.x < centerX ? projectionRect.left - depthX : right + depthX) : 0;
   const routeBreakY = projectionRect ? centerY + depthY : 0;
+  const cornerLength = projectionRect
+    ? Math.min(26, Math.max(14, projectionRect.width * 0.08))
+    : 0;
   const nearPlane = projectionRect
     ? `${projectionRect.left},${projectionRect.top} ${right},${projectionRect.top} ${right},${bottom} ${projectionRect.left},${bottom}`
     : '';
@@ -199,10 +219,20 @@ export default function CustomCursor() {
         className="field-pressure"
         style={{ x: springX, y: springY }}
         animate={{
-          opacity: isVisible ? (fieldTarget ? 0.5 : 0.2) : 0,
-          scale: pressureDepth,
+          opacity: isVisible ? (fieldTarget ? (isScrolling ? 0.36 : 0.5) : 0.18) : 0,
+          scale: isScrolling && fieldTarget ? 1.08 : pressureDepth,
         }}
         transition={{ duration: 0.18 }}
+      />
+
+      <motion.div
+        className={`field-core${isScrolling ? ' field-core--scrolling' : ''}`}
+        style={{ x: springX, y: springY }}
+        animate={{
+          opacity: isVisible ? 1 : 0,
+          scale: isActive ? 0.78 : fieldTarget ? 1.08 : 0.92,
+        }}
+        transition={{ duration: 0.14 }}
       />
 
       {projectionRect && isVisible && (
@@ -210,11 +240,13 @@ export default function CustomCursor() {
           <motion.polygon
             points={farPlane}
             className="field-plane field-plane--rear"
+            initial={{ opacity: 0 }}
             animate={{ opacity: isActive ? 0.16 : isLargeSurface ? 0.2 : 0.34 }}
           />
           <motion.polygon
             points={nearPlane}
             className="field-plane field-plane--front"
+            initial={{ opacity: 0 }}
             animate={{ opacity: isActive ? 0.48 : isLargeSurface ? 0.34 : 0.52 }}
           />
           <line
@@ -245,6 +277,15 @@ export default function CustomCursor() {
             y2={bottom + depthY}
             className="field-depth-line field-depth-line--soft"
           />
+          <path
+            d={[
+              `M ${projectionRect.left} ${projectionRect.top + cornerLength} L ${projectionRect.left} ${projectionRect.top} L ${projectionRect.left + cornerLength} ${projectionRect.top}`,
+              `M ${right - cornerLength} ${projectionRect.top} L ${right} ${projectionRect.top} L ${right} ${projectionRect.top + cornerLength}`,
+              `M ${right} ${bottom - cornerLength} L ${right} ${bottom} L ${right - cornerLength} ${bottom}`,
+              `M ${projectionRect.left + cornerLength} ${bottom} L ${projectionRect.left} ${bottom} L ${projectionRect.left} ${bottom - cornerLength}`,
+            ].join(' ')}
+            className="field-corners"
+          />
           <motion.path
             d={`M ${pointer.x} ${pointer.y} L ${routeBreakX} ${routeBreakY} L ${projectionRect.left + depthX} ${projectionRect.top + depthY}`}
             className="field-route field-route--iso"
@@ -265,7 +306,7 @@ export default function CustomCursor() {
           initial={false}
           animate={{ opacity: isActive ? 0.55 : 1, y: isActive ? 2 : 0 }}
         >
-          <span>{fieldTarget.kind}</span>
+          <span>{isScrolling ? 'resample' : fieldTarget.kind}</span>
           <strong>{fieldTarget.label}</strong>
         </motion.div>
       )}

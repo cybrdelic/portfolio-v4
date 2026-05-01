@@ -53,10 +53,10 @@ function ProjectFace({
           </div>
 
           <div className="space-y-6">
-            <h3 className="max-w-5xl text-4xl font-normal leading-[0.92] tracking-[-0.05em] md:text-6xl lg:text-7xl">
+            <h3 className="max-w-5xl text-4xl font-normal leading-[0.92] tracking-[-0.05em] transition-transform duration-300 ease-out group-hover:-translate-y-1 md:text-6xl lg:text-7xl">
               {project.title}
             </h3>
-            <p className="max-w-3xl text-lg leading-relaxed text-[var(--color-muted)] md:text-2xl">
+            <p className="max-w-3xl text-lg leading-relaxed text-[var(--color-muted)] transition-colors duration-300 group-hover:text-[var(--color-ink)] md:text-2xl">
               {project.subtitle}
             </p>
           </div>
@@ -77,7 +77,7 @@ function ProjectFace({
             <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.34em] text-[var(--color-muted)]">
               Stack
             </p>
-            <p className="max-w-xl text-xl leading-relaxed text-[var(--color-ink)] md:text-2xl">
+            <p className="max-w-xl text-xl leading-relaxed text-[var(--color-ink)] transition-transform duration-300 ease-out group-hover:translate-x-1 md:text-2xl">
               {project.tech}
             </p>
           </div>

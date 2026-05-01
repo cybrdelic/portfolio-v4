@@ -70,6 +70,7 @@ html.lenis, html.lenis body {
 [data-field-target] {
   position: relative;
   transition:
+    background-color 180ms ease,
     border-color 180ms ease,
     color 180ms ease,
     filter 180ms ease,
@@ -93,8 +94,8 @@ html.lenis, html.lenis body {
 }
 
 [data-field-target]:hover::before {
-  opacity: 0.24;
-  transform: translate(7px, -5px) skewY(-3deg) scale(1);
+  opacity: 0.28;
+  transform: translate(8px, -6px) skewY(-3deg) scale(1);
 }
 
 [data-field-kind="route"]:hover,
@@ -103,13 +104,41 @@ html.lenis, html.lenis body {
   letter-spacing: 0.25em;
 }
 
+.field-action {
+  overflow: hidden;
+}
+
+.field-action::after {
+  content: "";
+  position: absolute;
+  inset: auto 12px 8px 12px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.42;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 220ms ease;
+}
+
+.field-action:hover::after {
+  transform: scaleX(1);
+}
+
+.field-action svg {
+  transition: transform 180ms ease;
+}
+
+.field-action:hover svg {
+  transform: translate(2px, -2px);
+}
+
 .project-pressure-face {
   transform-origin: center;
 }
 
 .project-pressure-face:hover {
-  filter: contrast(1.04);
-  transform: translate3d(0, -1px, 0);
+  filter: contrast(1.06);
+  transform: translate3d(0, -2px, 0);
 }
 
 .project-pressure-face::after {
@@ -141,6 +170,60 @@ html.lenis, html.lenis body {
   opacity: 1;
 }
 
+.field-core {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 16px;
+  height: 16px;
+  margin-left: -8px;
+  margin-top: -8px;
+  border: 1px solid var(--color-ink);
+  background: rgba(6, 6, 6, 0.045);
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  mix-blend-mode: multiply;
+  will-change: transform, opacity;
+}
+
+.field-core::before,
+.field-core::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.field-core::before {
+  inset: 5px;
+  background: var(--color-ink);
+  opacity: 0.62;
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+}
+
+.field-core::after {
+  inset: -7px;
+  border: 1px solid rgba(6, 6, 6, 0.24);
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+}
+
+.field-core--scrolling {
+  width: 12px;
+  height: 28px;
+  margin-left: -6px;
+  margin-top: -14px;
+  background:
+    repeating-linear-gradient(
+      180deg,
+      rgba(6, 6, 6, 0.52) 0,
+      rgba(6, 6, 6, 0.52) 1px,
+      transparent 1px,
+      transparent 5px
+    );
+}
+
+.field-core--scrolling::before {
+  inset: 11px 4px;
+}
+
 .field-pressure {
   position: absolute;
   left: 0;
@@ -165,7 +248,8 @@ html.lenis, html.lenis body {
 
 .field-route,
 .field-plane,
-.field-depth-line {
+.field-depth-line,
+.field-corners {
   fill: none;
   stroke: var(--color-ink);
   stroke-width: 1;
@@ -207,6 +291,11 @@ html.lenis, html.lenis body {
   opacity: 0.16;
 }
 
+.field-corners {
+  opacity: 0.62;
+  stroke-dasharray: none;
+}
+
 .field-readout {
   position: absolute;
   min-width: 144px;
@@ -214,11 +303,15 @@ html.lenis, html.lenis body {
   border-left: 1px solid var(--color-ink);
   border-top: 1px solid rgba(6, 6, 6, 0.16);
   padding: 8px 10px;
-  background: color-mix(in srgb, var(--color-bg) 88%, transparent);
+  background:
+    linear-gradient(135deg, rgba(6, 6, 6, 0.055), transparent 42%),
+    color-mix(in srgb, var(--color-bg) 90%, transparent);
   color: var(--color-ink);
   font-family: var(--font-mono);
   text-transform: uppercase;
-  box-shadow: 0 0 0 1px rgba(6, 6, 6, 0.08);
+  box-shadow:
+    8px -8px 0 rgba(6, 6, 6, 0.028),
+    0 0 0 1px rgba(6, 6, 6, 0.08);
   transform: skewY(-5deg);
 }
 

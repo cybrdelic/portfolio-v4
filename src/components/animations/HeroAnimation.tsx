@@ -52,6 +52,16 @@ const plate = [
   .map((point) => `${point.x.toFixed(1)},${point.y.toFixed(1)}`)
   .join(' ');
 
+const markerNodes = [
+  { base: isoPoint(4, 3, -18), top: isoPoint(4, 3, 18) },
+  { base: isoPoint(9, 5, -18), top: isoPoint(9, 5, 26) },
+  { base: isoPoint(12, 8, -18), top: isoPoint(12, 8, 14) },
+];
+
+const nodeDropPath = markerNodes
+  .map(({ base, top }) => `M ${top.x.toFixed(1)} ${top.y.toFixed(1)} L ${base.x.toFixed(1)} ${base.y.toFixed(1)}`)
+  .join(' ');
+
 export default function HeroAnimation({ isActive }: { isActive: boolean }) {
   const prefersReducedMotion = Boolean(useReducedMotion());
   const id = useId();
@@ -81,6 +91,7 @@ export default function HeroAnimation({ isActive }: { isActive: boolean }) {
           <polygon points={plate} stroke="var(--color-ink)" strokeOpacity="0.22" strokeDasharray="10 7" />
           <path d={ridgePath} stroke="var(--color-ink)" strokeWidth="0.7" strokeOpacity="0.28" />
           <path d={crossPath} stroke="var(--color-ink)" strokeWidth="0.55" strokeOpacity="0.16" />
+          <path d={nodeDropPath} stroke="var(--color-ink)" strokeWidth="0.75" strokeOpacity="0.2" strokeDasharray="2 6" />
 
           <motion.path
             d={ridgePath}
@@ -97,11 +108,22 @@ export default function HeroAnimation({ isActive }: { isActive: boolean }) {
             transition={{ duration: 13, repeat: Infinity, ease: 'linear' }}
           />
 
-          {[
-            isoPoint(4, 3, 18),
-            isoPoint(9, 5, 26),
-            isoPoint(12, 8, 14),
-          ].map((point, index) => (
+          <motion.path
+            d={crossPath}
+            stroke={`url(#${scanId})`}
+            strokeWidth="0.9"
+            strokeDasharray="60 620"
+            strokeLinecap="round"
+            initial={{ strokeDashoffset: -120 }}
+            animate={
+              isActive && !prefersReducedMotion
+                ? { strokeDashoffset: [-120, -760] }
+                : { strokeDashoffset: -120 }
+            }
+            transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
+          />
+
+          {markerNodes.map(({ top: point }, index) => (
             <motion.g
               key={`${point.x}-${point.y}`}
               initial={{ opacity: 0.36, scale: 1 }}

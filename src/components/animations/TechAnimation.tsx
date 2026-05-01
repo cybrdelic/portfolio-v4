@@ -35,6 +35,12 @@ export default function TechAnimation({ isActive }: { isActive: boolean }) {
         </defs>
 
         <path d="M 28 280 L 154 34 L 454 34" stroke="var(--color-ink)" strokeOpacity="0.08" strokeDasharray="8 10" />
+        <path
+          d="M 92 102 L 112 252 M 178 88 L 208 238 M 272 82 L 286 264 M 366 84 L 352 234"
+          stroke="var(--color-ink)"
+          strokeOpacity="0.09"
+          strokeDasharray="3 9"
+        />
 
         {layers.map((layer, index) => {
           const polygon = layerPolygon(layer.x, layer.y, layer.width);
@@ -52,6 +58,12 @@ export default function TechAnimation({ isActive }: { isActive: boolean }) {
               <polygon points={polygon.rear} fill="var(--color-ink)" opacity="0.02" stroke="var(--color-ink)" strokeOpacity="0.14" strokeDasharray="7 6" />
               <polygon points={polygon.front} fill="transparent" stroke="var(--color-ink)" strokeOpacity="0.22" />
               <path d={polygon.spine} stroke="var(--color-ink)" strokeOpacity="0.13" />
+              <path
+                d={`M ${layer.x + 92} ${layer.y + 17} L ${layer.x + layer.width - 22} ${layer.y + 17}`}
+                stroke="var(--color-ink)"
+                strokeOpacity="0.12"
+                strokeDasharray="2 7"
+              />
               <text x={layer.x + 14} y={layer.y + 23} fill="var(--color-ink)" fillOpacity="0.42" fontSize="9" letterSpacing="3" fontFamily="monospace">
                 {layer.label}
               </text>
