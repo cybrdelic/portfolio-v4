@@ -22,6 +22,9 @@ export default function Footer() {
             <Magnetic strength={0.1}>
               <a 
                 href="mailto:alexfigueroa.cybr@gmail.com" 
+                data-field-target
+                data-field-kind="contact"
+                data-field-label="send email"
                 className="inline-flex min-h-11 items-center gap-2 border border-[var(--color-ink)] px-4 py-3 font-mono text-xs uppercase tracking-[0.22em] transition-colors hover:bg-[var(--color-ink)] hover:text-[var(--color-bg)]"
               >
                 Email Alex <ArrowUpRight size={16} />
@@ -36,17 +39,17 @@ export default function Footer() {
             <ul className="space-y-4 font-sans text-sm">
               <li>
                 <Magnetic strength={0.3}>
-                  <a href="https://github.com/cybrdelic" className="hover:text-[var(--color-muted)] transition-colors inline-block p-2 -ml-2">GitHub</a>
+                  <a href="https://github.com/cybrdelic" data-field-target data-field-kind="external" data-field-label="github" className="hover:text-[var(--color-muted)] transition-colors inline-block p-2 -ml-2">GitHub</a>
                 </Magnetic>
               </li>
               <li>
                 <Magnetic strength={0.3}>
-                  <a href="#work" className="hover:text-[var(--color-muted)] transition-colors inline-block p-2 -ml-2">Selected Work</a>
+                  <a href="#work" data-field-target data-field-kind="route" data-field-label="selected work" className="hover:text-[var(--color-muted)] transition-colors inline-block p-2 -ml-2">Selected Work</a>
                 </Magnetic>
               </li>
               <li>
                 <Magnetic strength={0.3}>
-                  <a href="mailto:alexfigueroa.cybr@gmail.com" className="hover:text-[var(--color-muted)] transition-colors inline-block p-2 -ml-2">Contact</a>
+                  <a href="mailto:alexfigueroa.cybr@gmail.com" data-field-target data-field-kind="contact" data-field-label="email" className="hover:text-[var(--color-muted)] transition-colors inline-block p-2 -ml-2">Contact</a>
                 </Magnetic>
               </li>
             </ul>

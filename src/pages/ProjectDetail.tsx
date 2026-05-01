@@ -25,7 +25,13 @@ export default function ProjectDetail() {
       <article className="min-h-screen px-6 pb-24 pt-24 text-[var(--color-ink)] md:px-12 md:pb-32 md:pt-28">
         <div className="max-w-7xl mx-auto">
           <Magnetic>
-            <Link to="/#work" className="mb-12 inline-flex min-h-10 items-center gap-2 p-2 -ml-2 font-mono text-xs uppercase tracking-widest text-[var(--color-muted)] transition-colors hover:text-[var(--color-ink)] md:mb-16">
+            <Link
+              to="/#work"
+              data-field-target
+              data-field-kind="route"
+              data-field-label="selected work"
+              className="mb-12 inline-flex min-h-10 items-center gap-2 p-2 -ml-2 font-mono text-xs uppercase tracking-widest text-[var(--color-muted)] transition-colors hover:text-[var(--color-ink)] md:mb-16"
+            >
               <ArrowLeft size={16} /> Back to selected work
             </Link>
           </Magnetic>

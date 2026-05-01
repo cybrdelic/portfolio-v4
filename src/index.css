@@ -57,19 +57,147 @@ html.lenis, html.lenis body {
   outline-offset: 4px;
 }
 
-body.has-custom-cursor,
-body.has-custom-cursor a,
-body.has-custom-cursor button,
-body.has-custom-cursor input,
-body.has-custom-cursor select,
-body.has-custom-cursor textarea {
-  cursor: none !important;
-}
-
 .section-shell {
   position: relative;
   padding: 6rem 1.5rem;
   border-bottom: 1px solid var(--color-line);
+}
+
+[data-field-target] {
+  position: relative;
+  transition:
+    border-color 180ms ease,
+    color 180ms ease,
+    filter 180ms ease,
+    letter-spacing 180ms ease,
+    transform 180ms ease;
+}
+
+[data-field-target]::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border: 1px solid var(--color-ink);
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.985);
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+[data-field-target]:hover::before {
+  opacity: 0.32;
+  transform: scale(1);
+}
+
+[data-field-kind="route"]:hover,
+[data-field-kind="contact"]:hover,
+[data-field-kind="external"]:hover {
+  letter-spacing: 0.25em;
+}
+
+.project-pressure-face {
+  transform-origin: center;
+}
+
+.project-pressure-face:hover {
+  filter: contrast(1.04);
+}
+
+.project-pressure-face::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      280px circle at var(--field-x, 50%) var(--field-y, 50%),
+      rgba(6, 6, 6, 0.07),
+      rgba(6, 6, 6, 0.025) 34%,
+      transparent 68%
+    );
+  mix-blend-mode: multiply;
+  transition: opacity 160ms ease;
+}
+
+.project-pressure-face:hover::after {
+  opacity: 1;
+}
+
+.field-pressure {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 260px;
+  height: 260px;
+  margin-left: -130px;
+  margin-top: -130px;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle, rgba(6, 6, 6, 0.08), rgba(6, 6, 6, 0.025) 36%, transparent 68%),
+    radial-gradient(circle, transparent 54%, rgba(6, 6, 6, 0.14) 55%, transparent 56%);
+  mix-blend-mode: multiply;
+  will-change: transform, opacity;
+}
+
+.field-route,
+.field-frame {
+  fill: none;
+  stroke: var(--color-ink);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.field-route {
+  opacity: 0.42;
+  stroke-dasharray: 1 7;
+}
+
+.field-route--soft {
+  opacity: 0.22;
+}
+
+.field-frame {
+  stroke-dasharray: 8 5;
+}
+
+.field-readout {
+  position: absolute;
+  min-width: 144px;
+  max-width: 210px;
+  border-left: 1px solid var(--color-ink);
+  padding: 8px 10px;
+  background: color-mix(in srgb, var(--color-bg) 88%, transparent);
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  box-shadow: 0 0 0 1px rgba(6, 6, 6, 0.08);
+}
+
+.field-readout span,
+.field-readout strong {
+  display: block;
+}
+
+.field-readout span {
+  margin-bottom: 5px;
+  color: var(--color-muted);
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.26em;
+}
+
+.field-readout strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
 }
 
 .section-shell--framed {

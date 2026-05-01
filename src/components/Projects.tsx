@@ -32,7 +32,10 @@ function ProjectFace({
       aria-hidden={!isInteractive}
       tabIndex={isInteractive ? 0 : -1}
       to={`/project/${project.id}`}
-      className="group relative block h-full w-full text-[var(--color-ink)] focus-visible:outline-none"
+      data-field-target={isInteractive ? true : undefined}
+      data-field-kind="inspect"
+      data-field-label={`${project.title} dossier`}
+      className="group project-pressure-face relative block h-full w-full text-[var(--color-ink)] focus-visible:outline-none"
     >
       <div className="absolute inset-x-0 top-0 h-px bg-[var(--color-line)]" />
       <div className="absolute inset-x-0 bottom-0 h-px bg-[var(--color-line)]" />

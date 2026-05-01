@@ -35,12 +35,18 @@ function HeroFace() {
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <a
               href="#work"
+              data-field-target
+              data-field-kind="route"
+              data-field-label="selected work"
               className="inline-flex min-h-11 items-center gap-2 border border-[var(--color-ink)] px-4 py-3 font-mono text-xs uppercase tracking-[0.22em] transition-colors hover:bg-[var(--color-ink)] hover:text-[var(--color-bg)]"
             >
               View work <ArrowDown size={14} />
             </a>
             <a
               href="#contact"
+              data-field-target
+              data-field-kind="contact"
+              data-field-label="email path"
               className="inline-flex min-h-11 items-center gap-2 border border-[var(--color-line)] px-4 py-3 font-mono text-xs uppercase tracking-[0.22em] text-[var(--color-muted)] transition-colors hover:border-[var(--color-ink)] hover:text-[var(--color-ink)]"
             >
               Contact <ArrowUpRight size={14} />
