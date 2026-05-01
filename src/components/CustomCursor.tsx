@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { motion, useMotionValue, useSpring } from 'motion/react';
 import useFinePointer from '../hooks/useFinePointer';
 
@@ -219,6 +219,13 @@ export default function CustomCursor() {
       : pointer.y > viewport.height - 128
         ? Math.max(18, pointer.y - 96)
         : Math.min(pointer.y + 18, viewport.height - 88);
+  const readoutStyle = {
+    left: readoutX,
+    top: readoutY,
+    '--readout-depth-x': `${depthX || 18}px`,
+    '--readout-depth-y': `${depthY || -14}px`,
+    '--readout-depth-rise': `${Math.abs(depthY || -14)}px`,
+  } as CSSProperties;
 
   return (
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-[96]">
@@ -323,7 +330,7 @@ export default function CustomCursor() {
       {fieldTarget && isVisible && (
         <motion.div
           className="field-readout"
-          style={{ left: readoutX, top: readoutY }}
+          style={readoutStyle}
           initial={false}
           animate={{ opacity: isActive ? 0.55 : 1, y: isActive ? 2 : 0 }}
         >

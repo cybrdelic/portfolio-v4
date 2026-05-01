@@ -397,10 +397,14 @@ html.lenis, html.lenis body {
   position: absolute;
   min-width: 144px;
   max-width: 210px;
+  --readout-depth-x: 18px;
+  --readout-depth-y: -14px;
+  --readout-depth-rise: 14px;
   will-change: opacity, transform;
 }
 
 .field-readout-panel {
+  position: relative;
   border-left: 1px solid var(--color-ink);
   border-top: 1px solid rgba(6, 6, 6, 0.16);
   padding: 8px 10px;
@@ -411,15 +415,46 @@ html.lenis, html.lenis body {
   font-family: var(--font-mono);
   text-transform: uppercase;
   box-shadow:
-    8px -8px 0 rgba(6, 6, 6, 0.028),
     0 0 0 1px rgba(6, 6, 6, 0.08);
-  transform: skewY(-5deg);
+}
+
+.field-readout-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  border: 1px solid rgba(6, 6, 6, 0.12);
+  background: rgba(6, 6, 6, 0.018);
+  transform: translate(var(--readout-depth-x), var(--readout-depth-y));
+}
+
+.field-readout-panel::after {
+  content: "";
+  position: absolute;
+  right: calc(var(--readout-depth-x) * -1);
+  top: var(--readout-depth-y);
+  z-index: -1;
+  width: var(--readout-depth-x);
+  height: calc(100% + var(--readout-depth-rise));
+  clip-path: polygon(
+    0 var(--readout-depth-rise),
+    100% 0,
+    100% calc(100% - var(--readout-depth-rise)),
+    0 100%
+  );
+  background:
+    linear-gradient(90deg, rgba(6, 6, 6, 0.055), rgba(6, 6, 6, 0.018)),
+    rgba(6, 6, 6, 0.012);
+  box-shadow:
+    inset -1px 0 0 rgba(6, 6, 6, 0.12),
+    inset 0 1px 0 rgba(6, 6, 6, 0.1);
 }
 
 .field-readout-panel span,
 .field-readout-panel strong {
+  position: relative;
+  z-index: 1;
   display: block;
-  transform: skewY(5deg);
 }
 
 .field-readout-panel span {
