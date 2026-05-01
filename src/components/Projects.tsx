@@ -133,7 +133,7 @@ export default function Projects() {
       id="work"
       ref={ref}
       className="bridge-section relative border-b border-[var(--color-line)]"
-      style={{ height: `${totalHeightVh}vh` }}
+      style={{ height: `${totalHeightVh}vh`, position: 'relative' }}
     >
       <div className="sticky top-0 h-[100svh] overflow-hidden">
         <motion.div

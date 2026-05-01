@@ -20,7 +20,7 @@ function HeroFace() {
   return (
     <div className="relative h-full w-full overflow-hidden text-[var(--color-ink)]">
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:48px_48px] opacity-10" />
-      <div className="pointer-events-none absolute right-0 top-0 h-[420px] w-[420px] -translate-y-1/4 translate-x-1/3 opacity-25 mix-blend-multiply md:h-[560px] md:w-[560px] md:opacity-35 lg:opacity-45">
+      <div className="pointer-events-none absolute right-0 top-0 h-[420px] w-[420px] -translate-y-1/4 translate-x-1/3 opacity-40 mix-blend-multiply md:h-[560px] md:w-[560px] md:opacity-55 lg:opacity-65">
         <HeroAnimation isActive />
       </div>
       <div className="pointer-events-none absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-[var(--color-bg)] via-[var(--color-bg)]/80 to-transparent" />
@@ -121,6 +121,7 @@ export default function HeroThesisTransition() {
       className="relative border-b border-[var(--color-line)]"
       style={{
         height: prefersReducedMotion ? '100svh' : '200vh',
+        position: 'relative',
       }}
     >
       <div className="sticky top-0 h-[100svh] overflow-hidden [perspective:2200px] [--hero-thesis-cube:100svh]">

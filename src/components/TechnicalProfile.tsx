@@ -16,7 +16,11 @@ export default function TechnicalProfile() {
   const backgroundY = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
 
   return (
-    <section ref={ref} className="section-shell section-shell--framed">
+    <section
+      ref={ref}
+      className="section-shell section-shell--framed"
+      style={{ position: 'relative' }}
+    >
       <motion.div 
         style={prefersReducedMotion ? undefined : { y: backgroundY }}
         className="absolute bottom-0 right-0 w-[500px] h-[500px] pointer-events-none -z-10 translate-x-1/4 translate-y-1/4"

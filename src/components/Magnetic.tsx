@@ -1,4 +1,4 @@
-import { ReactElement, useRef } from 'react';
+import { MouseEvent, ReactElement, useRef } from 'react';
 import { motion, useMotionValue, useSpring } from 'motion/react';
 import useFinePointer from '../hooks/useFinePointer';
 
@@ -15,7 +15,7 @@ export default function Magnetic({ children, strength = 0.2 }: MagneticProps) {
   const springX = useSpring(x, { stiffness: 150, damping: 15, mass: 0.1 });
   const springY = useSpring(y, { stiffness: 150, damping: 15, mass: 0.1 });
 
-  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseMove = (event: MouseEvent<HTMLDivElement>) => {
     if (!canUseFinePointer) return;
     if (!ref.current) return;
 

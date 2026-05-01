@@ -1,179 +1,118 @@
-import { MotionValue, motion, useTransform } from 'motion/react';
-
-const center = 240;
-
-const frameRings = [84, 132, 180];
-const guideLines = Array.from({ length: 9 }, (_, index) => 72 + index * 42);
-const nodes = [
-  { x: 126, y: 142 },
-  { x: 210, y: 104 },
-  { x: 328, y: 132 },
-  { x: 374, y: 222 },
-  { x: 316, y: 330 },
-  { x: 204, y: 364 },
-  { x: 118, y: 302 },
-  { x: 96, y: 214 },
-];
-
-const signalPaths = [
-  `M 92 178 C 146 146, 198 136, 244 152 S 340 214, 390 188`,
-  `M 108 296 C 172 274, 218 242, 266 248 S 334 288, 388 266`,
-  `M 136 112 C 192 134, 244 200, 316 206 S 370 176, 392 130`,
-];
+import { MotionValue, motion, useReducedMotion, useTransform } from 'motion/react';
+import { useId } from 'react';
 
 type SystemAnimationProps = {
   isActive: boolean;
   scrollProgress: MotionValue<number>;
 };
 
+const planes = [
+  { height: 116, width: 220, x: 110, y: 98 },
+  { height: 132, width: 256, x: 146, y: 156 },
+  { height: 102, width: 198, x: 86, y: 226 },
+];
+
+const nodes = [
+  [154, 132],
+  [248, 112],
+  [336, 174],
+  [304, 266],
+  [182, 296],
+  [132, 222],
+];
+
+function planePath(x: number, y: number, width: number, height: number, depth = 26) {
+  const right = x + width;
+  const bottom = y + height;
+  const dx = depth;
+  const dy = -depth * 0.58;
+
+  return {
+    connectors: [
+      `M ${x} ${y} L ${x + dx} ${y + dy}`,
+      `M ${right} ${y} L ${right + dx} ${y + dy}`,
+      `M ${right} ${bottom} L ${right + dx} ${bottom + dy}`,
+      `M ${x} ${bottom} L ${x + dx} ${bottom + dy}`,
+    ].join(' '),
+    front: `${x},${y} ${right},${y} ${right},${bottom} ${x},${bottom}`,
+    rear: `${x + dx},${y + dy} ${right + dx},${y + dy} ${right + dx},${bottom + dy} ${x + dx},${bottom + dy}`,
+  };
+}
+
 export default function SystemAnimation({
   isActive,
   scrollProgress,
 }: SystemAnimationProps) {
-  const backY = useTransform(scrollProgress, [0, 1], [-22, 18]);
-  const midY = useTransform(scrollProgress, [0, 1], [-10, 12]);
-  const frontY = useTransform(scrollProgress, [0, 1], [18, -18]);
-  const backRotate = useTransform(scrollProgress, [0, 1], [-4, 4]);
-  const frontRotate = useTransform(scrollProgress, [0, 1], [6, -6]);
+  const prefersReducedMotion = Boolean(useReducedMotion());
+  const id = useId();
+  const scanId = `system-scan-${id.replace(/:/g, '')}`;
+  const y = useTransform(scrollProgress, [0, 1], [-24, 24]);
+  const rotate = useTransform(scrollProgress, [0, 1], [-5, 5]);
+  const scale = useTransform(scrollProgress, [0, 0.5, 1], [0.94, 1.04, 0.98]);
 
   return (
-    <div className="relative flex h-full w-full items-center justify-center opacity-50" aria-hidden="true">
+    <div className="relative flex h-full w-full items-center justify-center opacity-60" aria-hidden="true">
       <svg className="h-full w-full" viewBox="0 0 480 480" fill="none">
         <defs>
-          <linearGradient id="system-scan-soft" x1="0%" y1="0%" x2="100%" y2="0%">
+          <linearGradient id={scanId} x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="var(--color-ink)" stopOpacity="0" />
-            <stop offset="50%" stopColor="var(--color-ink)" stopOpacity="0.55" />
+            <stop offset="50%" stopColor="var(--color-ink)" stopOpacity="0.56" />
             <stop offset="100%" stopColor="var(--color-ink)" stopOpacity="0" />
           </linearGradient>
         </defs>
 
-        <motion.g style={{ y: backY, rotate: backRotate, originX: '50%', originY: '50%' }}>
-          {frameRings.map((radius, index) => (
-            <circle
-              key={radius}
-              cx={center}
-              cy={center}
-              r={radius}
-              stroke="var(--color-ink)"
-              strokeWidth={index === 0 ? 1.2 : 0.9}
-              strokeOpacity={0.08 + index * 0.03}
-              strokeDasharray={index === 1 ? '3 14' : '4 18'}
-            />
-          ))}
+        <motion.g style={{ y, rotate, scale, originX: '50%', originY: '50%' }}>
+          {planes.map((plane, index) => {
+            const path = planePath(plane.x, plane.y, plane.width, plane.height);
+            return (
+              <motion.g
+                key={`${plane.x}-${plane.y}`}
+                initial={{ opacity: 0.7, x: 0 }}
+                animate={
+                  isActive && !prefersReducedMotion
+                    ? { opacity: [0.55, 0.92, 0.55], x: [0, index % 2 ? -5 : 5, 0] }
+                    : { opacity: 0.7, x: 0 }
+                }
+                transition={{ duration: 9 + index * 1.4, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                <polygon points={path.rear} fill="var(--color-ink)" opacity="0.022" stroke="var(--color-ink)" strokeOpacity="0.16" strokeDasharray="8 7" />
+                <polygon points={path.front} fill="transparent" stroke="var(--color-ink)" strokeOpacity="0.18" />
+                <path d={path.connectors} stroke="var(--color-ink)" strokeOpacity="0.12" strokeDasharray="4 6" />
+              </motion.g>
+            );
+          })}
 
-          {guideLines.map((position) => (
-            <line
-              key={`h-${position}`}
-              x1="64"
-              y1={position}
-              x2="416"
-              y2={position}
-              stroke="var(--color-ink)"
-              strokeWidth="0.6"
-              strokeOpacity="0.06"
-            />
-          ))}
-
-          {guideLines.map((position) => (
-            <line
-              key={`v-${position}`}
-              x1={position}
-              y1="64"
-              x2={position}
-              y2="416"
-              stroke="var(--color-ink)"
-              strokeWidth="0.6"
-              strokeOpacity="0.06"
-            />
-          ))}
-        </motion.g>
-
-        <motion.g style={{ y: midY, originX: '50%', originY: '50%' }}>
-          {signalPaths.map((path, index) => (
-            <motion.path
-              key={path}
-              d={path}
-              stroke="url(#system-scan-soft)"
-              strokeWidth={index === 1 ? 2.1 : 1.8}
-              strokeLinecap="round"
-              strokeDasharray="68 220"
-              strokeOpacity="0.7"
-              animate={
-                isActive
-                  ? {
-                      strokeDashoffset: [0, -288],
-                    }
-                  : undefined
-              }
-              transition={
-                isActive
-                  ? {
-                      duration: 12 + index * 2.5,
-                      repeat: Infinity,
-                      ease: 'linear',
-                      delay: index * 0.8,
-                    }
-                  : undefined
-              }
-            />
-          ))}
-
-          <rect
-            x="142"
-            y="142"
-            width="196"
-            height="196"
-            stroke="var(--color-ink)"
-            strokeWidth="1"
-            strokeOpacity="0.11"
+          <motion.path
+            d="M 132 222 L 154 132 L 248 112 L 336 174 L 304 266 L 182 296 Z"
+            stroke={`url(#${scanId})`}
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeDasharray="76 360"
+            initial={{ strokeDashoffset: 0 }}
+            animate={
+              isActive && !prefersReducedMotion
+                ? { strokeDashoffset: [0, -436] }
+                : { strokeDashoffset: 0 }
+            }
+            transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
           />
-          <rect
-            x="172"
-            y="172"
-            width="136"
-            height="136"
-            stroke="var(--color-ink)"
-            strokeWidth="0.9"
-            strokeOpacity="0.13"
-            strokeDasharray="6 16"
-          />
-        </motion.g>
 
-        <motion.g style={{ y: frontY, rotate: frontRotate, originX: '50%', originY: '50%' }}>
-          {nodes.map((node, index) => (
+          {nodes.map(([cx, cy], index) => (
             <motion.g
-              key={`${node.x}-${node.y}`}
+              key={`${cx}-${cy}`}
+              initial={{ opacity: 0.44, y: 0 }}
               animate={
-                isActive
-                  ? {
-                      opacity: [0.28, 0.68, 0.34],
-                    }
-                  : undefined
+                isActive && !prefersReducedMotion
+                  ? { opacity: [0.28, 0.74, 0.28], y: [0, -3, 0] }
+                  : { opacity: 0.44, y: 0 }
               }
-              transition={
-                isActive
-                  ? {
-                      duration: 6.5,
-                      repeat: Infinity,
-                      ease: 'easeInOut',
-                      delay: index * 0.45,
-                    }
-                  : undefined
-              }
+              transition={{ duration: 5.8, repeat: Infinity, delay: index * 0.42, ease: 'easeInOut' }}
             >
-              <circle cx={node.x} cy={node.y} r="3.5" fill="var(--color-ink)" fillOpacity="0.72" />
-              <circle cx={node.x} cy={node.y} r="10" stroke="var(--color-ink)" strokeOpacity="0.14" />
+              <circle cx={cx} cy={cy} r="3.4" fill="var(--color-ink)" fillOpacity="0.52" />
+              <path d={`M ${cx - 12} ${cy + 8} L ${cx} ${cy} L ${cx + 18} ${cy - 10}`} stroke="var(--color-ink)" strokeOpacity="0.16" />
             </motion.g>
           ))}
-
-          <path
-            d="M 240 104 L 240 376 M 104 240 L 376 240"
-            stroke="var(--color-ink)"
-            strokeWidth="0.85"
-            strokeOpacity="0.12"
-          />
-          <circle cx={center} cy={center} r="30" stroke="var(--color-ink)" strokeWidth="1.1" strokeOpacity="0.32" />
-          <circle cx={center} cy={center} r="8" fill="var(--color-ink)" fillOpacity="0.2" />
         </motion.g>
       </svg>
     </div>

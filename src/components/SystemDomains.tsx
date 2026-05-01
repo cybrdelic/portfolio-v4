@@ -11,6 +11,7 @@ function DomainRow({
 }: {
   description: string;
   index: number;
+  key?: string;
   title: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -35,8 +36,9 @@ function DomainRow({
       className="group relative block data-row py-12 md:py-14"
       style={
         prefersReducedMotion
-          ? undefined
+          ? { position: 'relative' }
           : {
+              position: 'relative',
               opacity: shellOpacity,
               transformPerspective: 1600,
               y: shellY,
@@ -104,7 +106,11 @@ export default function SystemDomains() {
     <section
       ref={ref}
       className="section-shell section-shell--framed"
-      style={prefersReducedMotion ? undefined : { perspective: '2000px' }}
+      style={
+        prefersReducedMotion
+          ? { position: 'relative' }
+          : { perspective: '2000px', position: 'relative' }
+      }
     >
       <motion.div
         aria-hidden="true"

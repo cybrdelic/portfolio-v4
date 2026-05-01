@@ -14,6 +14,10 @@
   --color-line: #959595;
 }
 
+html {
+  position: relative;
+}
+
 body {
   background-color: var(--color-bg);
   color: var(--color-ink);

@@ -38,9 +38,11 @@ export default function App() {
 
       <div className="relative z-10">
         <AnimatePresence mode="wait">
-          {/* @ts-ignore */}
-          <Suspense fallback={<div className="min-h-screen" aria-hidden="true" />}>
-            <Routes location={location} key={location.pathname}>
+          <Suspense
+            key={location.pathname}
+            fallback={<div className="min-h-screen" aria-hidden="true" />}
+          >
+            <Routes location={location}>
               <Route path="/" element={<Home />} />
               <Route path="/project/:id" element={<ProjectDetail />} />
             </Routes>

@@ -13,6 +13,11 @@ type PointerState = {
   y: number;
 };
 
+type ViewportState = {
+  height: number;
+  width: number;
+};
+
 function getFieldTarget(target: EventTarget | null): FieldTarget | null {
   if (!(target instanceof HTMLElement)) {
     return null;
@@ -49,6 +54,7 @@ export default function CustomCursor() {
   const [isVisible, setIsVisible] = useState(false);
   const [pointer, setPointer] = useState<PointerState>({ x: -200, y: -200 });
   const [fieldTarget, setFieldTarget] = useState<FieldTarget | null>(null);
+  const [viewport, setViewport] = useState<ViewportState>({ height: 900, width: 1440 });
 
   useEffect(() => {
     if (!canUseFinePointer) {
@@ -74,6 +80,10 @@ export default function CustomCursor() {
       document.documentElement.style.setProperty('--field-y', `${y}px`);
     };
 
+    const updateViewport = () => {
+      setViewport({ height: window.innerHeight, width: window.innerWidth });
+    };
+
     const handlePointerMove = (event: PointerEvent) => {
       nextPointer = { x: event.clientX, y: event.clientY };
       nextTarget = event.target;
@@ -97,10 +107,13 @@ export default function CustomCursor() {
       setFieldTarget(null);
     };
 
+    updateViewport();
     window.addEventListener('pointermove', handlePointerMove, { passive: true });
     window.addEventListener('pointerdown', handlePointerDown);
     window.addEventListener('pointerup', handlePointerUp);
     window.addEventListener('blur', handleWindowBlur);
+    window.addEventListener('resize', updateViewport);
+    window.addEventListener('scroll', flush, { passive: true });
     document.documentElement.addEventListener('pointerleave', handlePointerLeave);
     document.documentElement.addEventListener('pointerenter', handlePointerEnter);
 
@@ -112,6 +125,8 @@ export default function CustomCursor() {
       window.removeEventListener('pointerdown', handlePointerDown);
       window.removeEventListener('pointerup', handlePointerUp);
       window.removeEventListener('blur', handleWindowBlur);
+      window.removeEventListener('resize', updateViewport);
+      window.removeEventListener('scroll', flush);
       document.documentElement.removeEventListener('pointerleave', handlePointerLeave);
       document.documentElement.removeEventListener('pointerenter', handlePointerEnter);
       document.documentElement.style.removeProperty('--field-x');
@@ -125,20 +140,32 @@ export default function CustomCursor() {
 
   const rect = fieldTarget?.rect;
   const isLargeSurface = rect
-    ? rect.width > window.innerWidth * 0.62 && rect.height > window.innerHeight * 0.62
+    ? rect.width > viewport.width * 0.62 && rect.height > viewport.height * 0.62
     : false;
-  const projectionRect = rect
-    ? {
-        left: isLargeSurface
-          ? Math.max(24, Math.min(pointer.x - 170, window.innerWidth - 388))
-          : rect.left,
-        top: isLargeSurface
-          ? Math.max(24, Math.min(pointer.y - 108, window.innerHeight - 246))
-          : rect.top,
-        width: isLargeSurface ? 360 : rect.width,
-        height: isLargeSurface ? 210 : rect.height,
-      }
-    : null;
+  let projectionRect = null;
+
+  if (rect && !isLargeSurface) {
+    projectionRect = {
+      height: rect.height,
+      left: rect.left,
+      top: rect.top,
+      width: rect.width,
+    };
+  }
+
+  if (rect && isLargeSurface) {
+    const patchWidth = 220;
+    const patchHeight = 124;
+    projectionRect = {
+      height: patchHeight,
+      left: Math.max(24, Math.min(pointer.x - patchWidth / 2, viewport.width - patchWidth - 24)),
+      top:
+        pointer.y > viewport.height * 0.58
+          ? Math.max(24, pointer.y - patchHeight - 34)
+          : Math.min(pointer.y + 34, viewport.height - patchHeight - 24),
+      width: patchWidth,
+    };
+  }
   const right = projectionRect ? projectionRect.left + projectionRect.width : 0;
   const bottom = projectionRect ? projectionRect.top + projectionRect.height : 0;
   const centerX = projectionRect ? projectionRect.left + projectionRect.width / 2 : 0;
@@ -154,8 +181,17 @@ export default function CustomCursor() {
     ? `${projectionRect.left + depthX},${projectionRect.top + depthY} ${right + depthX},${projectionRect.top + depthY} ${right + depthX},${bottom + depthY} ${projectionRect.left + depthX},${bottom + depthY}`
     : '';
   const pressureDepth = isActive ? 0.82 : fieldTarget ? 1.24 : 1;
-  const readoutX = Math.min(pointer.x + 18, window.innerWidth - 220);
-  const readoutY = Math.min(pointer.y + 18, window.innerHeight - 88);
+  const readoutX = Math.max(
+    18,
+    Math.min(
+      isLargeSurface ? pointer.x - 92 : pointer.x + 18,
+      viewport.width - 220
+    )
+  );
+  const readoutY =
+    pointer.y > viewport.height - 128
+      ? Math.max(18, pointer.y - 96)
+      : Math.min(pointer.y + 18, viewport.height - 88);
 
   return (
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-[96]">
@@ -174,12 +210,12 @@ export default function CustomCursor() {
           <motion.polygon
             points={farPlane}
             className="field-plane field-plane--rear"
-            animate={{ opacity: isActive ? 0.2 : 0.34 }}
+            animate={{ opacity: isActive ? 0.16 : isLargeSurface ? 0.2 : 0.34 }}
           />
           <motion.polygon
             points={nearPlane}
             className="field-plane field-plane--front"
-            animate={{ opacity: isActive ? 0.72 : 0.52 }}
+            animate={{ opacity: isActive ? 0.48 : isLargeSurface ? 0.34 : 0.52 }}
           />
           <line
             x1={projectionRect.left}
