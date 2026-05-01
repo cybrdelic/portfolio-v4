@@ -9,12 +9,12 @@ export default function SmoothScroll() {
     if (!canUseFinePointer) return;
 
     const lenis = new Lenis({
-      duration: 0.95,
-      easing: (t) => 1 - Math.pow(1 - t, 3),
+      duration: 1.08,
+      easing: (t) => 1 - Math.pow(1 - t, 4),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 1,
+      wheelMultiplier: 0.92,
     });
 
     let rafId = 0;

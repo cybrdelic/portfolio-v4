@@ -6,7 +6,7 @@ import {
   useTransform,
 } from 'motion/react';
 import { ArrowDown, ArrowUpRight } from 'lucide-react';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   heroIdentity,
   heroStats,
@@ -103,73 +103,102 @@ function ThesisFace() {
 
 export default function HeroThesisTransition() {
   const ref = useRef<HTMLElement>(null);
+  const [isCompactViewport, setIsCompactViewport] = useState(false);
   const prefersReducedMotion = Boolean(useReducedMotion());
+
+  useEffect(() => {
+    const query = window.matchMedia('(max-width: 767px)');
+    const updateViewport = () => setIsCompactViewport(query.matches);
+
+    updateViewport();
+    query.addEventListener('change', updateViewport);
+
+    return () => query.removeEventListener('change', updateViewport);
+  }, []);
+
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start start', 'end end'],
   });
 
-  const rotation = useTransform(scrollYProgress, [0, 1], [0, 90]);
-  const zoom = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.92, 1]);
-  const frontOpacity = useTransform(scrollYProgress, [0, 0.7, 1], [1, 1, 0.55]);
-  const nextOpacity = useTransform(scrollYProgress, [0, 0.2, 1], [0.35, 0.75, 1]);
-  const hingeOpacity = useTransform(scrollYProgress, [0, 0.18, 0.42, 0.72, 1], [0, 0, 0.58, 0.28, 0]);
-  const hingeY = useTransform(scrollYProgress, [0, 1], ['72%', '25%']);
-  const cubeTransform = useMotionTemplate`translateZ(calc(var(--hero-thesis-cube) / -2)) rotateX(${rotation}deg) scale(${zoom})`;
+  const stageScale = useTransform(
+    scrollYProgress,
+    [0, 0.24, 0.7, 0.9],
+    [1, 0.985, isCompactViewport ? 0.88 : 0.68, isCompactViewport ? 0.74 : 0.42]
+  );
+  const stageY = useTransform(
+    scrollYProgress,
+    [0, 0.36, 0.7, 0.9],
+    [0, -8, isCompactViewport ? -34 : -112, isCompactViewport ? -112 : -286]
+  );
+  const stageInset = useTransform(
+    scrollYProgress,
+    [0, 0.24, 0.76, 1],
+    [0, 0, isCompactViewport ? 8 : 36, isCompactViewport ? 16 : 96]
+  );
+  const stageRadius = useTransform(scrollYProgress, [0, 0.5, 1], ['0px', '5px', '8px']);
+  const stageOpacity = useTransform(scrollYProgress, [0, 0.64, 0.76, 0.82], [1, 1, 0.12, 0]);
+  const stageClipPath = useMotionTemplate`inset(${stageInset}px round ${stageRadius})`;
+  const frameOpacity = useTransform(scrollYProgress, [0, 0.18, 0.58, 0.82], [0, 0, 0.76, 0]);
+  const frameScaleX = useTransform(scrollYProgress, [0.2, 1], [0.08, 1]);
+  const nextOpacity = useTransform(scrollYProgress, [0, 0.76, 0.88, 1], [0, 0, 0.9, 1]);
+  const nextY = useTransform(scrollYProgress, [0, 0.74, 1], [88, 12, 0]);
+  const nextScale = useTransform(scrollYProgress, [0, 0.68, 1], [0.965, 0.99, 1]);
+  const marginOpacity = useTransform(scrollYProgress, [0, 0.22, 0.72, 1], [0, 0, 0.46, 0.76]);
+
+  if (prefersReducedMotion) {
+    return (
+      <section ref={ref} className="relative border-b border-[var(--color-line)]">
+        <div className="min-h-[100svh]">
+          <HeroFace />
+        </div>
+        <div className="border-t border-[var(--color-line)]">
+          <ThesisFace />
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section
       ref={ref}
-      className="relative border-b border-[var(--color-line)]"
-      style={{
-        height: prefersReducedMotion ? '100svh' : '200vh',
-        position: 'relative',
-      }}
+      className="hero-scroll-section relative border-b border-[var(--color-line)]"
     >
-      <div className="sticky top-0 h-[100svh] overflow-hidden [perspective:2200px] [--hero-thesis-cube:100svh]">
+      <div className="hero-scroll-sticky sticky top-0 h-[100svh] overflow-hidden">
         <motion.div
-          className="absolute inset-0 [transform-style:preserve-3d]"
-          style={prefersReducedMotion ? undefined : { transform: cubeTransform }}
-        >
-          <motion.div
-            className="absolute inset-0 overflow-hidden border-y border-[var(--color-line)] [backface-visibility:hidden]"
-            style={
-              prefersReducedMotion
-                ? undefined
-                : {
-                    opacity: frontOpacity,
-                    transform: 'translateZ(calc(var(--hero-thesis-cube) / 2))',
-                  }
-            }
-          >
-            <HeroFace />
-          </motion.div>
+          aria-hidden="true"
+          className="hero-scroll-margin-field"
+          style={{ opacity: marginOpacity }}
+        />
 
-          <motion.div
-            className="absolute inset-0 overflow-hidden border-y border-[var(--color-line)] [backface-visibility:hidden]"
-            style={
-              prefersReducedMotion
-                ? undefined
-                : {
-                    opacity: nextOpacity,
-                    transform: 'rotateX(-90deg) translateZ(calc(var(--hero-thesis-cube) / 2))',
-                    transformOrigin: 'center center',
-                  }
-            }
-          >
-            <ThesisFace />
-          </motion.div>
+        <motion.div
+          className="hero-thesis-underlay absolute inset-0"
+          style={{ opacity: nextOpacity, scale: nextScale, y: nextY }}
+        >
+          <ThesisFace />
         </motion.div>
 
-        {!prefersReducedMotion && (
+        <motion.div
+          className="hero-stage-shell absolute inset-0 overflow-hidden border-y border-[var(--color-line)] bg-[var(--color-bg)]"
+          style={{
+            borderRadius: stageRadius,
+            clipPath: stageClipPath,
+            opacity: stageOpacity,
+            scale: stageScale,
+            y: stageY,
+          }}
+        >
+          <HeroFace />
           <motion.div
             aria-hidden="true"
-            className="hero-cube-hinge"
-            style={{ opacity: hingeOpacity, top: hingeY }}
-          />
-        )}
-
-        {prefersReducedMotion && <ThesisFace />}
+            className="hero-stage-chrome"
+            style={{ opacity: frameOpacity }}
+          >
+            <motion.span style={{ scaleX: frameScaleX }} />
+            <i>Scroll field</i>
+            <b>Thesis handoff</b>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );
