@@ -225,6 +225,8 @@ export default function CustomCursor() {
     '--readout-depth-x': `${depthX || 18}px`,
     '--readout-depth-y': `${depthY || -14}px`,
     '--readout-depth-rise': `${Math.abs(depthY || -14)}px`,
+    '--readout-depth-angle': `${Math.atan2(depthY || -14, depthX || 18)}rad`,
+    '--readout-edge-length': `${Math.hypot(depthX || 18, depthY || -14)}px`,
   } as CSSProperties;
 
   return (

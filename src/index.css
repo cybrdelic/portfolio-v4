@@ -419,7 +419,6 @@ html.lenis, html.lenis body {
     linear-gradient(135deg, rgba(6, 6, 6, 0.055), transparent 42%),
     color-mix(in srgb, var(--color-bg) 90%, transparent);
   box-shadow:
-    inset 1px 0 0 var(--color-ink),
     inset 0 1px 0 rgba(6, 6, 6, 0.16),
     inset 0 -1px 0 rgba(6, 6, 6, 0.08);
   clip-path: polygon(
@@ -430,6 +429,30 @@ html.lenis, html.lenis body {
     calc(100% - var(--readout-depth-x)) 100%,
     0 100%
   );
+}
+
+.field-readout-surface::before,
+.field-readout-surface::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  width: var(--readout-edge-length);
+  height: 1px;
+  background: var(--color-ink);
+  opacity: 0.72;
+  pointer-events: none;
+  transform: rotate(var(--readout-depth-angle));
+  transform-origin: left center;
+}
+
+.field-readout-surface::before {
+  left: 0;
+  top: var(--readout-depth-rise);
+}
+
+.field-readout-surface::after {
+  left: calc(100% - var(--readout-depth-x));
+  bottom: 0;
 }
 
 .field-readout-panel::before {
