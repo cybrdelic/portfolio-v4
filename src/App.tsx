@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import ScrollToTop from './components/ScrollToTop';
 import BootSequence from './components/BootSequence';
 import CustomCursor from './components/CustomCursor';
+import RouteTransitionCapture from './components/RouteTransitionCapture';
 import SmoothScroll from './components/SmoothScroll';
 
 const ProjectDetail = lazy(() => import('./pages/ProjectDetail'));
@@ -34,6 +35,7 @@ export default function App() {
       <SmoothScroll />
       <BootSequence />
       <CustomCursor />
+      <RouteTransitionCapture />
       <ScrollToTop />
 
       <div className="relative z-10">

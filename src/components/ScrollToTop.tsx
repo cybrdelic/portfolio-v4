@@ -27,6 +27,22 @@ function getHashTarget(hash: string) {
   }
 }
 
+function getDocumentTop(target: HTMLElement) {
+  let top = 0;
+  let node: HTMLElement | null = target;
+
+  while (node) {
+    top += node.offsetTop;
+    node = node.offsetParent as HTMLElement | null;
+  }
+
+  if (top > 0 || target === document.body) {
+    return top;
+  }
+
+  return target.getBoundingClientRect().top + window.scrollY;
+}
+
 function scrollToTarget(target: HTMLElement | number, immediate = false) {
   const lenis = window.__portfolioLenis;
 
@@ -35,7 +51,7 @@ function scrollToTarget(target: HTMLElement | number, immediate = false) {
     const scrollTarget =
       typeof target === 'number'
         ? target
-        : Math.max(0, target.getBoundingClientRect().top + window.scrollY);
+        : Math.max(0, getDocumentTop(target));
 
     lenis.scrollTo(scrollTarget, {
       duration: SECTION_TRAVEL_DURATION,
@@ -51,7 +67,7 @@ function scrollToTarget(target: HTMLElement | number, immediate = false) {
         const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
         const correctedTarget = Math.max(
           0,
-          Math.min(maxScroll, window.scrollY + targetElement.getBoundingClientRect().top)
+          Math.min(maxScroll, getDocumentTop(targetElement))
         );
 
         if (Math.abs(correctedTarget - window.scrollY) > 2) {
