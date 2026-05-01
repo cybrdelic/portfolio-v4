@@ -397,6 +397,10 @@ html.lenis, html.lenis body {
   position: absolute;
   min-width: 144px;
   max-width: 210px;
+  will-change: opacity, transform;
+}
+
+.field-readout-panel {
   border-left: 1px solid var(--color-ink);
   border-top: 1px solid rgba(6, 6, 6, 0.16);
   padding: 8px 10px;
@@ -412,12 +416,13 @@ html.lenis, html.lenis body {
   transform: skewY(-5deg);
 }
 
-.field-readout span,
-.field-readout strong {
+.field-readout-panel span,
+.field-readout-panel strong {
   display: block;
+  transform: skewY(5deg);
 }
 
-.field-readout span {
+.field-readout-panel span {
   margin-bottom: 5px;
   color: var(--color-muted);
   font-size: 9px;
@@ -425,18 +430,13 @@ html.lenis, html.lenis body {
   letter-spacing: 0.26em;
 }
 
-.field-readout strong {
+.field-readout-panel strong {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.18em;
-  transform: skewY(5deg);
-}
-
-.field-readout span {
-  transform: skewY(5deg);
 }
 
 .section-shell--framed {
