@@ -18,10 +18,13 @@ export default function ScrambleText({ text, className }: { text: string, classN
     if (!isInView) return;
     
     let iteration = 0;
-    let interval: any = null;
+    let interval: ReturnType<typeof setInterval> | null = null;
     
     interval = setInterval(() => {
       setDisplayText(text.split('').map((letter, index) => {
+        if (letter === ' ') {
+          return letter;
+        }
         if (index < iteration) {
           return text[index];
         }
@@ -32,10 +35,14 @@ export default function ScrambleText({ text, className }: { text: string, classN
         clearInterval(interval);
       }
       
-      iteration += 1 / 3;
-    }, 30);
+      iteration += 1;
+    }, 22);
     
-    return () => clearInterval(interval);
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
   }, [text, isInView, prefersReducedMotion]);
 
   return <span ref={ref} className={className}>{displayText}</span>;

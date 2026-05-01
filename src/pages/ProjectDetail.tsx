@@ -22,16 +22,16 @@ export default function ProjectDetail() {
 
   return (
     <PageTransition>
-      <article className="min-h-screen pt-32 pb-32 px-6 md:px-12 text-[var(--color-ink)]">
+      <article className="min-h-screen px-6 pb-24 pt-24 text-[var(--color-ink)] md:px-12 md:pb-32 md:pt-28">
         <div className="max-w-7xl mx-auto">
           <Magnetic>
-            <Link to="/" className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-[var(--color-muted)] hover:text-[var(--color-ink)] transition-colors mb-16 p-2 -ml-2">
-              <ArrowLeft size={16} /> Back to Index
+            <Link to="/#work" className="mb-12 inline-flex min-h-10 items-center gap-2 p-2 -ml-2 font-mono text-xs uppercase tracking-widest text-[var(--color-muted)] transition-colors hover:text-[var(--color-ink)] md:mb-16">
+              <ArrowLeft size={16} /> Back to selected work
             </Link>
           </Magnetic>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start mb-24">
-            <div className="lg:col-span-8">
+          <div className="mb-20 grid grid-cols-1 items-start gap-10 md:mb-24 lg:grid-cols-12">
+            <div className="lg:col-span-7">
               <motion.h1 
                 className="font-sans text-4xl md:text-5xl lg:text-6xl font-normal tracking-tight leading-tight mb-6"
                 initial={{ opacity: 0, y: 10 }}
@@ -49,7 +49,7 @@ export default function ProjectDetail() {
                 {project.subtitle}
               </motion.p>
             </div>
-            <div className="lg:col-span-4 flex flex-col gap-4">
+            <div className="grid gap-6 border-t border-[var(--color-line)] pt-6 sm:grid-cols-2 lg:col-span-5 lg:grid-cols-1 lg:border-t-0 lg:pt-2">
               <motion.div 
                 className="font-mono text-xs uppercase tracking-widest text-[var(--color-muted)]"
                 initial={{ opacity: 0 }}
@@ -71,8 +71,11 @@ export default function ProjectDetail() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-            <div className="lg:col-span-8 lg:col-start-5 space-y-24 font-sans text-lg md:text-xl leading-relaxed text-[var(--color-muted)]">
+          <div className="grid grid-cols-1 gap-10 border-t border-[var(--color-line)] pt-12 lg:grid-cols-12">
+            <div className="hidden font-mono text-xs uppercase tracking-widest text-[var(--color-muted)] lg:col-span-3 lg:block">
+              Project dossier
+            </div>
+            <div className="space-y-16 font-sans text-base leading-relaxed text-[var(--color-muted)] md:text-xl lg:col-span-8 lg:col-start-5">
               <section>
                 <h2 className="font-mono text-sm uppercase tracking-widest text-[var(--color-ink)] mb-8 border-b border-[var(--color-line)] pb-4">
                   1.0 / Overview

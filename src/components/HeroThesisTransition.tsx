@@ -5,6 +5,7 @@ import {
   useScroll,
   useTransform,
 } from 'motion/react';
+import { ArrowDown, ArrowUpRight } from 'lucide-react';
 import { useRef } from 'react';
 import {
   heroIdentity,
@@ -19,26 +20,41 @@ function HeroFace() {
   return (
     <div className="relative h-full w-full overflow-hidden text-[var(--color-ink)]">
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:48px_48px] opacity-10" />
-      <div className="absolute top-0 right-0 h-[600px] w-[600px] translate-x-1/4 -translate-y-1/4 opacity-90">
+      <div className="pointer-events-none absolute right-0 top-0 h-[420px] w-[420px] -translate-y-1/4 translate-x-1/3 opacity-25 mix-blend-multiply md:h-[560px] md:w-[560px] md:opacity-35 lg:opacity-45">
         <HeroAnimation isActive />
       </div>
-      <div className="relative z-10 mx-auto flex h-full w-full max-w-7xl flex-col justify-between px-6 pb-24 pt-40 md:px-12">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-[var(--color-bg)] via-[var(--color-bg)]/80 to-transparent" />
+      <div className="relative z-10 mx-auto flex h-full w-full max-w-7xl flex-col justify-center gap-14 px-6 py-16 md:gap-20 md:px-12 md:py-20">
         <div className="max-w-5xl">
           <p className="mb-6 font-mono text-sm uppercase tracking-widest text-[var(--color-muted)]">
             <ScrambleText text={heroIdentity} />
           </p>
-          <h1 className="text-4xl font-normal leading-tight tracking-tight md:text-5xl lg:text-6xl">
+          <h1 className="max-w-5xl text-4xl font-normal leading-[1.04] tracking-tight md:text-5xl lg:text-6xl">
             {heroTitle}
           </h1>
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <a
+              href="#work"
+              className="inline-flex min-h-11 items-center gap-2 border border-[var(--color-ink)] px-4 py-3 font-mono text-xs uppercase tracking-[0.22em] transition-colors hover:bg-[var(--color-ink)] hover:text-[var(--color-bg)]"
+            >
+              View work <ArrowDown size={14} />
+            </a>
+            <a
+              href="#contact"
+              className="inline-flex min-h-11 items-center gap-2 border border-[var(--color-line)] px-4 py-3 font-mono text-xs uppercase tracking-[0.22em] text-[var(--color-muted)] transition-colors hover:border-[var(--color-ink)] hover:text-[var(--color-ink)]"
+            >
+              Contact <ArrowUpRight size={14} />
+            </a>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-12 border-t border-[var(--color-line)] pt-12 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 border-t border-[var(--color-line)] pt-6 md:grid-cols-3 md:gap-10 md:pt-8">
           {heroStats.map((item) => (
             <div key={item.label}>
-              <p className="mb-2 font-mono text-xs uppercase tracking-widest text-[var(--color-muted)]">
+              <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.28em] text-[var(--color-muted)]">
                 {item.label}
               </p>
-              <p className="text-sm">{item.value}</p>
+              <p className="max-w-xs text-sm leading-relaxed">{item.value}</p>
             </div>
           ))}
         </div>
@@ -50,23 +66,23 @@ function HeroFace() {
 function ThesisFace() {
   return (
     <div className="h-full w-full overflow-hidden text-[var(--color-ink)]">
-      <div className="mx-auto grid h-full w-full max-w-7xl grid-cols-1 gap-12 px-6 py-16 md:px-12 lg:grid-cols-12">
+      <div className="mx-auto grid h-full w-full max-w-7xl grid-cols-1 gap-10 px-6 py-12 md:px-12 md:py-16 lg:grid-cols-12">
         <div className="lg:col-span-4">
           <h2 className="font-mono text-sm uppercase tracking-widest text-[var(--color-muted)] lg:sticky lg:top-12">
             1.0 / Thesis
           </h2>
         </div>
         <div className="overflow-auto pr-2 lg:col-span-8">
-          <div className="max-w-4xl font-sans text-lg leading-relaxed text-[var(--color-muted)] md:text-xl">
+          <div className="max-w-3xl font-sans text-base leading-relaxed text-[var(--color-muted)] md:text-xl">
             {thesisParagraphs.map((paragraph) => (
               <p
                 key={paragraph.text}
                 className={
                   paragraph.tone === 'lead'
-                    ? 'mb-8 text-[var(--color-ink)]'
+                    ? 'mb-6 text-[var(--color-ink)]'
                     : paragraph.tone === 'closing'
                       ? 'text-[var(--color-ink)]'
-                      : 'mb-8'
+                      : 'mb-6'
                 }
               >
                 {paragraph.text}

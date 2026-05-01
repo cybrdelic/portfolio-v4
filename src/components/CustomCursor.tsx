@@ -85,17 +85,17 @@ export default function CustomCursor() {
     <>
       <motion.div
         aria-hidden="true"
-        className="fixed top-0 left-0 w-2 h-2 -translate-x-1/2 -translate-y-1/2 bg-[var(--color-ink)] rounded-full pointer-events-none z-[100] mix-blend-difference will-change-transform"
+        className="fixed top-0 left-0 w-2 h-2 -translate-x-1/2 -translate-y-1/2 bg-[var(--color-ink)] rounded-full pointer-events-none z-[100] will-change-transform"
         style={{ x: cursorX, y: cursorY }}
         animate={{
-          scale: isActive ? 0.5 : isHovering ? 3 : 1,
-          opacity: isVisible ? 1 : 0,
+          scale: isActive ? 0.65 : isHovering ? 2.1 : 1,
+          opacity: isVisible ? 0.9 : 0,
         }}
         transition={{ type: 'spring', stiffness: 1000, damping: 40, mass: 0.1 }}
       />
       <motion.div
         aria-hidden="true"
-        className="fixed top-0 left-0 w-8 h-8 -translate-x-1/2 -translate-y-1/2 border border-[var(--color-ink)] rounded-full pointer-events-none z-[99] mix-blend-difference opacity-30 will-change-transform"
+        className="fixed top-0 left-0 w-8 h-8 -translate-x-1/2 -translate-y-1/2 border border-[var(--color-muted)] rounded-full pointer-events-none z-[99] opacity-30 will-change-transform"
         style={{ x: ringX, y: ringY }}
         animate={{
           scale: isActive ? 0.8 : isHovering ? 1.5 : 1,

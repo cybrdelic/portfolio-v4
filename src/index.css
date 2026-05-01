@@ -9,7 +9,7 @@
   --color-bg: #bababa;
   --color-ink: #060606;
   --color-accent: #060606;
-  --color-muted: #4f4f4f;
+  --color-muted: #404040;
   --color-surface: #ababab;
   --color-line: #959595;
 }
@@ -21,6 +21,11 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+}
+
+#work,
+#contact {
+  scroll-margin-top: 0;
 }
 
 html.lenis, html.lenis body {

@@ -3,7 +3,7 @@ import Magnetic from './Magnetic';
 
 export default function Footer() {
   return (
-    <footer className="pt-24 pb-12 px-6 md:px-12 text-[var(--color-ink)]">
+    <footer id="contact" className="px-6 pb-12 pt-20 text-[var(--color-ink)] md:px-12 md:pt-24">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-24">
           <div className="lg:col-span-4">
@@ -22,9 +22,9 @@ export default function Footer() {
             <Magnetic strength={0.1}>
               <a 
                 href="mailto:alexfigueroa.cybr@gmail.com" 
-                className="inline-flex items-center gap-2 font-mono text-sm uppercase tracking-widest border-b border-[var(--color-line)] pb-1 hover:text-[var(--color-muted)] hover:border-[var(--color-muted)] transition-colors p-2 -ml-2"
+                className="inline-flex min-h-11 items-center gap-2 border border-[var(--color-ink)] px-4 py-3 font-mono text-xs uppercase tracking-[0.22em] transition-colors hover:bg-[var(--color-ink)] hover:text-[var(--color-bg)]"
               >
-                alexfigueroa.cybr@gmail.com <ArrowUpRight size={16} />
+                Email Alex <ArrowUpRight size={16} />
               </a>
             </Magnetic>
           </div>
@@ -36,17 +36,17 @@ export default function Footer() {
             <ul className="space-y-4 font-sans text-sm">
               <li>
                 <Magnetic strength={0.3}>
-                  <a href="#" className="hover:text-[var(--color-muted)] transition-colors inline-block p-2 -ml-2">GitHub</a>
+                  <a href="https://github.com/cybrdelic" className="hover:text-[var(--color-muted)] transition-colors inline-block p-2 -ml-2">GitHub</a>
                 </Magnetic>
               </li>
               <li>
                 <Magnetic strength={0.3}>
-                  <a href="#" className="hover:text-[var(--color-muted)] transition-colors inline-block p-2 -ml-2">LinkedIn</a>
+                  <a href="#work" className="hover:text-[var(--color-muted)] transition-colors inline-block p-2 -ml-2">Selected Work</a>
                 </Magnetic>
               </li>
               <li>
                 <Magnetic strength={0.3}>
-                  <a href="#" className="hover:text-[var(--color-muted)] transition-colors inline-block p-2 -ml-2">Resume</a>
+                  <a href="mailto:alexfigueroa.cybr@gmail.com" className="hover:text-[var(--color-muted)] transition-colors inline-block p-2 -ml-2">Contact</a>
                 </Magnetic>
               </li>
             </ul>

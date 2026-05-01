@@ -127,6 +127,7 @@ export default function Projects() {
 
   return (
     <section
+      id="work"
       ref={ref}
       className="bridge-section relative border-b border-[var(--color-line)]"
       style={{ height: `${totalHeightVh}vh` }}
