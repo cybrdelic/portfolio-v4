@@ -13,6 +13,25 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    id: 'jjugg',
+    title: 'JJUGG',
+    subtitle: 'Local-first job intelligence and autonomous opportunity pipeline',
+    type: 'Autonomous Tooling',
+    tech: 'TypeScript, Local-First, Userscripts',
+    animationType: 'pipeline',
+    overview: 'JJUGG treats the job search as a live local system instead of a pile of tabs and spreadsheets. A browser userscript captures applications as they happen, preserves the job description, and stores the opportunity as structured local data.',
+    whyItExists: 'Most job-search tools are passive trackers or shallow automation. JJUGG exists to keep a continuously improving picture of opportunities, profile fit, and search momentum without depending on a SaaS dashboard.',
+    coreMechanisms: [
+      'Userscript-seeded capture',
+      'Local-first storage',
+      'Profile contextualization',
+      'Role relevance filtering',
+      'Job-pipeline analytics',
+      'Agent-assisted enrichment'
+    ],
+    roleInWork: 'JJUGG reflects my interest in turning messy external processes into instrumented, autonomous workflows.'
+  },
+  {
     id: 'outersense',
     title: 'OuterSense',
     subtitle: 'Real-time gaze interaction and spatial digital twin system',
@@ -30,46 +49,6 @@ export const projects: Project[] = [
       'Real-time spatial computation'
     ],
     roleInWork: 'OuterSense is the clearest expression of the direction I care about most: software that perceives and models the physical context of use.'
-  },
-  {
-    id: 'jjugg',
-    title: 'JJUGG',
-    subtitle: 'Career command system for opportunity capture, pipeline analytics, and automation',
-    type: 'Autonomous Tooling',
-    tech: 'Node.js, Express, SQLite, Userscripts',
-    animationType: 'pipeline',
-    overview: 'JJUGG is my local-first career operating system: a command dashboard for capturing opportunities, tracking the full application pipeline, monitoring automation runs, and keeping profile context, drafts, analytics, and agent-driven job discovery in one coherent system.',
-    whyItExists: 'Most job-search tools split capture, tracking, analytics, and automation across too many disconnected products. JJUGG exists to collapse that workflow into one private operating surface where an agent built from my professional context can autonomously hunt, extract, normalize, and rank relevant opportunities instead of leaving me to manually sift through noise.',
-    coreMechanisms: [
-      'Userscript-seeded capture',
-      'SQLite-backed local state',
-      'Autonomous opportunity ETL',
-      'Pipeline analytics and conversion tracking',
-      'Professional-context agent modeling',
-      'Role relevance filtering',
-      'Automation run monitoring',
-      'High-volume opportunity ranking'
-    ],
-    roleInWork: 'JJUGG reflects my interest in turning a messy real-world process into an instrumented operating system where autonomous job hunts can surface thousands of relevant opportunities, push them through ETL, and make the pipeline legible through live tables, charts, and action queues.'
-  },
-  {
-    id: 'firesim',
-    title: 'FireSim',
-    subtitle: 'Real-time volumetric fire and fluid simulation in WebGPU',
-    type: 'Simulation & Rendering',
-    tech: 'React, TypeScript, WebGPU, WGSL',
-    animationType: 'timeseries',
-    overview: 'FireSim is a real-time 3D fire and fluid simulation that pushes Navier-Stokes-style transport, buoyancy, and volumetric rendering through WebGPU compute shaders in the browser.',
-    whyItExists: 'I wanted a simulation that was not just visually convincing but structurally serious: GPU-side transport, controllable combustion behavior, and a runtime stable enough to benchmark and test instead of treating the effect as a one-off demo.',
-    coreMechanisms: [
-      'WebGPU compute shaders',
-      'Fluid transport and buoyancy',
-      'Volumetric ray marching',
-      'Deterministic stability harness',
-      'Interactive parameter control',
-      'GPU-first simulation architecture'
-    ],
-    roleInWork: 'FireSim reflects the part of my work that is closest to engine programming: numerical systems, GPU constraints, rendering architecture, and making technically heavy visuals behave like products.'
   },
   {
     id: 'commitaura',
@@ -90,41 +69,40 @@ export const projects: Project[] = [
     roleInWork: 'CommitAura is the most directly shippable expression of my tooling philosophy: serious utility, low interaction cost, immediate leverage.'
   },
   {
-    id: 'spectrocity',
-    title: 'Spectrocity',
-    subtitle: 'Real-time spectral ray tracing of gemstones in WebGPU',
+    id: 'tessellarity',
+    title: 'Tessellarity',
+    subtitle: 'GPU-first simulation substrate for procedural physical systems',
     type: 'Simulation & Rendering',
-    tech: 'React, TypeScript, WebGPU, WGSL',
-    animationType: 'system',
-    overview: 'Spectrocity is a real-time gemstone renderer built in WebGPU, using spectral ray tracing and compute-driven shading to model chromatic dispersion, internal reflection, and cut-specific light behavior with physically grounded control.',
-    whyItExists: 'I built Spectrocity to push browser rendering past generic PBR demos into per-wavelength behavior, procedural gem geometry, and a performance envelope that still holds on consumer GPUs.',
+    tech: 'GLSL, WebGL, TypeScript',
+    animationType: 'timeseries',
+    overview: 'Tessellarity is a GPU-first simulation substrate for procedural systems, dynamic geometry, and physical behavior. It is intended as reusable runtime infrastructure, not a one-off visual demo.',
+    whyItExists: 'Most web visuals rely on fixed assets or pre-baked animation. Tessellarity exists to push more of the behavior to the GPU so procedural generation, large particle counts, and physical interaction can stay live and responsive.',
     coreMechanisms: [
-      'Per-wavelength spectral dispersion',
-      'Fresnel and total internal reflection',
-      'Procedural SDF gem geometry',
-      'Multi-bounce caustics',
-      'Compute-driven quality tiers',
-      'Editor-style material controls'
+      'GPU simulation',
+      'Dynamic remeshing',
+      'Procedural geometry',
+      'Physical salience',
+      'Runtime substrate design',
+      'Simulation-first architecture'
     ],
-    roleInWork: 'Spectrocity is the rendering side of my work at full precision: shader architecture, GPU debugging, physically grounded light behavior, and interface design that still has to make the system legible.'
+    roleInWork: 'Tessellarity reflects my engine-level interests and my preference for systems built from computational principles rather than content pipelines.'
   },
   {
-    id: 'xelathemes',
-    title: 'XELA Themes',
-    subtitle: 'Professional VS Code theme system with automated generation and packaging',
+    id: 'demosnap',
+    title: 'DemoSnap',
+    subtitle: 'Cinematic presentation system for technical products and interfaces',
     type: 'Systems UX',
-    tech: 'JavaScript, VS Code Extension API, Node.js',
+    tech: 'React, Framer Motion, WebGL',
     animationType: 'system',
-    overview: 'XELA Themes is a professional-grade VS Code theme collection with a large generated theme catalog, a centralized palette and role system, and packaging automation for shipping and maintaining the extension cleanly.',
-    whyItExists: 'Theme packs usually become unmaintainable once they grow. XELA Themes exists to treat visual design like a system: shared primitives, role-based token mapping, build automation, validation, and a distribution workflow instead of hand-edited JSON sprawl.',
+    overview: 'DemoSnap is a presentation system for turning technical products into clear, cinematic software narratives. It treats demos as part of the product surface instead of an afterthought.',
+    whyItExists: 'Complex products often fail to explain themselves. DemoSnap exists to provide a programmatic way to orchestrate UI state, motion, and annotation so technical systems can present themselves without flattening the underlying complexity.',
     coreMechanisms: [
-      'Centralized palette architecture',
-      'Role-based token mapping',
-      'Automated theme generation',
-      'HTML and XML token tuning',
-      'Pack-aware theme picker',
-      'Marketplace packaging workflow'
+      'Visual communication',
+      'Product framing',
+      'Technical storytelling',
+      'Motion-driven interface presentation',
+      'State orchestration'
     ],
-    roleInWork: 'XELA Themes shows a different but important part of my work: building design systems and developer-facing tooling with the same rigor I apply to simulation and systems software.'
+    roleInWork: 'DemoSnap reflects a core part of my engineering philosophy: if a system cannot present itself clearly, its leverage is limited.'
   }
 ];

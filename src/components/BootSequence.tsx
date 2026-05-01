@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 
 const BOOT_SEQUENCE_STORAGE_KEY = 'boot-sequence-seen';
@@ -12,34 +12,25 @@ const SEQUENCE = [
   'SYSTEM_READY.',
 ];
 
-export default function BootSequence({ onComplete }: { onComplete?: () => void }) {
+export default function BootSequence() {
   const prefersReducedMotion = useReducedMotion();
   const [isVisible, setIsVisible] = useState(true);
   const [logs, setLogs] = useState<string[]>([]);
-  const completionNotifiedRef = useRef(false);
-
-  const notifyComplete = () => {
-    if (completionNotifiedRef.current) return;
-    completionNotifiedRef.current = true;
-    onComplete?.();
-  };
-
-  const close = () => {
-    localStorage.setItem(BOOT_SEQUENCE_STORAGE_KEY, '1');
-    setIsVisible(false);
-    notifyComplete();
-  };
 
   useEffect(() => {
-    if (prefersReducedMotion || localStorage.getItem(BOOT_SEQUENCE_STORAGE_KEY) === '1') {
+    if (prefersReducedMotion || sessionStorage.getItem(BOOT_SEQUENCE_STORAGE_KEY) === '1') {
       setLogs(SEQUENCE);
       setIsVisible(false);
-      notifyComplete();
       return;
     }
 
     let currentIndex = 0;
     let exitTimeout: ReturnType<typeof setTimeout> | null = null;
+
+    const close = () => {
+      sessionStorage.setItem(BOOT_SEQUENCE_STORAGE_KEY, '1');
+      setIsVisible(false);
+    };
 
     const handleSkip = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -67,7 +58,7 @@ export default function BootSequence({ onComplete }: { onComplete?: () => void }
       }
       window.removeEventListener('keydown', handleSkip);
     };
-  }, [onComplete, prefersReducedMotion]);
+  }, [prefersReducedMotion]);
 
   return (
     <AnimatePresence>
@@ -77,7 +68,10 @@ export default function BootSequence({ onComplete }: { onComplete?: () => void }
           className="fixed inset-0 z-[200] bg-[var(--color-bg)] flex flex-col justify-end p-8 md:p-12 font-mono text-xs md:text-sm text-[var(--color-muted)]"
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          onClick={close}
+          onClick={() => {
+            sessionStorage.setItem(BOOT_SEQUENCE_STORAGE_KEY, '1');
+            setIsVisible(false);
+          }}
         >
           <div className="max-w-3xl">
             {logs.map((log, index) => (

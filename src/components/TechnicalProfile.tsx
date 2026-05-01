@@ -1,95 +1,74 @@
-import { motion } from 'motion/react';
+import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { useRef } from 'react';
 import { technicalIntro, technicalRows } from '../content/home';
-import {
-  EASE_STANDARD,
-  SPRING_FLIP,
-  REVEAL_ITEM_TRANSITION,
-  inViewViewport,
-  revealGroupVariants,
-  revealItemVariants,
-  revealRuleVariants,
-} from '../lib/motion';
+import TechAnimation from './animations/TechAnimation';
+import ScrambleText from './ScrambleText';
 
 export default function TechnicalProfile() {
   const ref = useRef(null);
+  const prefersReducedMotion = useReducedMotion();
+  const isInView = useInView(ref, { amount: 0.15 });
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"]
+  });
+  
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
 
   return (
-    <motion.section
-      ref={ref}
-      className="section-shell section-shell--dense section-shell--framed technical-profile-shell"
-    >
+    <section ref={ref} className="section-shell section-shell--framed">
+      <motion.div 
+        style={prefersReducedMotion ? undefined : { y: backgroundY }}
+        className="absolute bottom-0 right-0 w-[500px] h-[500px] pointer-events-none -z-10 translate-x-1/4 translate-y-1/4"
+        aria-hidden="true"
+      >
+        <TechAnimation isActive={!prefersReducedMotion && isInView} />
+      </motion.div>
       <div className="section-intro">
-        <div className="section-rail section-rail--sticky">
+        <div className="section-rail">
           <h2 className="section-label">
-            5.0 / Technical Profile
+            <ScrambleText text="5.0 / Technical Profile" />
           </h2>
         </div>
-        <motion.div
-          className="section-content section-copy section-copy-stage technical-profile-intro"
-          initial="hidden"
-          whileInView="visible"
-          viewport={inViewViewport}
-          variants={revealGroupVariants}
-        >
-          <motion.div aria-hidden="true" className="section-copy-rule origin-left" variants={revealRuleVariants} />
+        <div className="section-content">
           {technicalIntro.map((paragraph, index) => (
-            <motion.p
+            <p
               key={paragraph.text}
-              variants={revealItemVariants}
-              transition={{
-                ...REVEAL_ITEM_TRANSITION,
-                delay: index * 0.05,
-              }}
               className={
                 paragraph.tone === 'lead'
-                  ? 'section-copy-lead'
+                  ? 'mb-8 text-[var(--color-ink)]'
                   : index === technicalIntro.length - 1
-                    ? 'section-copy-closing'
-                    : 'section-copy-body'
+                    ? 'text-[var(--color-ink)]'
+                    : 'mb-8'
               }
             >
               {paragraph.text}
-            </motion.p>
+            </p>
           ))}
-        </motion.div>
+        </div>
       </div>
 
-      <div className="technical-reference-list">
-        {technicalRows.map((row, i) => {
-          return (
-          <motion.article
-            key={row.label}
-            layout
-            initial={{ opacity: 0, y: 16, filter: 'blur(8px)' }}
-            whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+      <div className="section-list">
+        {technicalRows.map(([label, value], i) => (
+          <motion.div 
+            key={label}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.56, delay: i * 0.035, ease: EASE_STANDARD, layout: SPRING_FLIP }}
-            className="technical-reference-item"
+            transition={{ duration: 0.8, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+            className="data-row py-12"
           >
-            <div className="technical-reference-grid">
-              <div className="technical-reference-rail">
-                <span className="hero-stat-index technical-reference-index">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                <div className="technical-reference-meta">
-                  <p className="technical-reference-label">{row.label}</p>
-                  <p className="technical-reference-signal">{row.signal}</p>
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+              <div className="md:col-span-4 font-mono text-sm uppercase tracking-widest text-[var(--color-ink)]">
+                {label}
               </div>
-
-              <div className="technical-reference-primary-block">
-                <p className="technical-reference-primary">{row.primary}</p>
-              </div>
-
-              <div className="technical-reference-detail-block">
-                <p className="technical-reference-detail">{row.detail}</p>
+              <div className="md:col-span-8 font-sans text-lg text-[var(--color-muted)]">
+                {value}
               </div>
             </div>
-          </motion.article>
-          );
-        })}
+          </motion.div>
+        ))}
       </div>
-    </motion.section>
+    </section>
   );
 }
