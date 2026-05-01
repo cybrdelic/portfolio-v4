@@ -22,6 +22,10 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }
 
+const TARGET_PRISM_DEPTH_X = 8;
+const TARGET_PRISM_DEPTH_Y = -6;
+const TARGET_PRISM_SKEW = -3;
+
 function getFieldTarget(target: EventTarget | null): FieldTarget | null {
   if (!(target instanceof HTMLElement)) {
     return null;
@@ -219,14 +223,16 @@ export default function CustomCursor() {
       : pointer.y > viewport.height - 128
         ? Math.max(18, pointer.y - 96)
         : Math.min(pointer.y + 18, viewport.height - 88);
+  const readoutDepthX = projectionRect && !isLargeSurface ? TARGET_PRISM_DEPTH_X : depthX || 18;
+  const readoutDepthY = projectionRect && !isLargeSurface ? TARGET_PRISM_DEPTH_Y : depthY || -14;
   const readoutStyle = {
     left: readoutX,
     top: readoutY,
-    '--readout-depth-x': `${depthX || 18}px`,
-    '--readout-depth-y': `${depthY || -14}px`,
-    '--readout-depth-rise': `${Math.abs(depthY || -14)}px`,
-    '--readout-depth-angle': `${Math.atan2(depthY || -14, depthX || 18)}rad`,
-    '--readout-edge-length': `${Math.hypot(depthX || 18, depthY || -14)}px`,
+    '--readout-depth-x': `${readoutDepthX}px`,
+    '--readout-depth-y': `${readoutDepthY}px`,
+    '--readout-depth-rise': `${Math.abs(readoutDepthY)}px`,
+    '--readout-face-skew': `${TARGET_PRISM_SKEW}deg`,
+    '--readout-counter-skew': `${-TARGET_PRISM_SKEW}deg`,
   } as CSSProperties;
 
   return (

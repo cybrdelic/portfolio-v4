@@ -400,6 +400,8 @@ html.lenis, html.lenis body {
   --readout-depth-x: 18px;
   --readout-depth-y: -14px;
   --readout-depth-rise: 14px;
+  --readout-face-skew: -3deg;
+  --readout-counter-skew: 3deg;
   will-change: opacity, transform;
 }
 
@@ -414,45 +416,16 @@ html.lenis, html.lenis body {
 .field-readout-surface {
   position: relative;
   z-index: 1;
-  padding: 10px calc(12px + var(--readout-depth-x)) 9px calc(10px + var(--readout-depth-x));
+  padding: 10px 12px 9px 12px;
   background:
     linear-gradient(135deg, rgba(6, 6, 6, 0.055), transparent 42%),
     color-mix(in srgb, var(--color-bg) 90%, transparent);
   box-shadow:
+    inset 1px 0 0 var(--color-ink),
     inset 0 1px 0 rgba(6, 6, 6, 0.16),
     inset 0 -1px 0 rgba(6, 6, 6, 0.08);
-  clip-path: polygon(
-    0 var(--readout-depth-rise),
-    var(--readout-depth-x) 0,
-    100% 0,
-    100% calc(100% - var(--readout-depth-rise)),
-    calc(100% - var(--readout-depth-x)) 100%,
-    0 100%
-  );
-}
-
-.field-readout-surface::before,
-.field-readout-surface::after {
-  content: "";
-  position: absolute;
-  z-index: 2;
-  width: var(--readout-edge-length);
-  height: 1px;
-  background: var(--color-ink);
-  opacity: 0.72;
-  pointer-events: none;
-  transform: rotate(var(--readout-depth-angle));
+  transform: skewY(var(--readout-face-skew));
   transform-origin: left center;
-}
-
-.field-readout-surface::before {
-  left: 0;
-  top: var(--readout-depth-rise);
-}
-
-.field-readout-surface::after {
-  left: calc(100% - var(--readout-depth-x));
-  bottom: 0;
 }
 
 .field-readout-panel::before {
@@ -463,15 +436,8 @@ html.lenis, html.lenis body {
   background: rgba(6, 6, 6, 0.018);
   box-shadow:
     inset 0 0 0 1px rgba(6, 6, 6, 0.12);
-  clip-path: polygon(
-    0 var(--readout-depth-rise),
-    var(--readout-depth-x) 0,
-    100% 0,
-    100% calc(100% - var(--readout-depth-rise)),
-    calc(100% - var(--readout-depth-x)) 100%,
-    0 100%
-  );
-  transform: translate(var(--readout-depth-x), var(--readout-depth-y));
+  transform: translate(var(--readout-depth-x), var(--readout-depth-y)) skewY(var(--readout-face-skew));
+  transform-origin: left center;
 }
 
 .field-readout-panel::after {
@@ -501,6 +467,8 @@ html.lenis, html.lenis body {
   position: relative;
   z-index: 1;
   display: block;
+  transform: skewY(var(--readout-counter-skew));
+  transform-origin: left center;
 }
 
 .field-readout-surface span {
