@@ -76,20 +76,21 @@ html.lenis, html.lenis body {
 [data-field-target]::before {
   content: "";
   position: absolute;
-  inset: -1px;
+  inset: -2px;
   z-index: -1;
   border: 1px solid var(--color-ink);
   opacity: 0;
   pointer-events: none;
-  transform: scale(0.985);
+  transform: translate(0, 0) skewY(-3deg) scale(0.985);
+  transform-origin: center;
   transition:
     opacity 180ms ease,
     transform 180ms ease;
 }
 
 [data-field-target]:hover::before {
-  opacity: 0.32;
-  transform: scale(1);
+  opacity: 0.24;
+  transform: translate(7px, -5px) skewY(-3deg) scale(1);
 }
 
 [data-field-kind="route"]:hover,
@@ -104,6 +105,7 @@ html.lenis, html.lenis body {
 
 .project-pressure-face:hover {
   filter: contrast(1.04);
+  transform: translate3d(0, -1px, 0);
 }
 
 .project-pressure-face::after {
@@ -115,10 +117,17 @@ html.lenis, html.lenis body {
   pointer-events: none;
   background:
     radial-gradient(
-      280px circle at var(--field-x, 50%) var(--field-y, 50%),
-      rgba(6, 6, 6, 0.07),
+      380px ellipse at var(--field-x, 50%) var(--field-y, 50%),
+      rgba(6, 6, 6, 0.065),
       rgba(6, 6, 6, 0.025) 34%,
       transparent 68%
+    ),
+    repeating-linear-gradient(
+      132deg,
+      rgba(6, 6, 6, 0.08) 0,
+      rgba(6, 6, 6, 0.08) 1px,
+      transparent 1px,
+      transparent 18px
     );
   mix-blend-mode: multiply;
   transition: opacity 160ms ease;
@@ -132,20 +141,27 @@ html.lenis, html.lenis body {
   position: absolute;
   left: 0;
   top: 0;
-  width: 260px;
-  height: 260px;
-  margin-left: -130px;
-  margin-top: -130px;
-  border-radius: 999px;
+  width: 320px;
+  height: 190px;
+  margin-left: -160px;
+  margin-top: -95px;
+  clip-path: polygon(14% 0, 100% 0, 86% 100%, 0 100%);
   background:
-    radial-gradient(circle, rgba(6, 6, 6, 0.08), rgba(6, 6, 6, 0.025) 36%, transparent 68%),
-    radial-gradient(circle, transparent 54%, rgba(6, 6, 6, 0.14) 55%, transparent 56%);
+    radial-gradient(ellipse at center, rgba(6, 6, 6, 0.09), rgba(6, 6, 6, 0.028) 42%, transparent 72%),
+    repeating-linear-gradient(
+      132deg,
+      rgba(6, 6, 6, 0.18) 0,
+      rgba(6, 6, 6, 0.18) 1px,
+      transparent 1px,
+      transparent 18px
+    );
   mix-blend-mode: multiply;
   will-change: transform, opacity;
 }
 
 .field-route,
-.field-frame {
+.field-plane,
+.field-depth-line {
   fill: none;
   stroke: var(--color-ink);
   stroke-width: 1;
@@ -153,16 +169,38 @@ html.lenis, html.lenis body {
 }
 
 .field-route {
-  opacity: 0.42;
-  stroke-dasharray: 1 7;
+  opacity: 0.46;
+  stroke-dasharray: 7 6 1 6;
 }
 
 .field-route--soft {
   opacity: 0.22;
 }
 
-.field-frame {
-  stroke-dasharray: 8 5;
+.field-route--iso {
+  stroke-dasharray: 1 6;
+}
+
+.field-plane {
+  fill: rgba(6, 6, 6, 0.018);
+  stroke-dasharray: 9 5;
+}
+
+.field-plane--rear {
+  fill: rgba(6, 6, 6, 0.026);
+}
+
+.field-plane--front {
+  fill: transparent;
+}
+
+.field-depth-line {
+  opacity: 0.34;
+  stroke-dasharray: 4 5;
+}
+
+.field-depth-line--soft {
+  opacity: 0.16;
 }
 
 .field-readout {
@@ -170,12 +208,14 @@ html.lenis, html.lenis body {
   min-width: 144px;
   max-width: 210px;
   border-left: 1px solid var(--color-ink);
+  border-top: 1px solid rgba(6, 6, 6, 0.16);
   padding: 8px 10px;
   background: color-mix(in srgb, var(--color-bg) 88%, transparent);
   color: var(--color-ink);
   font-family: var(--font-mono);
   text-transform: uppercase;
   box-shadow: 0 0 0 1px rgba(6, 6, 6, 0.08);
+  transform: skewY(-5deg);
 }
 
 .field-readout span,
@@ -198,6 +238,11 @@ html.lenis, html.lenis body {
   font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.18em;
+  transform: skewY(5deg);
+}
+
+.field-readout span {
+  transform: skewY(5deg);
 }
 
 .section-shell--framed {

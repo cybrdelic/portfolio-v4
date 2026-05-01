@@ -124,8 +124,36 @@ export default function CustomCursor() {
   }
 
   const rect = fieldTarget?.rect;
-  const centerX = rect ? rect.left + rect.width / 2 : 0;
-  const centerY = rect ? rect.top + rect.height / 2 : 0;
+  const isLargeSurface = rect
+    ? rect.width > window.innerWidth * 0.62 && rect.height > window.innerHeight * 0.62
+    : false;
+  const projectionRect = rect
+    ? {
+        left: isLargeSurface
+          ? Math.max(24, Math.min(pointer.x - 170, window.innerWidth - 388))
+          : rect.left,
+        top: isLargeSurface
+          ? Math.max(24, Math.min(pointer.y - 108, window.innerHeight - 246))
+          : rect.top,
+        width: isLargeSurface ? 360 : rect.width,
+        height: isLargeSurface ? 210 : rect.height,
+      }
+    : null;
+  const right = projectionRect ? projectionRect.left + projectionRect.width : 0;
+  const bottom = projectionRect ? projectionRect.top + projectionRect.height : 0;
+  const centerX = projectionRect ? projectionRect.left + projectionRect.width / 2 : 0;
+  const centerY = projectionRect ? projectionRect.top + projectionRect.height / 2 : 0;
+  const depthX = projectionRect ? Math.min(34, Math.max(18, projectionRect.width * 0.05)) : 0;
+  const depthY = projectionRect ? -Math.min(24, Math.max(14, projectionRect.height * 0.06)) : 0;
+  const routeBreakX = projectionRect ? (pointer.x < centerX ? projectionRect.left - depthX : right + depthX) : 0;
+  const routeBreakY = projectionRect ? centerY + depthY : 0;
+  const nearPlane = projectionRect
+    ? `${projectionRect.left},${projectionRect.top} ${right},${projectionRect.top} ${right},${bottom} ${projectionRect.left},${bottom}`
+    : '';
+  const farPlane = projectionRect
+    ? `${projectionRect.left + depthX},${projectionRect.top + depthY} ${right + depthX},${projectionRect.top + depthY} ${right + depthX},${bottom + depthY} ${projectionRect.left + depthX},${bottom + depthY}`
+    : '';
+  const pressureDepth = isActive ? 0.82 : fieldTarget ? 1.24 : 1;
   const readoutX = Math.min(pointer.x + 18, window.innerWidth - 220);
   const readoutY = Math.min(pointer.y + 18, window.innerHeight - 88);
 
@@ -135,31 +163,61 @@ export default function CustomCursor() {
         className="field-pressure"
         style={{ x: springX, y: springY }}
         animate={{
-          opacity: isVisible ? (fieldTarget ? 0.42 : 0.18) : 0,
-          scale: isActive ? 0.72 : fieldTarget ? 1.18 : 1,
+          opacity: isVisible ? (fieldTarget ? 0.5 : 0.2) : 0,
+          scale: pressureDepth,
         }}
         transition={{ duration: 0.18 }}
       />
 
-      {rect && isVisible && (
+      {projectionRect && isVisible && (
         <svg className="absolute inset-0 h-full w-full overflow-visible">
+          <motion.polygon
+            points={farPlane}
+            className="field-plane field-plane--rear"
+            animate={{ opacity: isActive ? 0.2 : 0.34 }}
+          />
+          <motion.polygon
+            points={nearPlane}
+            className="field-plane field-plane--front"
+            animate={{ opacity: isActive ? 0.72 : 0.52 }}
+          />
+          <line
+            x1={projectionRect.left}
+            y1={projectionRect.top}
+            x2={projectionRect.left + depthX}
+            y2={projectionRect.top + depthY}
+            className="field-depth-line"
+          />
+          <line
+            x1={right}
+            y1={projectionRect.top}
+            x2={right + depthX}
+            y2={projectionRect.top + depthY}
+            className="field-depth-line"
+          />
+          <line
+            x1={right}
+            y1={bottom}
+            x2={right + depthX}
+            y2={bottom + depthY}
+            className="field-depth-line"
+          />
+          <line
+            x1={projectionRect.left}
+            y1={bottom}
+            x2={projectionRect.left + depthX}
+            y2={bottom + depthY}
+            className="field-depth-line field-depth-line--soft"
+          />
           <motion.path
-            d={`M ${pointer.x} ${pointer.y} L ${rect.left} ${centerY} L ${rect.left} ${rect.top}`}
-            className="field-route"
+            d={`M ${pointer.x} ${pointer.y} L ${routeBreakX} ${routeBreakY} L ${projectionRect.left + depthX} ${projectionRect.top + depthY}`}
+            className="field-route field-route--iso"
             initial={false}
           />
           <motion.path
-            d={`M ${pointer.x} ${pointer.y} L ${rect.right} ${centerY} L ${rect.right} ${rect.bottom}`}
+            d={`M ${pointer.x} ${pointer.y} L ${routeBreakX} ${routeBreakY} L ${right + depthX} ${bottom + depthY}`}
             className="field-route field-route--soft"
             initial={false}
-          />
-          <motion.rect
-            x={rect.left}
-            y={rect.top}
-            width={rect.width}
-            height={rect.height}
-            className="field-frame"
-            animate={{ opacity: isActive ? 0.9 : 0.58 }}
           />
         </svg>
       )}
