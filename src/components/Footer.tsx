@@ -1,4 +1,5 @@
 import { ArrowUpRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import Magnetic from './Magnetic';
 
 export default function Footer() {
@@ -44,7 +45,7 @@ export default function Footer() {
               </li>
               <li>
                 <Magnetic strength={0.3}>
-                  <a href="#work" data-field-target data-field-kind="route" data-field-label="selected work" className="hover:text-[var(--color-muted)] transition-colors inline-block p-2 -ml-2">Selected Work</a>
+                  <Link to="/#work" data-field-target data-field-kind="route" data-field-label="selected work" className="hover:text-[var(--color-muted)] transition-colors inline-block p-2 -ml-2">Selected Work</Link>
                 </Magnetic>
               </li>
               <li>

@@ -2,6 +2,12 @@ import { useEffect } from 'react';
 import Lenis from 'lenis';
 import useFinePointer from '../hooks/useFinePointer';
 
+declare global {
+  interface Window {
+    __portfolioLenis?: Lenis;
+  }
+}
+
 export default function SmoothScroll() {
   const canUseFinePointer = useFinePointer();
 
@@ -16,6 +22,8 @@ export default function SmoothScroll() {
       smoothWheel: true,
       wheelMultiplier: 1,
     });
+
+    window.__portfolioLenis = lenis;
 
     let rafId = 0;
 
@@ -52,6 +60,9 @@ export default function SmoothScroll() {
 
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (window.__portfolioLenis === lenis) {
+        delete window.__portfolioLenis;
+      }
       stop();
       lenis.destroy();
     };
