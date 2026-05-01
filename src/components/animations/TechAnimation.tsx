@@ -34,12 +34,11 @@ export default function TechAnimation({ isActive }: { isActive: boolean }) {
           </linearGradient>
         </defs>
 
-        <path d="M 28 280 L 154 34 L 454 34" stroke="var(--color-ink)" strokeOpacity="0.08" strokeDasharray="8 10" />
+        <path d="M 42 280 H 438 M 42 58 V 280 M 42 58 H 438" stroke="var(--color-ink)" strokeOpacity="0.08" />
         <path
-          d="M 92 102 L 112 252 M 178 88 L 208 238 M 272 82 L 286 264 M 366 84 L 352 234"
+          d="M 92 104 H 418 M 92 154 H 408 M 92 204 H 418 M 92 254 H 408"
           stroke="var(--color-ink)"
-          strokeOpacity="0.09"
-          strokeDasharray="3 9"
+          strokeOpacity="0.075"
         />
 
         {layers.map((layer, index) => {
@@ -55,14 +54,13 @@ export default function TechAnimation({ isActive }: { isActive: boolean }) {
               }
               transition={{ duration: 8 + index, repeat: Infinity, delay: index * 0.35, ease: 'easeInOut' }}
             >
-              <polygon points={polygon.rear} fill="var(--color-ink)" opacity="0.02" stroke="var(--color-ink)" strokeOpacity="0.14" strokeDasharray="7 6" />
+              <polygon points={polygon.rear} fill="var(--color-ink)" opacity="0.02" stroke="var(--color-ink)" strokeOpacity="0.12" />
               <polygon points={polygon.front} fill="transparent" stroke="var(--color-ink)" strokeOpacity="0.22" />
               <path d={polygon.spine} stroke="var(--color-ink)" strokeOpacity="0.13" />
               <path
                 d={`M ${layer.x + 92} ${layer.y + 17} L ${layer.x + layer.width - 22} ${layer.y + 17}`}
                 stroke="var(--color-ink)"
                 strokeOpacity="0.12"
-                strokeDasharray="2 7"
               />
               <text x={layer.x + 14} y={layer.y + 23} fill="var(--color-ink)" fillOpacity="0.42" fontSize="9" letterSpacing="3" fontFamily="monospace">
                 {layer.label}
@@ -72,15 +70,15 @@ export default function TechAnimation({ isActive }: { isActive: boolean }) {
         })}
 
         <motion.path
-          d="M 78 101 L 392 85 L 112 151 L 430 134 L 104 201 L 386 185 L 90 251 L 418 234"
+          d="M 104 101 H 392 M 112 151 H 430 M 104 201 H 386 M 90 251 H 418"
           stroke={`url(#${scanId})`}
           strokeWidth="1.8"
           strokeLinecap="round"
-          strokeDasharray="74 460"
+          strokeDasharray="74 360"
           initial={{ strokeDashoffset: 0 }}
           animate={
             isActive && !prefersReducedMotion
-              ? { strokeDashoffset: [0, -534] }
+              ? { strokeDashoffset: [0, -434] }
               : { strokeDashoffset: 0 }
           }
           transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}

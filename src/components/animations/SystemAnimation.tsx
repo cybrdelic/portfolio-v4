@@ -75,14 +75,13 @@ export default function SystemAnimation({
                 }
                 transition={{ duration: 9 + index * 1.4, repeat: Infinity, ease: 'easeInOut' }}
               >
-                <polygon points={path.rear} fill="var(--color-ink)" opacity="0.022" stroke="var(--color-ink)" strokeOpacity="0.16" strokeDasharray="8 7" />
+                <polygon points={path.rear} fill="var(--color-ink)" opacity="0.022" stroke="var(--color-ink)" strokeOpacity="0.12" />
                 <polygon points={path.front} fill="transparent" stroke="var(--color-ink)" strokeOpacity="0.18" />
-                <path d={path.connectors} stroke="var(--color-ink)" strokeOpacity="0.12" strokeDasharray="4 6" />
+                <path d={path.connectors} stroke="var(--color-ink)" strokeOpacity="0.1" />
                 <path
                   d={`M ${plane.x + 18} ${plane.y + 26} L ${plane.x + plane.width - 22} ${plane.y + 26} M ${plane.x + 18} ${plane.y + plane.height - 24} L ${plane.x + plane.width - 58} ${plane.y + plane.height - 24}`}
                   stroke="var(--color-ink)"
                   strokeOpacity="0.1"
-                  strokeDasharray="1 8"
                 />
                 <text
                   x={plane.x + 18}

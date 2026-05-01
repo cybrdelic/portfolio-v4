@@ -1,9 +1,6 @@
 import { motion, useReducedMotion } from 'motion/react';
 import { useId } from 'react';
 
-const rows = Array.from({ length: 13 }, (_, index) => index);
-const columns = Array.from({ length: 15 }, (_, index) => index);
-
 function isoPoint(x: number, y: number, z = 0) {
   return {
     x: 240 + (x - y) * 14,
@@ -11,36 +8,25 @@ function isoPoint(x: number, y: number, z = 0) {
   };
 }
 
-const ridgePath = rows
-  .map((row) => {
-    const points = columns.map((column) => {
-      const z =
-        Math.sin(column * 0.9) * 10 +
-        Math.cos(row * 0.8) * 7 +
-        Math.sin((column + row) * 0.42) * 11;
-      return isoPoint(column, row, z);
-    });
-
-    return points
+const ridgePath = [
+  [isoPoint(0, 5, -10), isoPoint(4, 2, 18), isoPoint(10, 3, 26), isoPoint(16, 7, 2)],
+  [isoPoint(2, 10, -8), isoPoint(7, 7, 16), isoPoint(13, 8, 12)],
+]
+  .map((points) =>
+    points
       .map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`)
-      .join(' ');
-  })
+      .join(' ')
+  )
   .join(' ');
 
-const crossPath = columns
-  .map((column) => {
-    const points = rows.map((row) => {
-      const z =
-        Math.sin(column * 0.9) * 10 +
-        Math.cos(row * 0.8) * 7 +
-        Math.sin((column + row) * 0.42) * 11;
-      return isoPoint(column, row, z);
-    });
-
-    return points
-      .map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`)
-      .join(' ');
-  })
+const signalPath = [
+  isoPoint(4, 3, 18),
+  isoPoint(7, 2, 22),
+  isoPoint(9, 5, 26),
+  isoPoint(11, 7, 20),
+  isoPoint(12, 8, 14),
+]
+  .map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`)
   .join(' ');
 
 const plate = [
@@ -88,10 +74,10 @@ export default function HeroAnimation({ isActive }: { isActive: boolean }) {
           style={{ originX: '50%', originY: '50%' }}
         >
           <polygon points={plate} fill="var(--color-ink)" opacity="0.04" />
-          <polygon points={plate} stroke="var(--color-ink)" strokeOpacity="0.22" strokeDasharray="10 7" />
-          <path d={ridgePath} stroke="var(--color-ink)" strokeWidth="0.7" strokeOpacity="0.28" />
-          <path d={crossPath} stroke="var(--color-ink)" strokeWidth="0.55" strokeOpacity="0.16" />
-          <path d={nodeDropPath} stroke="var(--color-ink)" strokeWidth="0.75" strokeOpacity="0.2" strokeDasharray="2 6" />
+          <polygon points={plate} stroke="var(--color-ink)" strokeOpacity="0.22" />
+          <path d={ridgePath} stroke="var(--color-ink)" strokeWidth="0.85" strokeOpacity="0.24" />
+          <path d={signalPath} stroke="var(--color-ink)" strokeWidth="0.75" strokeOpacity="0.18" />
+          <path d={nodeDropPath} stroke="var(--color-ink)" strokeWidth="0.75" strokeOpacity="0.18" />
 
           <motion.path
             d={ridgePath}
@@ -109,18 +95,18 @@ export default function HeroAnimation({ isActive }: { isActive: boolean }) {
           />
 
           <motion.path
-            d={crossPath}
+            d={signalPath}
             stroke={`url(#${scanId})`}
             strokeWidth="0.9"
-            strokeDasharray="60 620"
+            strokeDasharray="54 320"
             strokeLinecap="round"
             initial={{ strokeDashoffset: -120 }}
             animate={
               isActive && !prefersReducedMotion
-                ? { strokeDashoffset: [-120, -760] }
+                ? { strokeDashoffset: [-120, -440] }
                 : { strokeDashoffset: -120 }
             }
-            transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
+            transition={{ duration: 14, repeat: Infinity, ease: 'linear' }}
           />
 
           {markerNodes.map(({ top: point }, index) => (
