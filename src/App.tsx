@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { AnimatePresence } from 'motion/react';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import ProjectDetail from './pages/ProjectDetail';
@@ -38,15 +37,13 @@ export default function App() {
       <RouteTransitionCapture />
 
       <div className="relative z-10">
-        <AnimatePresence mode="wait" initial={false}>
-          <PageTransition key={location.pathname} pathname={location.pathname}>
-            <ScrollToTop hash={location.hash} pathname={location.pathname} />
-            <Routes location={location}>
-              <Route path="/" element={<Home />} />
-              <Route path="/project/:id" element={<ProjectDetail />} />
-            </Routes>
-          </PageTransition>
-        </AnimatePresence>
+        <PageTransition key={location.pathname} pathname={location.pathname}>
+          <ScrollToTop hash={location.hash} pathname={location.pathname} />
+          <Routes location={location}>
+            <Route path="/" element={<Home />} />
+            <Route path="/project/:id" element={<ProjectDetail />} />
+          </Routes>
+        </PageTransition>
 
         <Footer />
       </div>

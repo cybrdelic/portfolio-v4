@@ -1,4 +1,4 @@
-import { useEffect, useState, type CSSProperties } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { motion, useMotionValue, useSpring } from 'motion/react';
 import useFinePointer from '../hooks/useFinePointer';
 
@@ -54,11 +54,13 @@ function getFieldTarget(target: EventTarget | null): FieldTarget | null {
 
 export default function CustomCursor() {
   const canUseFinePointer = useFinePointer();
+  const routeReleaseAt = useRef(0);
   const pressureX = useMotionValue(-200);
   const pressureY = useMotionValue(-200);
   const springX = useSpring(pressureX, { stiffness: 320, damping: 34, mass: 0.2 });
   const springY = useSpring(pressureY, { stiffness: 320, damping: 34, mass: 0.2 });
   const [isActive, setIsActive] = useState(false);
+  const [isRouteCommitting, setIsRouteCommitting] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [pointer, setPointer] = useState<PointerState>({ x: -200, y: -200 });
@@ -108,6 +110,9 @@ export default function CustomCursor() {
     const handlePointerMove = (event: PointerEvent) => {
       nextPointer = { x: event.clientX, y: event.clientY };
       setIsVisible(true);
+      if (isRouteCommitting && performance.now() >= routeReleaseAt.current) {
+        setIsRouteCommitting(false);
+      }
       scheduleFlush();
     };
 
@@ -157,13 +162,31 @@ export default function CustomCursor() {
       document.documentElement.style.removeProperty('--field-x');
       document.documentElement.style.removeProperty('--field-y');
     };
-  }, [canUseFinePointer, pressureX, pressureY]);
+  }, [canUseFinePointer, isRouteCommitting, pressureX, pressureY]);
+
+  useEffect(() => {
+    if (!canUseFinePointer) {
+      return;
+    }
+
+    const handleRouteCommit = () => {
+      routeReleaseAt.current = performance.now() + 520;
+      setIsRouteCommitting(true);
+      setFieldTarget(null);
+    };
+
+    window.addEventListener('portfolio-route-commit', handleRouteCommit);
+
+    return () => {
+      window.removeEventListener('portfolio-route-commit', handleRouteCommit);
+    };
+  }, [canUseFinePointer]);
 
   if (!canUseFinePointer) {
     return null;
   }
 
-  const chromeVisible = isVisible && !isActive;
+  const chromeVisible = isVisible && !isActive && !isRouteCommitting;
   const rect = chromeVisible ? fieldTarget?.rect : undefined;
   const isLargeSurface = rect
     ? rect.width > viewport.width * 0.62 && rect.height > viewport.height * 0.62
@@ -251,7 +274,7 @@ export default function CustomCursor() {
           opacity: chromeVisible ? (fieldTarget ? (isScrolling ? 0.36 : 0.5) : 0.18) : 0,
           scale: isScrolling && fieldTarget ? 1.08 : pressureDepth,
         }}
-        transition={{ duration: isActive ? 0.04 : 0.18 }}
+        transition={{ duration: isActive || isRouteCommitting ? 0 : 0.18 }}
       />
 
       <motion.div
@@ -261,7 +284,7 @@ export default function CustomCursor() {
           opacity: chromeVisible ? (fieldTarget ? 0.62 : 0.32) : 0,
           scale: fieldTarget ? 1 : 0.78,
         }}
-        transition={{ duration: isActive ? 0.04 : 0.16 }}
+        transition={{ duration: isActive || isRouteCommitting ? 0 : 0.16 }}
       />
 
       <motion.div
@@ -275,7 +298,7 @@ export default function CustomCursor() {
           opacity: chromeVisible ? 1 : 0,
           scale: isActive ? 0.78 : fieldTarget ? 1.08 : 0.92,
         }}
-        transition={{ duration: isActive ? 0.04 : 0.14 }}
+        transition={{ duration: isActive || isRouteCommitting ? 0 : 0.14 }}
       />
 
       {projectionRect && chromeVisible && (

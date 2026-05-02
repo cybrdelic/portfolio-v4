@@ -68,6 +68,97 @@ html.lenis, html.lenis body {
   backface-visibility: hidden;
 }
 
+.route-mount-plane {
+  min-height: 100svh;
+  will-change: clip-path, opacity, transform;
+}
+
+.route-mount-frame {
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  pointer-events: none;
+  contain: layout paint style;
+  --route-frame-x: clamp(1.5rem, 5.6vw, 5rem);
+  --route-frame-y: clamp(4.75rem, 10svh, 7.5rem);
+}
+
+.route-mount-line {
+  position: absolute;
+  left: var(--route-frame-x);
+  right: var(--route-frame-x);
+  height: 1px;
+  background: rgba(6, 6, 6, 0.36);
+  transform-origin: center;
+}
+
+.route-mount-line--upper {
+  top: var(--route-frame-y);
+}
+
+.route-mount-line--lower {
+  bottom: var(--route-frame-y);
+  background: rgba(6, 6, 6, 0.25);
+}
+
+.route-mount-corner {
+  position: absolute;
+  width: clamp(2.25rem, 4vw, 3.75rem);
+  height: clamp(2.25rem, 4vw, 3.75rem);
+  border-color: rgba(6, 6, 6, 0.34);
+  border-style: solid;
+  border-width: 0;
+}
+
+.route-mount-corner--top-left {
+  left: var(--route-frame-x);
+  top: var(--route-frame-y);
+  border-left-width: 1px;
+  border-top-width: 1px;
+  transform-origin: left top;
+}
+
+.route-mount-corner--top-right {
+  right: var(--route-frame-x);
+  top: var(--route-frame-y);
+  border-right-width: 1px;
+  border-top-width: 1px;
+  transform-origin: right top;
+}
+
+.route-mount-corner--bottom-left {
+  left: var(--route-frame-x);
+  bottom: var(--route-frame-y);
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  transform-origin: left bottom;
+}
+
+.route-mount-corner--bottom-right {
+  right: var(--route-frame-x);
+  bottom: var(--route-frame-y);
+  border-bottom-width: 1px;
+  border-right-width: 1px;
+  transform-origin: right bottom;
+}
+
+.route-mount-depth {
+  position: absolute;
+  right: calc(var(--route-frame-x) - 0.35rem);
+  width: clamp(2.75rem, 5.8vw, 5.5rem);
+  height: 1px;
+  background: rgba(6, 6, 6, 0.28);
+  transform-origin: right center;
+}
+
+.route-mount-depth--upper {
+  top: calc(var(--route-frame-y) + clamp(0.75rem, 1.8vw, 1.35rem));
+}
+
+.route-mount-depth--lower {
+  bottom: calc(var(--route-frame-y) + clamp(0.75rem, 1.8vw, 1.35rem));
+}
+
 .section-shell {
   position: relative;
   padding: 6rem 1.5rem;

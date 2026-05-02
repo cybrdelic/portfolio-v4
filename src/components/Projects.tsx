@@ -75,10 +75,7 @@ function ProjectFace({
             </p>
           </div>
 
-          <div
-            className="flex items-center justify-between gap-6 border-t border-[var(--color-line)] pt-6"
-            data-route-transition-source
-          >
+          <div className="flex items-center justify-between gap-6 border-t border-[var(--color-line)] pt-6">
             <span className="font-mono text-[11px] uppercase tracking-[0.34em] text-[var(--color-muted)]">
               View project
             </span>

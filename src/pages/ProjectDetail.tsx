@@ -4,6 +4,8 @@ import { ArrowLeft } from 'lucide-react';
 import { projects } from '../data';
 import Magnetic from '../components/Magnetic';
 
+const DETAIL_EASE = [0.16, 1, 0.3, 1] as const;
+
 export default function ProjectDetail() {
   const { id } = useParams();
   const project = projects.find(p => p.id === id);
@@ -36,17 +38,17 @@ export default function ProjectDetail() {
           <div className="lg:col-span-7">
             <motion.h1
               className="font-sans text-4xl md:text-5xl lg:text-6xl font-normal tracking-tight leading-tight mb-6"
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
+              transition={{ duration: 0.42, delay: 0.04, ease: DETAIL_EASE }}
             >
               {project.title}
             </motion.h1>
             <motion.p
               className="font-sans text-xl md:text-2xl text-[var(--color-muted)] leading-relaxed"
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
+              transition={{ duration: 0.42, delay: 0.08, ease: DETAIL_EASE }}
             >
               {project.subtitle}
             </motion.p>
@@ -56,7 +58,7 @@ export default function ProjectDetail() {
               className="font-mono text-xs uppercase tracking-widest text-[var(--color-muted)]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
+              transition={{ duration: 0.36, delay: 0.12, ease: DETAIL_EASE }}
             >
               <p className="mb-2">Domain</p>
               <p className="text-[var(--color-ink)]">{project.type}</p>
@@ -65,7 +67,7 @@ export default function ProjectDetail() {
               className="font-mono text-xs uppercase tracking-widest text-[var(--color-muted)]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
+              transition={{ duration: 0.36, delay: 0.16, ease: DETAIL_EASE }}
             >
               <p className="mb-2">Stack</p>
               <p className="text-[var(--color-ink)]">{project.tech}</p>

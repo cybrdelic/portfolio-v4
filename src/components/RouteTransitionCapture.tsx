@@ -35,11 +35,16 @@ function stopScrollMomentum() {
   });
 }
 
+function commitRouteInteraction() {
+  stopScrollMomentum();
+  window.dispatchEvent(new Event('portfolio-route-commit'));
+}
+
 export default function RouteTransitionCapture() {
   useEffect(() => {
     const handlePointerDown = (event: PointerEvent) => {
       if (!isModifiedClick(event) && getInternalRouteAnchor(event.target)) {
-        stopScrollMomentum();
+        commitRouteInteraction();
       }
     };
 
