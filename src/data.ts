@@ -13,98 +13,98 @@ export interface Project {
 
 export const projects: Project[] = [
   {
-    id: 'vdbstream',
-    title: 'VDBStream',
-    subtitle: 'Browser WebGPU sparse-field runtime with mutable voxel bricks',
-    type: 'Simulation Runtime',
-    tech: 'TypeScript, WebGPU, WGSL, Vite',
+    id: 'drone-sim-studio',
+    title: 'DroneSim Studio',
+    subtitle: 'Flight-to-fabrication engineering bench for quadcopter frames',
+    type: 'Engineering Workbench',
+    tech: 'React, Three.js, Rapier, TypeScript',
+    animationType: 'system',
+    overview: 'DroneSim Studio is a browser engineering lab for designing, inspecting, and flying quadcopter frames. It connects geometry, assembly views, fabrication checks, flight telemetry, controller tuning, and debug overlays into one dense operator surface.',
+    whyItExists: 'Most drone configurators stop at a static model or a toy flight scene. This project is stronger because the UI treats the drone as an engineering object: fit, wiring, prop clearance, control mode, telemetry, and print readiness all live in the same loop.',
+    coreMechanisms: [
+      'Parametric frame generator',
+      'Flight-to-fabrication gate',
+      'Assembly and print-layout views',
+      'Optional PID assist modes',
+      'Live telemetry readouts',
+      'Local debug-bridge protocol'
+    ],
+    roleInWork: 'This is the strongest portfolio project in the current corpus because it has a believable product surface, a real technical loop, and screenshots that immediately explain the work.'
+  },
+  {
+    id: 'amber-lab',
+    title: 'AmberLab',
+    subtitle: 'WebGPU specimen renderer for translucent amber and material capture',
+    type: 'Material Rendering',
+    tech: 'Three.js, WebGPU, TSL, TypeScript',
     animationType: 'timeseries',
-    overview: 'VDBStream is a runnable browser prototype for a VDB-style game architecture. The world lives in sparse 16x16x16 bricks, streams pages around the player, mutates field values through tools, packs a local 64x64x64 view into a WebGPU 3D texture, and raymarches the result in WGSL.',
-    whyItExists: 'Native OpenVDB and NanoVDB do not map cleanly into a normal browser app. This project proves the game-side architecture first: sparse page residency, dirty-brick mutation, local GPU upload, and visible field rendering that can be inspected without a native toolchain.',
+    overview: 'AmberLab is a material capture and rendering rig for amber-like translucent specimens. It combines procedural nodule geometry, inclusions, HDRI lighting, WebGPU volume materials, fallback reporting, and canvas-to-reference comparison.',
+    whyItExists: 'The interesting part is not just that it renders a pretty object. The project turns material lookdev into a measurable workflow: capture profile, lighting state, renderer backend, specimen geometry, and diff metrics are all surfaced instead of hidden behind a single canvas.',
     coreMechanisms: [
-      'Sparse brick world store',
-      'Queued page streaming',
-      'Runtime field tools',
-      'Heat and smoke simulation',
-      'Packed 3D texture upload',
-      'WGSL volume raymarching'
+      'Procedural amber geometry',
+      'WebGPU volume material path',
+      'Renderer fallback reporting',
+      'HDRI calibration presets',
+      'Inclusion and caustic layers',
+      'Canvas/reference diff export'
     ],
-    roleInWork: 'This is the clearest recent simulation artifact to extract: it turns a speculative VDB architecture into a small, runnable WebGPU system with a real code path.'
+    roleInWork: 'This should replace the weaker gemstone/rendering placeholders because it has a specific subject, visible output, and real renderer-state mechanics.'
   },
   {
-    id: 'codex-connect',
-    title: 'Codex Connect',
-    subtitle: 'Native Android and local bridge control surface for Codex sessions',
-    type: 'Operator Infrastructure',
-    tech: 'Android, Java, Node, Codex CLI',
-    animationType: 'network',
-    overview: 'Codex Connect is a native Android client plus a local PC bridge for sending prompts from a phone into Codex. The bridge exposes health, command, and job polling routes, persists queued jobs, and can run fresh or resumed Codex CLI work without SMS, tunnels, or third-party relays.',
-    whyItExists: 'Codex is powerful but still mostly trapped at the desktop. This project makes the control plane reachable from a phone while keeping the trust boundary local: same machine, local LAN or VPN, shared app secret, and explicit ask/do modes.',
-    coreMechanisms: [
-      'Local Node bridge',
-      'Native Android client',
-      'Shared-secret command API',
-      'Queued job persistence',
-      'Codex CLI execution',
-      'Browser fallback console'
-    ],
-    roleInWork: 'This is a strong portfolio project because it is not a mockup. It reached a live phone-submitted smoke path that returned a real Codex response.'
-  },
-  {
-    id: 'spectrocity',
-    title: 'Spectrocity',
-    subtitle: 'WebGPU gemstone renderer with diagnostic probe tooling',
-    type: 'Rendering Systems',
-    tech: 'WebGPU, TypeScript, React, Playwright',
-    animationType: 'system',
-    overview: 'Spectrocity is a real-time gemstone renderer built around spectral dispersion, procedural gem cuts, and WebGPU compute paths. Recent work made the project more durable by splitting the risky full diamond shader from a safer diamond_preview path and adding probes that classify visible render signal, device loss, and requestDevice traces.',
-    whyItExists: 'WebGPU demos often fail as black boxes: a page goes blank and the only feedback is a browser error. Spectrocity treats renderer stability as part of the product by exposing internal renderer state and producing artifacts that survive bad GPU sessions.',
-    coreMechanisms: [
-      'Spectral ray tracing',
-      'Procedural SDF gem cuts',
-      'WebGPU renderer lifecycle',
-      'Device-loss instrumentation',
-      'Visual signal probes',
-      'Watchdog/debug protocol'
-    ],
-    roleInWork: 'Spectrocity shows the renderer/debugging side of my work: not just making a GPU visual, but building the tools to prove when it is actually alive.'
-  },
-  {
-    id: 'eye-sim',
-    title: 'EyeSim',
-    subtitle: 'Procedural face rig and presentation surface with proof captures',
-    type: 'Perceptual Interfaces',
-    tech: 'React, Three.js, MediaPipe, TypeScript',
-    animationType: 'system',
-    overview: 'EyeSim is a React and Three.js digital face rig with procedural eyes, shot-based presentation modes, opt-in tracking, and separated lab routes for material, WebGPU, and asset-conditioning work. The strongest recent slice adds a procedural-head route with generator-backed geometry, mouth shaping, and proof captures for desktop, close-up, and mobile surfaces.',
-    whyItExists: 'Face and gaze work gets hard to evaluate when it is buried in renderer experiments. EyeSim keeps the product route, lab routes, tracking adapters, presentation shots, and conditioning scripts separated so the project can be judged as a real interface rather than a pile of demos.',
-    coreMechanisms: [
-      'Procedural head generation',
-      'Shot-based presentation',
-      'MediaPipe tracking adapter',
-      'Facecap conditioning scripts',
-      'Mouth and expression systems',
-      'Release proof screenshots'
-    ],
-    roleInWork: 'EyeSim is the strongest real replacement for the old perceptual-systems placeholder because it has routes, screenshots, source modules, and a proof page already in the repo.'
-  },
-  {
-    id: 'codex-operator-kit',
-    title: 'Codex Operator Kit',
-    subtitle: 'Local plugin and skill system for repeatable Codex workflows',
-    type: 'Codex Tooling',
-    tech: 'Codex Plugins, Python, Node, Skills',
+    id: 'cnt-workbench',
+    title: 'CNTWorkbench',
+    subtitle: 'Carbon nanotube geometry builder with simulation export paths',
+    type: 'Scientific Tooling',
+    tech: 'React, Three.js, TypeScript, Vite',
     animationType: 'pipeline',
-    overview: 'Codex Operator Kit is the local plugin/tooling layer that came out of recent Codex work: harness-forge for discovering measurable project loops, autoresearch-operator for bounded observe/edit/verify cycles, anti-pattern-memory for curated rule packs, ai-slop-audit for explicit PASS/FLAG checks, and codex-theme-forge for Windows app theme generation.',
-    whyItExists: 'One-off prompts do not compound unless the workflow becomes callable again. This project turns repeated Codex patterns into local plugins, skills, scripts, static rule packs, and installed operator surfaces that can be reused without harvesting context every time.',
+    overview: 'CNTWorkbench turns carbon-nanotube chirality and length parameters into inspectable molecular geometry. The useful part is the export path: finite segments, periodic unit cells, ExtXYZ, LAMMPS data, POSCAR, and JSON specs.',
+    whyItExists: 'A visual nanotech demo is easy to fake. This one is more portfolio-worthy because it exposes the bridge between a browser workbench and real simulation tooling, so the output can leave the UI and survive in external analysis pipelines.',
     coreMechanisms: [
-      'Plugin scaffolding',
-      'Installed skill contracts',
-      'Harness generation',
-      'Autoresearch loops',
-      'Static anti-pattern packs',
-      'Audit pass reporting'
+      'Chirality-driven geometry',
+      'Finite segment generation',
+      'Periodic unit-cell export',
+      'LAMMPS and POSCAR writers',
+      'OVITO-friendly handoff',
+      'Cinematic inspection stage'
     ],
-    roleInWork: 'This is the most honest Codex-native portfolio entry: it shows that I am not only using agents, I am building durable operator infrastructure around them.'
+    roleInWork: 'This is a better scientific-project candidate than another generic renderer because the workflow has an external technical contract, not just a scene.'
+  },
+  {
+    id: 'firesim',
+    title: 'FireSim',
+    subtitle: 'Combustion workbench for browser fire simulation and validation',
+    type: 'Simulation Platform',
+    tech: 'React, WebGPU, WGSL, Vite',
+    animationType: 'timeseries',
+    overview: 'FireSim is the combustion platform line in the corpus: a WebGPU fire/fluid simulation with a V2 consumer route, control-deck UI work, debug overlays, field exports, benchmark scaffolds, and a clean launcher path.',
+    whyItExists: 'The strongest angle is not the flame visual by itself. It is the attempt to make browser combustion testable: runtime controls, high-quality defaults, field exports, performance measurement, and a staged benchmark suite based on NIST, UL FSRI, and RxCADRE sources.',
+    coreMechanisms: [
+      'WebGPU fluid/fire solver',
+      'V2 consumer route',
+      'Control deck and diagnostics',
+      'Projected field exports',
+      'Benchmark sync scaffold',
+      'Quality-preserving launcher path'
+    ],
+    roleInWork: 'FireSim is worth showing as a platform-in-progress because it combines simulation, UX, performance diagnosis, and validation strategy in one real project line.'
+  },
+  {
+    id: 'llmwiki',
+    title: 'LLMWiki',
+    subtitle: 'Local-first second brain built from project evidence and authored pages',
+    type: 'Knowledge System',
+    tech: 'Node, Markdown, Static Site',
+    animationType: 'network',
+    overview: 'LLMWiki is a local-first personal knowledge system that scans project folders, reads profile/repo metadata, imports archives, and builds a lightweight wiki. The accepted direction is an article-first second brain with authored pages and explicit provenance.',
+    whyItExists: 'The portfolio problem itself points at why this matters: a directory full of projects does not automatically become a coherent body of work. LLMWiki exists to turn messy local evidence into durable pages that can explain what is real, what repeats, and what should be extracted next.',
+    coreMechanisms: [
+      'Local project root scanning',
+      'GitHub/profile metadata ingest',
+      'Archive import hooks',
+      'Hand-authored canonical pages',
+      'Backlinks and source panels',
+      'Static browser wiki output'
+    ],
+    roleInWork: 'This is the most honest tooling/project extraction candidate because it directly addresses the recurring problem: making a large local corpus legible without turning it into another generic dashboard.'
   }
 ];
