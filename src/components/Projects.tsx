@@ -66,7 +66,7 @@ function ProjectFace({
             <span>{String(index + 1).padStart(2, '0')}</span>
           </div>
 
-          <div className="space-y-6" data-route-transition-source>
+          <div className="space-y-6">
             <h3 className="max-w-5xl text-4xl font-normal leading-[0.92] tracking-[-0.05em] transition-transform duration-300 ease-out group-hover:-translate-y-1 md:text-6xl lg:text-7xl">
               {project.title}
             </h3>
@@ -75,7 +75,10 @@ function ProjectFace({
             </p>
           </div>
 
-          <div className="flex items-center justify-between gap-6 border-t border-[var(--color-line)] pt-6">
+          <div
+            className="flex items-center justify-between gap-6 border-t border-[var(--color-line)] pt-6"
+            data-route-transition-source
+          >
             <span className="font-mono text-[11px] uppercase tracking-[0.34em] text-[var(--color-muted)]">
               View project
             </span>

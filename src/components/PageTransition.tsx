@@ -67,8 +67,9 @@ export default function PageTransition({
   const [isPresent, safeToRemove] = usePresence();
   const prefersReducedMotion = Boolean(useReducedMotion());
   const [routeSource, setRouteSource] = useState<RouteSource | null>(() => readRouteSource());
-  const [showTransfer, setShowTransfer] = useState(true);
+  const [showTransfer, setShowTransfer] = useState(() => readRouteSource() !== null);
   const route = useMemo(() => getRouteMeta(pathname), [pathname]);
+  const isTransferActive = !prefersReducedMotion && (!isPresent || showTransfer);
 
   useEffect(() => {
     const handleRouteSource = (event: Event) => {
@@ -83,6 +84,7 @@ export default function PageTransition({
         label: detail.label,
         phase: detail.phase || `${detail.kind || 'route'} transfer`,
       });
+      setShowTransfer(true);
     };
 
     window.addEventListener('portfolio-route-source', handleRouteSource);
@@ -120,6 +122,18 @@ export default function PageTransition({
     }, ENTRY_FALLBACK_MS);
     return () => window.clearTimeout(fallbackId);
   }, [isPresent, pathname, prefersReducedMotion, showTransfer]);
+
+  useEffect(() => {
+    const root = document.documentElement;
+
+    if (isTransferActive) {
+      root.classList.add('is-route-transferring');
+      return () => root.classList.remove('is-route-transferring');
+    }
+
+    root.classList.remove('is-route-transferring');
+    window.dispatchEvent(new Event('portfolio-route-transition-end'));
+  }, [isTransferActive]);
 
   if (prefersReducedMotion) {
     return <div className="page-transition-content">{children}</div>;

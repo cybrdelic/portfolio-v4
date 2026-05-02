@@ -18,7 +18,13 @@ export default function BootSequence() {
   const [logs, setLogs] = useState<string[]>([]);
 
   useEffect(() => {
-    if (prefersReducedMotion || sessionStorage.getItem(BOOT_SEQUENCE_STORAGE_KEY) === '1') {
+    const isDeepLink = window.location.pathname !== '/' || window.location.hash.length > 0;
+
+    if (
+      prefersReducedMotion ||
+      isDeepLink ||
+      sessionStorage.getItem(BOOT_SEQUENCE_STORAGE_KEY) === '1'
+    ) {
       setLogs(SEQUENCE);
       setIsVisible(false);
       return;
@@ -89,9 +95,6 @@ export default function BootSequence() {
               transition={{ repeat: Infinity, duration: 0.8 }}
               className="inline-block w-2 h-4 bg-[var(--color-ink)] mt-2"
             />
-            <p className="mt-6 text-[10px] uppercase tracking-[0.3em] text-[var(--color-line)]">
-              Click or press Escape to skip
-            </p>
           </div>
         </motion.div>
       )}

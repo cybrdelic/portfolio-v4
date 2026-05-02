@@ -59,6 +59,7 @@ export default function CustomCursor() {
   const springX = useSpring(pressureX, { stiffness: 320, damping: 34, mass: 0.2 });
   const springY = useSpring(pressureY, { stiffness: 320, damping: 34, mass: 0.2 });
   const [isActive, setIsActive] = useState(false);
+  const [isRouteTransferring, setIsRouteTransferring] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [pointer, setPointer] = useState<PointerState>({ x: -200, y: -200 });
@@ -159,11 +160,42 @@ export default function CustomCursor() {
     };
   }, [canUseFinePointer, pressureX, pressureY]);
 
+  useEffect(() => {
+    if (!canUseFinePointer) {
+      return;
+    }
+
+    let fallbackId = 0;
+
+    const startTransfer = () => {
+      window.clearTimeout(fallbackId);
+      setIsRouteTransferring(true);
+      setIsVisible(false);
+      setFieldTarget(null);
+      fallbackId = window.setTimeout(() => setIsRouteTransferring(false), 1200);
+    };
+
+    const endTransfer = () => {
+      window.clearTimeout(fallbackId);
+      setIsRouteTransferring(false);
+    };
+
+    window.addEventListener('portfolio-route-source', startTransfer);
+    window.addEventListener('portfolio-route-transition-end', endTransfer);
+
+    return () => {
+      window.clearTimeout(fallbackId);
+      window.removeEventListener('portfolio-route-source', startTransfer);
+      window.removeEventListener('portfolio-route-transition-end', endTransfer);
+    };
+  }, [canUseFinePointer]);
+
   if (!canUseFinePointer) {
     return null;
   }
 
-  const rect = fieldTarget?.rect;
+  const cursorVisible = isVisible && !isRouteTransferring;
+  const rect = cursorVisible ? fieldTarget?.rect : undefined;
   const isLargeSurface = rect
     ? rect.width > viewport.width * 0.62 && rect.height > viewport.height * 0.62
     : false;
@@ -179,15 +211,15 @@ export default function CustomCursor() {
   }
 
   if (rect && isLargeSurface) {
-    const patchWidth = 220;
-    const patchHeight = 124;
+    const patchWidth = 184;
+    const patchHeight = 104;
     projectionRect = {
       height: patchHeight,
       left: Math.max(24, Math.min(pointer.x - patchWidth / 2, viewport.width - patchWidth - 24)),
       top:
         pointer.y > viewport.height * 0.58
-          ? Math.max(24, pointer.y - patchHeight - 34)
-          : Math.min(pointer.y + 34, viewport.height - patchHeight - 24),
+          ? Math.max(24, pointer.y - patchHeight - 46)
+          : Math.min(pointer.y + 58, viewport.height - patchHeight - 24),
       width: patchWidth,
     };
   }
@@ -210,6 +242,9 @@ export default function CustomCursor() {
     : '';
   const pressureDepth = isActive ? 0.82 : fieldTarget ? 1.24 : 1;
   const readoutX =
+    projectionRect && isLargeSurface
+      ? clamp(projectionRect.left + projectionRect.width + 14, 18, viewport.width - 220)
+      :
     projectionRect && !isLargeSurface
       ? clamp(
           projectionRect.left < viewport.width * 0.56 ? right + 14 : projectionRect.left - 224,
@@ -218,6 +253,9 @@ export default function CustomCursor() {
         )
       : clamp(pointer.x - 92, 18, viewport.width - 220);
   const readoutY =
+    projectionRect && isLargeSurface
+      ? clamp(projectionRect.top + 8, 18, viewport.height - 92)
+      :
     projectionRect && !isLargeSurface
       ? clamp(projectionRect.top > viewport.height - 220 ? projectionRect.top - 84 : bottom + 14, 18, viewport.height - 92)
       : pointer.y > viewport.height - 128
@@ -241,7 +279,7 @@ export default function CustomCursor() {
         className="field-pressure"
         style={{ x: springX, y: springY }}
         animate={{
-          opacity: isVisible ? (fieldTarget ? (isScrolling ? 0.36 : 0.5) : 0.18) : 0,
+          opacity: cursorVisible ? (fieldTarget ? (isScrolling ? 0.36 : 0.5) : 0.18) : 0,
           scale: isScrolling && fieldTarget ? 1.08 : pressureDepth,
         }}
         transition={{ duration: 0.18 }}
@@ -251,7 +289,7 @@ export default function CustomCursor() {
         className={`field-axes${fieldTarget ? ' field-axes--target' : ''}`}
         style={{ x: springX, y: springY }}
         animate={{
-          opacity: isVisible ? (fieldTarget ? 0.62 : 0.32) : 0,
+          opacity: cursorVisible ? (fieldTarget ? 0.62 : 0.32) : 0,
           scale: fieldTarget ? 1 : 0.78,
         }}
         transition={{ duration: 0.16 }}
@@ -265,13 +303,13 @@ export default function CustomCursor() {
         ].filter(Boolean).join(' ')}
         style={{ x: springX, y: springY }}
         animate={{
-          opacity: isVisible ? 1 : 0,
+          opacity: cursorVisible ? 1 : 0,
           scale: isActive ? 0.78 : fieldTarget ? 1.08 : 0.92,
         }}
         transition={{ duration: 0.14 }}
       />
 
-      {projectionRect && isVisible && (
+      {projectionRect && cursorVisible && (
         <svg className="absolute inset-0 h-full w-full overflow-visible">
           <motion.polygon
             points={farPlane}
@@ -335,7 +373,7 @@ export default function CustomCursor() {
         </svg>
       )}
 
-      {fieldTarget && isVisible && (
+      {fieldTarget && cursorVisible && (
         <motion.div
           className="field-readout"
           style={readoutStyle}

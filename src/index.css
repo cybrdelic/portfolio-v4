@@ -36,6 +36,10 @@ body {
   overflow-x: hidden;
 }
 
+html.is-route-transferring {
+  cursor: wait;
+}
+
 #work,
 #contact {
   scroll-margin-top: 0;
@@ -95,15 +99,15 @@ html.lenis, html.lenis body {
   position: absolute;
   left: var(--route-origin-center-x);
   top: var(--route-origin-center-y);
-  width: min(78vw, max(24rem, calc(var(--route-origin-width) + 12rem)));
-  height: min(58vh, max(12rem, calc(var(--route-origin-height) + 8rem)));
+  width: min(58vw, max(12rem, calc(var(--route-origin-width) + 2.6rem)));
+  height: min(40vh, max(6rem, calc(var(--route-origin-height) + 2.2rem)));
   border: 1px solid rgba(6, 6, 6, 0.82);
   background:
     linear-gradient(90deg, rgba(6, 6, 6, 0.48), rgba(6, 6, 6, 0.14) 48%, rgba(186, 186, 186, 0.2)),
     rgba(186, 186, 186, 0.34);
   box-shadow:
     inset 0 0 0 1px rgba(186, 186, 186, 0.42),
-    18px -14px 0 rgba(6, 6, 6, 0.14);
+    10px -8px 0 rgba(6, 6, 6, 0.1);
   transform-origin: center;
   will-change: opacity, transform;
 }
@@ -169,7 +173,7 @@ html.lenis, html.lenis body {
   position: absolute;
   left: var(--route-origin-center-x);
   top: var(--route-origin-center-y);
-  width: min(88vw, 72rem);
+  width: min(46vw, max(10rem, calc(var(--route-origin-width) + 8rem)));
   height: 1px;
   background: rgba(6, 6, 6, 0.74);
   transform-origin: center;
@@ -177,7 +181,7 @@ html.lenis, html.lenis body {
 }
 
 .page-transfer-axis--echo {
-  margin-top: 2.1rem;
+  margin-top: 1.35rem;
   background: rgba(6, 6, 6, 0.34);
 }
 
@@ -239,10 +243,10 @@ html.lenis, html.lenis body {
 
 .page-transfer-label {
   position: absolute;
-  top: min(calc(100vh - 5.5rem), max(1.25rem, calc(var(--route-origin-center-y) + 2.4rem)));
-  left: min(calc(100vw - 18.5rem), max(1.25rem, calc(var(--route-origin-center-x) + 2.7rem)));
-  width: 17rem;
-  padding: 0.78rem 0.95rem;
+  top: min(calc(100vh - 5.1rem), max(1rem, calc(var(--route-origin-center-y) + 2rem)));
+  left: min(calc(100vw - 16.8rem), max(1rem, calc(var(--route-origin-center-x) + 2.2rem)));
+  width: 15.5rem;
+  padding: 0.68rem 0.82rem;
   border: 1px solid rgba(186, 186, 186, 0.24);
   border-left-color: rgba(186, 186, 186, 0.74);
   background: rgba(6, 6, 6, 0.82);
@@ -258,7 +262,7 @@ html.lenis, html.lenis body {
 }
 
 .page-transfer-label span {
-  margin-bottom: 0.42rem;
+  margin-bottom: 0.34rem;
   color: rgba(186, 186, 186, 0.72);
   font-size: 0.58rem;
   font-weight: 400;
@@ -267,7 +271,7 @@ html.lenis, html.lenis body {
 
 .page-transfer-label strong {
   color: var(--color-bg);
-  font-size: 0.66rem;
+  font-size: 0.62rem;
   font-weight: 500;
   letter-spacing: 0;
 }
@@ -769,13 +773,6 @@ html.lenis, html.lenis body {
 
   .section-content {
     grid-column: span 8 / span 8;
-  }
-}
-
-@supports (content-visibility: auto) {
-  main > section:not(:first-child):not(.bridge-section) {
-    content-visibility: auto;
-    contain-intrinsic-size: 1px 960px;
   }
 }
 

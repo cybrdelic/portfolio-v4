@@ -9,7 +9,7 @@ declare global {
 }
 
 const MAX_HASH_ATTEMPTS = 180;
-const SECTION_TRAVEL_DURATION = 1.1;
+const SECTION_TRAVEL_DURATION = 0.64;
 
 function easeOutCubic(t: number) {
   return 1 - Math.pow(1 - t, 3);
@@ -28,18 +28,6 @@ function getHashTarget(hash: string) {
 }
 
 function getDocumentTop(target: HTMLElement) {
-  let top = 0;
-  let node: HTMLElement | null = target;
-
-  while (node) {
-    top += node.offsetTop;
-    node = node.offsetParent as HTMLElement | null;
-  }
-
-  if (top > 0 || target === document.body) {
-    return top;
-  }
-
   return target.getBoundingClientRect().top + window.scrollY;
 }
 

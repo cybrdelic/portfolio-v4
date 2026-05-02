@@ -75,10 +75,23 @@ function getTargetMeta(anchor: HTMLAnchorElement) {
 }
 
 function setRouteSource(anchor: HTMLAnchorElement) {
+  window.__portfolioLenis?.scrollTo(window.scrollY, {
+    force: true,
+    immediate: true,
+  });
+
   const visualSource = getVisualSource(anchor);
   const rect = visualSource.getBoundingClientRect();
   const root = document.documentElement;
   const meta = getTargetMeta(anchor);
+  const centerX = Math.min(
+    window.innerWidth - 120,
+    Math.max(120, rect.left + rect.width / 2)
+  );
+  const centerY = Math.min(
+    window.innerHeight - 128,
+    Math.max(96, rect.top + rect.height / 2)
+  );
 
   window.__routeTransitionSource = {
     height: rect.height,
@@ -96,8 +109,8 @@ function setRouteSource(anchor: HTMLAnchorElement) {
   root.style.setProperty('--route-origin-top', `${rect.top}px`);
   root.style.setProperty('--route-origin-width', `${rect.width}px`);
   root.style.setProperty('--route-origin-height', `${rect.height}px`);
-  root.style.setProperty('--route-origin-center-x', `${rect.left + rect.width / 2}px`);
-  root.style.setProperty('--route-origin-center-y', `${rect.top + rect.height / 2}px`);
+  root.style.setProperty('--route-origin-center-x', `${centerX}px`);
+  root.style.setProperty('--route-origin-center-y', `${centerY}px`);
 
   window.dispatchEvent(
     new CustomEvent('portfolio-route-source', {
