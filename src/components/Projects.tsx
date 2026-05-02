@@ -66,7 +66,7 @@ function ProjectFace({
             <span>{String(index + 1).padStart(2, '0')}</span>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-6" data-route-transition-source>
             <h3 className="max-w-5xl text-4xl font-normal leading-[0.92] tracking-[-0.05em] transition-transform duration-300 ease-out group-hover:-translate-y-1 md:text-6xl lg:text-7xl">
               {project.title}
             </h3>

@@ -72,16 +72,13 @@ html.lenis, html.lenis body {
 
 .page-transition-shell {
   position: relative;
-  perspective: 1800px;
-  transform-style: preserve-3d;
+  isolation: isolate;
 }
 
 .page-transition-content {
   min-height: 100svh;
   backface-visibility: hidden;
   transform-origin: var(--route-origin-center-x) var(--route-origin-center-y);
-  transform-style: preserve-3d;
-  will-change: clip-path, filter, opacity, transform;
 }
 
 .page-transfer {
@@ -91,143 +88,46 @@ html.lenis, html.lenis body {
   overflow: hidden;
   pointer-events: none;
   color: var(--color-bg);
-  contain: paint;
-  perspective: 1600px;
+  contain: layout paint style;
 }
 
-.page-transfer-backdrop {
-  position: absolute;
-  inset: -12vh -12vw;
-  background:
-    linear-gradient(115deg, rgba(6, 6, 6, 0.94), rgba(6, 6, 6, 0.86) 52%, rgba(6, 6, 6, 0.96)),
-    linear-gradient(rgba(186, 186, 186, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(186, 186, 186, 0.08) 1px, transparent 1px);
-  background-size: auto, 42px 42px, 42px 42px;
-}
-
-.page-transfer-backdrop::after {
-  content: "";
-  position: absolute;
-  inset: 12vh 12vw;
-  border: 1px solid rgba(186, 186, 186, 0.18);
-  clip-path: polygon(0 8%, 94% 0, 100% 82%, 7% 100%);
-}
-
-.page-transfer-slice {
-  position: absolute;
-  top: calc(-10vh + var(--slice-index) * 25vh);
-  left: -14vw;
-  width: 128vw;
-  height: 40vh;
-  border-top: 1px solid rgba(186, 186, 186, 0.18);
-  border-bottom: 1px solid rgba(186, 186, 186, 0.13);
-  background:
-    linear-gradient(90deg, transparent 0 14%, rgba(186, 186, 186, 0.16) 14% calc(14% + 1px), transparent calc(14% + 1px) 86%, rgba(186, 186, 186, 0.1) 86% calc(86% + 1px), transparent calc(86% + 1px)),
-    rgba(6, 6, 6, 0.52);
-  clip-path: polygon(0 13%, 100% 0, 100% 82%, 0 100%);
-  mix-blend-mode: multiply;
-  rotate: -3deg;
-  transform-origin: center;
-}
-
-.page-transfer-prism {
+.page-transfer-matte {
   position: absolute;
   left: var(--route-origin-center-x);
   top: var(--route-origin-center-y);
-  width: min(82vmax, 1120px);
-  height: min(62vmax, 820px);
+  width: 240vmax;
+  height: 240vmax;
+  background: var(--color-ink);
   transform-origin: center;
-  transform-style: preserve-3d;
   will-change: opacity, transform;
 }
 
-.page-transfer-face {
-  position: absolute;
-  pointer-events: none;
-}
-
-.page-transfer-face--front {
-  inset: 0;
-  border: 1px solid rgba(186, 186, 186, 0.42);
-  background:
-    linear-gradient(135deg, rgba(186, 186, 186, 0.09), transparent 36%),
-    linear-gradient(rgba(186, 186, 186, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(186, 186, 186, 0.08) 1px, transparent 1px),
-    var(--color-ink);
-  background-size: auto, 54px 54px, 54px 54px, auto;
-  box-shadow: inset 0 0 0 1px rgba(6, 6, 6, 0.72);
-  clip-path: polygon(3% 0, 100% 4%, 96% 100%, 0 94%);
-}
-
-.page-transfer-face--right {
-  top: 5%;
-  right: -11%;
-  width: 12%;
-  height: 94%;
-  border-right: 1px solid rgba(186, 186, 186, 0.26);
-  background:
-    linear-gradient(90deg, rgba(186, 186, 186, 0.13), rgba(186, 186, 186, 0.03)),
-    rgba(6, 6, 6, 0.74);
-  clip-path: polygon(0 0, 100% 10%, 100% 92%, 0 100%);
-}
-
-.page-transfer-face--floor {
-  right: 4%;
-  bottom: -14%;
-  left: 0;
-  height: 15%;
-  border-bottom: 1px solid rgba(186, 186, 186, 0.22);
-  background:
-    linear-gradient(180deg, rgba(186, 186, 186, 0.12), rgba(186, 186, 186, 0.02)),
-    rgba(6, 6, 6, 0.68);
-  clip-path: polygon(0 0, 96% 0, 100% 100%, 6% 100%);
-}
-
-.page-transfer-face--wire {
-  inset: 11% 9%;
-  border: 1px solid rgba(186, 186, 186, 0.34);
-  background:
-    linear-gradient(90deg, transparent 49%, rgba(186, 186, 186, 0.2) 49% 50%, transparent 50%),
-    linear-gradient(transparent 49%, rgba(186, 186, 186, 0.17) 49% 50%, transparent 50%);
-  background-size: 33.333% 33.333%;
-  mix-blend-mode: screen;
-}
-
-.page-transfer-reticle {
+.page-transfer-edge {
   position: absolute;
   left: var(--route-origin-center-x);
   top: var(--route-origin-center-y);
-  width: max(140px, calc(var(--route-origin-width) + 76px));
-  height: max(86px, calc(var(--route-origin-height) + 56px));
-  border: 1px solid rgba(186, 186, 186, 0.62);
-  box-shadow:
-    8px -6px 0 rgba(186, 186, 186, 0.12),
-    inset 0 0 0 1px rgba(6, 6, 6, 0.38);
-  clip-path: polygon(0 8%, 94% 0, 100% 82%, 7% 100%);
-  mix-blend-mode: screen;
-}
-
-.page-transfer-reticle::before,
-.page-transfer-reticle::after {
-  content: "";
-  position: absolute;
-  background: rgba(186, 186, 186, 0.52);
-}
-
-.page-transfer-reticle::before {
-  top: 50%;
-  left: -18%;
-  width: 136%;
+  width: 112vmax;
   height: 1px;
-  rotate: -3deg;
+  background: rgba(186, 186, 186, 0.7);
+  transform-origin: center;
+  will-change: opacity, transform;
 }
 
-.page-transfer-reticle::after {
-  top: -20%;
-  left: 50%;
-  width: 1px;
-  height: 140%;
-  rotate: -3deg;
+.page-transfer-edge--shadow {
+  margin-top: 18px;
+  background: rgba(186, 186, 186, 0.22);
+}
+
+.page-transfer-origin {
+  position: absolute;
+  left: var(--route-origin-center-x);
+  top: var(--route-origin-center-y);
+  width: max(9rem, var(--route-origin-width));
+  height: max(3.5rem, var(--route-origin-height));
+  border: 1px solid rgba(186, 186, 186, 0.72);
+  background: rgba(6, 6, 6, 0.18);
+  transform-origin: center;
+  will-change: opacity, transform;
 }
 
 .page-transfer-label {
@@ -235,15 +135,13 @@ html.lenis, html.lenis body {
   top: min(calc(100vh - 5.75rem), max(1.25rem, calc(var(--route-origin-center-y) + 1.45rem)));
   left: min(calc(100vw - 17rem), max(1.25rem, calc(var(--route-origin-center-x) + 1.6rem)));
   width: 15.5rem;
-  padding: 0.85rem 1rem 0.85rem 1.2rem;
+  padding: 0.82rem 1rem;
   border-left: 1px solid rgba(186, 186, 186, 0.68);
-  background:
-    linear-gradient(90deg, rgba(6, 6, 6, 0.72), rgba(6, 6, 6, 0.18)),
-    rgba(186, 186, 186, 0.05);
+  background: rgba(6, 6, 6, 0.72);
   color: var(--color-bg);
   font-family: var(--font-mono);
   text-transform: uppercase;
-  clip-path: polygon(0 0, 100% 7%, 95% 100%, 0 92%);
+  will-change: opacity, transform;
 }
 
 .page-transfer-label span,
@@ -256,14 +154,14 @@ html.lenis, html.lenis body {
   color: rgba(186, 186, 186, 0.68);
   font-size: 0.58rem;
   font-weight: 400;
-  letter-spacing: 0.32em;
+  letter-spacing: 0;
 }
 
 .page-transfer-label strong {
   color: var(--color-bg);
   font-size: 0.66rem;
   font-weight: 500;
-  letter-spacing: 0.2em;
+  letter-spacing: 0;
 }
 
 .section-shell {

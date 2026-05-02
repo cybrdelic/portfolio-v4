@@ -4,9 +4,12 @@ declare global {
   interface Window {
     __routeTransitionSource?: {
       height: number;
+      index: string;
       kind: string;
       label: string;
       left: number;
+      phase: string;
+      timestamp: number;
       top: number;
       width: number;
     };
@@ -41,21 +44,50 @@ function getRouteAnchor(target: EventTarget | null) {
   return anchor;
 }
 
-function setRouteSource(anchor: HTMLAnchorElement) {
-  const rect = anchor.getBoundingClientRect();
-  const root = document.documentElement;
+function getVisualSource(anchor: HTMLAnchorElement) {
+  return anchor.querySelector<HTMLElement>('[data-route-transition-source]') || anchor;
+}
+
+function getTargetMeta(anchor: HTMLAnchorElement) {
+  const url = new URL(anchor.href);
+  const kind = anchor.dataset.fieldKind || 'route';
   const label =
     anchor.dataset.fieldLabel ||
     anchor.getAttribute('aria-label') ||
     anchor.textContent?.replace(/\s+/g, ' ').trim() ||
     'route';
-  const kind = anchor.dataset.fieldKind || 'route';
+
+  if (url.pathname.startsWith('/project/')) {
+    return {
+      index: '02',
+      kind,
+      label,
+      phase: `${kind} transfer`,
+    };
+  }
+
+  return {
+    index: '01',
+    kind,
+    label,
+    phase: url.hash ? 'section transfer' : `${kind} transfer`,
+  };
+}
+
+function setRouteSource(anchor: HTMLAnchorElement) {
+  const visualSource = getVisualSource(anchor);
+  const rect = visualSource.getBoundingClientRect();
+  const root = document.documentElement;
+  const meta = getTargetMeta(anchor);
 
   window.__routeTransitionSource = {
     height: rect.height,
-    kind,
-    label,
+    index: meta.index,
+    kind: meta.kind,
+    label: meta.label,
     left: rect.left,
+    phase: meta.phase,
+    timestamp: performance.now(),
     top: rect.top,
     width: rect.width,
   };
@@ -69,7 +101,7 @@ function setRouteSource(anchor: HTMLAnchorElement) {
 
   window.dispatchEvent(
     new CustomEvent('portfolio-route-source', {
-      detail: { kind, label },
+      detail: meta,
     })
   );
 }

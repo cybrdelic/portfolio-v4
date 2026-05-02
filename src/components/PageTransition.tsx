@@ -1,9 +1,11 @@
-import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
-import { useLocation } from 'react-router-dom';
-import { motion, useReducedMotion } from 'motion/react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { motion, usePresence, useReducedMotion } from 'motion/react';
 
 const PRECISION_EASE = [0.16, 1, 0.3, 1] as const;
 const SNAP_EASE = [0.83, 0, 0.17, 1] as const;
+const SOURCE_TTL_MS = 1400;
+const EXIT_HOLD_MS = 220;
+const ENTRY_FALLBACK_MS = 520;
 
 function getRouteMeta(pathname: string) {
   if (pathname.startsWith('/project/')) {
@@ -25,22 +27,61 @@ function getRouteMeta(pathname: string) {
   };
 }
 
-export default function PageTransition({ children }: { children: ReactNode }) {
-  const location = useLocation();
+type RouteSource = {
+  index: string;
+  kind: string;
+  label: string;
+  phase: string;
+};
+
+function readRouteSource(): RouteSource | null {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  const source = window.__routeTransitionSource;
+  if (!source?.label) {
+    return null;
+  }
+
+  if (source.timestamp && performance.now() - source.timestamp > SOURCE_TTL_MS) {
+    return null;
+  }
+
+  return {
+    index: source.index || '01',
+    kind: source.kind || 'route',
+    label: source.label,
+    phase: source.phase || `${source.kind || 'route'} transfer`,
+  };
+}
+
+export default function PageTransition({
+  children,
+  pathname,
+}: {
+  children: ReactNode;
+  key?: string;
+  pathname: string;
+}) {
+  const [isPresent, safeToRemove] = usePresence();
   const prefersReducedMotion = Boolean(useReducedMotion());
-  const [routeSource, setRouteSource] = useState<{ kind: string; label: string } | null>(null);
-  const route = useMemo(() => getRouteMeta(location.pathname), [location.pathname]);
+  const [routeSource, setRouteSource] = useState<RouteSource | null>(() => readRouteSource());
+  const [showTransfer, setShowTransfer] = useState(true);
+  const route = useMemo(() => getRouteMeta(pathname), [pathname]);
 
   useEffect(() => {
     const handleRouteSource = (event: Event) => {
-      const { detail } = event as CustomEvent<{ kind?: string; label?: string }>;
+      const { detail } = event as CustomEvent<Partial<RouteSource>>;
       if (!detail?.label) {
         return;
       }
 
       setRouteSource({
+        index: detail.index || '01',
         kind: detail.kind || 'route',
         label: detail.label,
+        phase: detail.phase || `${detail.kind || 'route'} transfer`,
       });
     };
 
@@ -48,104 +89,132 @@ export default function PageTransition({ children }: { children: ReactNode }) {
     return () => window.removeEventListener('portfolio-route-source', handleRouteSource);
   }, []);
 
+  useEffect(() => {
+    if (isPresent) {
+      return;
+    }
+
+    if (prefersReducedMotion) {
+      safeToRemove();
+      return;
+    }
+
+    setShowTransfer(true);
+
+    const exitId = window.setTimeout(() => {
+      setRouteSource(null);
+      safeToRemove();
+    }, EXIT_HOLD_MS);
+
+    return () => window.clearTimeout(exitId);
+  }, [isPresent, prefersReducedMotion, safeToRemove]);
+
+  useEffect(() => {
+    if (!isPresent || prefersReducedMotion || !showTransfer) {
+      return;
+    }
+
+    const fallbackId = window.setTimeout(() => {
+      setShowTransfer(false);
+      setRouteSource(null);
+    }, ENTRY_FALLBACK_MS);
+    return () => window.clearTimeout(fallbackId);
+  }, [isPresent, pathname, prefersReducedMotion, showTransfer]);
+
   if (prefersReducedMotion) {
     return <div className="page-transition-content">{children}</div>;
   }
 
-  const contentExitRotateY = route.mode === 'project' ? 4 : -4;
-  const contentEnterRotateY = route.mode === 'project' ? -3 : 3;
-  const transferPhase = routeSource ? `${routeSource.kind} transfer` : route.phase;
+  const targetMode = routeSource?.index === '02' ? 'project' : route.mode;
+  const transferAngle = targetMode === 'project' ? -7 : 7;
+  const transferIndex = routeSource?.index || route.index;
+  const transferPhase = routeSource?.phase || route.phase;
   const transferLabel = routeSource?.label || route.label;
   const transferVariants = {
     center: {
       opacity: 0,
-      transition: { delay: 0.86, duration: 0.24, ease: PRECISION_EASE },
+      transition: { delay: 0.28, duration: 0.14, ease: PRECISION_EASE },
     },
     enter: { opacity: 1 },
     exit: {
       opacity: 1,
-      transition: { duration: 0.01, ease: SNAP_EASE },
+      transition: { duration: 0.18, ease: SNAP_EASE },
     },
   };
-  const backdropVariants = {
+  const matteVariants = {
     center: {
+      rotate: transferAngle,
       opacity: 0,
-      transition: { delay: 0.62, duration: 0.34, ease: PRECISION_EASE },
-    },
-    enter: { opacity: 0.96 },
-    exit: {
-      opacity: 0.92,
-      transition: { duration: 0.01, ease: SNAP_EASE },
-    },
-  };
-  const sliceVariants = {
-    center: (index: number) => ({
-      opacity: 0,
-      scaleX: 0.18,
-      transition: {
-        delay: 0.1 + index * 0.045,
-        duration: 0.72,
-        ease: PRECISION_EASE,
-      },
-      x: `${(index - 1.5) * 13}%`,
-    }),
-    enter: (index: number) => ({
-      opacity: 0.68,
-      scaleX: 1.16,
-      x: `${(index - 1.5) * 3}%`,
-    }),
-    exit: (index: number) => ({
-      opacity: 0.72,
-      scaleX: 1.18,
-      transition: {
-        delay: index * 0.035,
-        duration: 0.38,
-        ease: SNAP_EASE,
-      },
-      x: `${(index - 1.5) * 2}%`,
-    }),
-  };
-  const prismVariants = {
-    center: {
-      opacity: 0,
-      rotateX: 58,
-      rotateY: route.mode === 'project' ? -38 : 38,
-      scale: 0.13,
-      transition: { duration: 0.82, ease: PRECISION_EASE },
+      scaleX: 0.012,
+      scaleY: 0.12,
+      transition: { duration: 0.36, ease: PRECISION_EASE },
       x: '-50%',
       y: '-50%',
     },
     enter: {
+      rotate: transferAngle,
       opacity: 1,
-      rotateX: 0,
-      rotateY: 0,
-      scale: 2.16,
+      scaleX: 1,
+      scaleY: 1,
       x: '-50%',
       y: '-50%',
     },
     exit: {
+      rotate: transferAngle,
       opacity: 1,
-      rotateX: 0,
-      rotateY: 0,
-      scale: 2.2,
-      transition: { duration: 0.52, ease: SNAP_EASE },
+      scaleX: 1,
+      scaleY: 1,
+      transition: { duration: 0.18, ease: SNAP_EASE },
       x: '-50%',
       y: '-50%',
     },
   };
-  const reticleVariants = {
+  const edgeVariants = {
     center: {
       opacity: 0,
-      scale: 0.62,
-      transition: { delay: 0.08, duration: 0.56, ease: PRECISION_EASE },
+      rotate: transferAngle,
+      scaleX: 0.18,
+      transition: { delay: 0.03, duration: 0.28, ease: PRECISION_EASE },
       x: '-50%',
       y: '-50%',
     },
-    enter: { opacity: 1, scale: 1.3, x: '-50%', y: '-50%' },
+    enter: {
+      opacity: 0.76,
+      rotate: transferAngle,
+      scaleX: 1,
+      x: '-50%',
+      y: '-50%',
+    },
     exit: {
-      opacity: 1,
-      scale: 1.14,
-      transition: { duration: 0.36, ease: SNAP_EASE },
+      opacity: 0.78,
+      rotate: transferAngle,
+      scaleX: 1,
+      transition: { duration: 0.18, ease: SNAP_EASE },
+      x: '-50%',
+      y: '-50%',
+    },
+  };
+  const originVariants = {
+    center: {
+      opacity: 0,
+      rotate: transferAngle,
+      scale: 1.18,
+      transition: { delay: 0.04, duration: 0.28, ease: PRECISION_EASE },
+      x: '-50%',
+      y: '-50%',
+    },
+    enter: {
+      opacity: 0.8,
+      rotate: transferAngle,
+      scale: 0.96,
+      x: '-50%',
+      y: '-50%',
+    },
+    exit: {
+      opacity: 0.82,
+      rotate: transferAngle,
+      scale: 0.98,
+      transition: { duration: 0.16, ease: SNAP_EASE },
       x: '-50%',
       y: '-50%',
     },
@@ -153,106 +222,66 @@ export default function PageTransition({ children }: { children: ReactNode }) {
   const labelVariants = {
     center: {
       opacity: 0,
-      transition: { delay: 0.28, duration: 0.36, ease: PRECISION_EASE },
-      x: route.mode === 'project' ? 32 : -32,
-      y: -10,
+      transition: { duration: 0.18, ease: PRECISION_EASE },
+      x: targetMode === 'project' ? 14 : -14,
+      y: -6,
     },
     enter: { opacity: 1, x: 0, y: 0 },
     exit: {
       opacity: 1,
-      transition: { delay: 0.12, duration: 0.28, ease: SNAP_EASE },
+      transition: { duration: 0.14, ease: SNAP_EASE },
       x: 0,
       y: 0,
     },
   };
 
   return (
-    <motion.div className="page-transition-shell" data-route-mode={route.mode}>
-      <motion.div
-        className="page-transition-content"
-        initial={{
-          clipPath: 'polygon(2% 0%, 100% 4%, 97% 100%, 0% 96%)',
-          filter: 'blur(7px)',
-          opacity: 0,
-          rotateX: 6,
-          rotateY: contentEnterRotateY,
-          scale: 0.982,
-          y: 32,
-        }}
-        animate={{
-          clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)',
-          filter: 'blur(0px)',
-          opacity: 1,
-          rotateX: 0,
-          rotateY: 0,
-          scale: 1,
-          y: 0,
-        }}
-        exit={{
-          clipPath: 'polygon(3% 1%, 100% 7%, 95% 100%, 0% 93%)',
-          filter: 'blur(6px)',
-          opacity: 0,
-          rotateX: -7,
-          rotateY: contentExitRotateY,
-          scale: 0.972,
-          y: -26,
-        }}
-        transition={{
-          clipPath: { duration: 0.74, ease: PRECISION_EASE },
-          default: { duration: 0.68, ease: PRECISION_EASE },
-          filter: { duration: 0.5, ease: PRECISION_EASE },
-          opacity: { duration: 0.42, ease: PRECISION_EASE },
-        }}
-      >
-        {children}
-      </motion.div>
+    <div className="page-transition-shell" data-route-mode={route.mode}>
+      <div className="page-transition-content">{children}</div>
 
-      <motion.div
-        aria-hidden="true"
-        className="page-transfer"
-        initial="enter"
-        animate="center"
-        exit="exit"
-        variants={transferVariants}
-      >
+      {showTransfer && (
         <motion.div
-          className="page-transfer-backdrop"
-          variants={backdropVariants}
-        />
-
-        {[0, 1, 2, 3].map((index) => (
+          aria-hidden="true"
+          className="page-transfer"
+          initial={isPresent ? 'enter' : 'center'}
+          animate={isPresent ? 'center' : 'exit'}
+          variants={transferVariants}
+          onAnimationComplete={(definition) => {
+            if (isPresent && definition === 'center') {
+              setShowTransfer(false);
+              setRouteSource(null);
+            }
+          }}
+        >
           <motion.div
-            key={index}
-            className="page-transfer-slice"
-            custom={index}
-            style={{ '--slice-index': index } as CSSProperties}
-            variants={sliceVariants}
+            className="page-transfer-matte"
+            variants={matteVariants}
           />
-        ))}
 
-        <motion.div
-          className="page-transfer-prism"
-          variants={prismVariants}
-        >
-          <div className="page-transfer-face page-transfer-face--front" />
-          <div className="page-transfer-face page-transfer-face--right" />
-          <div className="page-transfer-face page-transfer-face--floor" />
-          <div className="page-transfer-face page-transfer-face--wire" />
+          <motion.div
+            className="page-transfer-edge page-transfer-edge--lead"
+            variants={edgeVariants}
+          />
+
+          <motion.div
+            className="page-transfer-edge page-transfer-edge--shadow"
+            variants={edgeVariants}
+          />
+
+          <motion.div
+            className="page-transfer-origin"
+            variants={originVariants}
+          />
+
+          <motion.div
+            className="page-transfer-label"
+            variants={labelVariants}
+          >
+            <span>{transferPhase}</span>
+            <strong>{transferIndex} / {transferLabel}</strong>
+          </motion.div>
         </motion.div>
-
-        <motion.div
-          className="page-transfer-reticle"
-          variants={reticleVariants}
-        />
-
-        <motion.div
-          className="page-transfer-label"
-          variants={labelVariants}
-        >
-          <span>{transferPhase}</span>
-          <strong>{route.index} / {transferLabel}</strong>
-        </motion.div>
-      </motion.div>
-    </motion.div>
+      )}
+    </div>
   );
 }

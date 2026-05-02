@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import type Lenis from 'lenis';
 
@@ -129,11 +129,40 @@ function travelToHash(hash: string) {
   };
 }
 
-export default function ScrollToTop() {
-  const { hash, pathname } = useLocation();
+export default function ScrollToTop({
+  hash: hashProp,
+  pathname: pathnameProp,
+}: {
+  hash?: string;
+  pathname?: string;
+}) {
+  const location = useLocation();
+  const hash = hashProp ?? location.hash;
+  const pathname = pathnameProp ?? location.pathname;
 
   useEffect(() => {
-    return hash ? travelToHash(hash) : scrollToTarget(0, true);
+    if (!('scrollRestoration' in window.history)) {
+      return;
+    }
+
+    const previous = window.history.scrollRestoration;
+    window.history.scrollRestoration = 'manual';
+
+    return () => {
+      window.history.scrollRestoration = previous;
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!hash) {
+      scrollToTarget(0, true);
+    }
+  }, [hash, pathname]);
+
+  useEffect(() => {
+    if (hash) {
+      return travelToHash(hash);
+    }
   }, [hash, pathname]);
 
   useEffect(() => {
