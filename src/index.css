@@ -91,53 +91,161 @@ html.lenis, html.lenis body {
   contain: layout paint style;
 }
 
-.page-transfer-matte {
+.page-transfer-aperture {
   position: absolute;
   left: var(--route-origin-center-x);
   top: var(--route-origin-center-y);
-  width: 240vmax;
-  height: 240vmax;
-  background: var(--color-ink);
+  width: min(78vw, max(24rem, calc(var(--route-origin-width) + 12rem)));
+  height: min(58vh, max(12rem, calc(var(--route-origin-height) + 8rem)));
+  border: 1px solid rgba(6, 6, 6, 0.82);
+  background:
+    linear-gradient(90deg, rgba(6, 6, 6, 0.48), rgba(6, 6, 6, 0.14) 48%, rgba(186, 186, 186, 0.2)),
+    rgba(186, 186, 186, 0.34);
+  box-shadow:
+    inset 0 0 0 1px rgba(186, 186, 186, 0.42),
+    18px -14px 0 rgba(6, 6, 6, 0.14);
   transform-origin: center;
   will-change: opacity, transform;
 }
 
-.page-transfer-edge {
+.page-transfer-aperture__rule,
+.page-transfer-aperture__corner {
   position: absolute;
-  left: var(--route-origin-center-x);
-  top: var(--route-origin-center-y);
-  width: 112vmax;
+  display: block;
+  pointer-events: none;
+}
+
+.page-transfer-aperture__rule--x {
+  left: 7%;
+  right: 7%;
+  top: 50%;
   height: 1px;
-  background: rgba(186, 186, 186, 0.7);
-  transform-origin: center;
-  will-change: opacity, transform;
+  background: rgba(6, 6, 6, 0.58);
 }
 
-.page-transfer-edge--shadow {
-  margin-top: 18px;
-  background: rgba(186, 186, 186, 0.22);
+.page-transfer-aperture__rule--y {
+  bottom: 12%;
+  left: 58%;
+  top: 12%;
+  width: 1px;
+  background: rgba(6, 6, 6, 0.4);
 }
 
-.page-transfer-origin {
+.page-transfer-aperture__corner {
+  width: 2.4rem;
+  height: 2.4rem;
+  border-color: rgba(6, 6, 6, 0.7);
+}
+
+.page-transfer-aperture__corner--a {
+  left: 0.9rem;
+  top: 0.9rem;
+  border-left: 1px solid;
+  border-top: 1px solid;
+}
+
+.page-transfer-aperture__corner--b {
+  right: 0.9rem;
+  top: 0.9rem;
+  border-right: 1px solid;
+  border-top: 1px solid;
+}
+
+.page-transfer-aperture__corner--c {
+  bottom: 0.9rem;
+  left: 0.9rem;
+  border-bottom: 1px solid;
+  border-left: 1px solid;
+}
+
+.page-transfer-aperture__corner--d {
+  bottom: 0.9rem;
+  right: 0.9rem;
+  border-bottom: 1px solid;
+  border-right: 1px solid;
+}
+
+.page-transfer-axis {
   position: absolute;
   left: var(--route-origin-center-x);
   top: var(--route-origin-center-y);
-  width: max(9rem, var(--route-origin-width));
-  height: max(3.5rem, var(--route-origin-height));
-  border: 1px solid rgba(186, 186, 186, 0.72);
-  background: rgba(6, 6, 6, 0.18);
+  width: min(88vw, 72rem);
+  height: 1px;
+  background: rgba(6, 6, 6, 0.74);
   transform-origin: center;
   will-change: opacity, transform;
+}
+
+.page-transfer-axis--echo {
+  margin-top: 2.1rem;
+  background: rgba(6, 6, 6, 0.34);
+}
+
+.page-transfer-cube {
+  position: absolute;
+  left: var(--route-origin-center-x);
+  top: var(--route-origin-center-y);
+  width: 5.75rem;
+  height: 5.75rem;
+  transform-origin: center;
+  transform-style: preserve-3d;
+  will-change: opacity, transform;
+}
+
+.page-transfer-cube__face {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+}
+
+.page-transfer-cube__face--front {
+  inset: 0.9rem;
+  border: 1px solid rgba(6, 6, 6, 0.82);
+  background: rgba(186, 186, 186, 0.16);
+}
+
+.page-transfer-cube__face--right {
+  bottom: 0.9rem;
+  right: -0.35rem;
+  top: 0.55rem;
+  width: 1.25rem;
+  border-right: 1px solid rgba(6, 6, 6, 0.52);
+  border-top: 1px solid rgba(6, 6, 6, 0.3);
+  transform: skewY(-28deg);
+  transform-origin: left center;
+}
+
+.page-transfer-cube__face--floor {
+  bottom: 0.2rem;
+  left: 0.9rem;
+  right: -0.35rem;
+  height: 1.25rem;
+  border-bottom: 1px solid rgba(6, 6, 6, 0.42);
+  border-right: 1px solid rgba(6, 6, 6, 0.22);
+  transform: skewX(-28deg);
+  transform-origin: center top;
+}
+
+.page-transfer-cube__pin {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0.48rem;
+  height: 0.48rem;
+  border: 1px solid rgba(6, 6, 6, 0.82);
+  background: var(--color-bg);
+  transform: translate(-50%, -50%) rotate(45deg);
 }
 
 .page-transfer-label {
   position: absolute;
-  top: min(calc(100vh - 5.75rem), max(1.25rem, calc(var(--route-origin-center-y) + 1.45rem)));
-  left: min(calc(100vw - 17rem), max(1.25rem, calc(var(--route-origin-center-x) + 1.6rem)));
-  width: 15.5rem;
-  padding: 0.82rem 1rem;
-  border-left: 1px solid rgba(186, 186, 186, 0.68);
-  background: rgba(6, 6, 6, 0.72);
+  top: min(calc(100vh - 5.5rem), max(1.25rem, calc(var(--route-origin-center-y) + 2.4rem)));
+  left: min(calc(100vw - 18.5rem), max(1.25rem, calc(var(--route-origin-center-x) + 2.7rem)));
+  width: 17rem;
+  padding: 0.78rem 0.95rem;
+  border: 1px solid rgba(186, 186, 186, 0.24);
+  border-left-color: rgba(186, 186, 186, 0.74);
+  background: rgba(6, 6, 6, 0.82);
   color: var(--color-bg);
   font-family: var(--font-mono);
   text-transform: uppercase;
@@ -151,7 +259,7 @@ html.lenis, html.lenis body {
 
 .page-transfer-label span {
   margin-bottom: 0.42rem;
-  color: rgba(186, 186, 186, 0.68);
+  color: rgba(186, 186, 186, 0.72);
   font-size: 0.58rem;
   font-weight: 400;
   letter-spacing: 0;
