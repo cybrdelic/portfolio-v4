@@ -6,12 +6,12 @@
   --font-mono: "JetBrains Mono", monospace;
   --font-display: "Inter", system-ui, sans-serif;
 
-  --color-bg: #bababa;
+  --color-bg: #bdb9b3;
   --color-ink: #060606;
   --color-accent: #060606;
-  --color-muted: #404040;
-  --color-surface: #ababab;
-  --color-line: #959595;
+  --color-muted: #3f3f46;
+  --color-surface: #aeaaa5;
+  --color-line: #979390;
 }
 
 html {

@@ -8,7 +8,7 @@ export default function Footer() {
       <div className="mx-auto max-w-7xl">
         <div className="mb-24 grid grid-cols-1 gap-12 lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <h2 className="font-mono text-sm text-[var(--color-muted)] uppercase tracking-widest">
+            <h2 className="font-mono text-[11px] text-[var(--color-muted)] uppercase tracking-[0.28em]">
               Contact
             </h2>
           </div>
@@ -31,7 +31,7 @@ export default function Footer() {
                   data-field-label="send email"
                   className="inline-flex min-h-11 items-center gap-2 border border-[var(--color-ink)] px-4 py-3 font-mono text-xs uppercase tracking-[0.22em] transition-colors hover:bg-[var(--color-ink)] hover:text-[var(--color-bg)]"
                 >
-                  Email Alex <ArrowUpRight size={16} />
+                  Email me <ArrowUpRight size={16} />
                 </a>
               </Magnetic>
               <Magnetic strength={0.1}>
@@ -51,7 +51,7 @@ export default function Footer() {
 
         <div className="grid grid-cols-1 gap-12 border-t border-[var(--color-line)] pt-12 md:grid-cols-12">
           <div className="md:col-span-4">
-            <p className="mb-4 font-mono text-xs uppercase tracking-widest text-[var(--color-muted)]">
+            <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.28em] text-[var(--color-muted)]">
               Network
             </p>
             <ul className="space-y-4 font-sans text-sm">
@@ -72,6 +72,19 @@ export default function Footer() {
               </li>
               <li>
                 <Magnetic strength={0.3}>
+                  <a
+                    href="mailto:alexfigueroa.cybr@gmail.com"
+                    data-field-target
+                    data-field-kind="contact"
+                    data-field-label="email"
+                    className="-ml-2 inline-flex min-h-11 items-center p-2 transition-colors hover:text-[var(--color-muted)]"
+                  >
+                    Email
+                  </a>
+                </Magnetic>
+              </li>
+              <li>
+                <Magnetic strength={0.3}>
                   <Link
                     to="/#work"
                     data-field-target
@@ -83,33 +96,19 @@ export default function Footer() {
                   </Link>
                 </Magnetic>
               </li>
-              <li>
-                <Magnetic strength={0.3}>
-                  <Link
-                    to="/project/filelight-explorer"
-                    data-field-target
-                    data-field-kind="route"
-                    data-field-label="filelight explorer"
-                    className="-ml-2 inline-flex min-h-11 items-center p-2 transition-colors hover:text-[var(--color-muted)]"
-                  >
-                    Filelight Explorer
-                  </Link>
-                </Magnetic>
-              </li>
             </ul>
           </div>
           <div className="md:col-span-4">
-            <p className="mb-4 font-mono text-xs uppercase tracking-widest text-[var(--color-muted)]">
+            <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.28em] text-[var(--color-muted)]">
               Coordinates
             </p>
-            <p className="font-sans text-sm text-[var(--color-ink)]">
-              Dayton, OH
-              <br />
-              California roots
+            <p className="font-sans text-sm text-[var(--color-ink)]">Dayton, Ohio</p>
+            <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.28em] text-[var(--color-muted)]">
+              39°45′N · 84°11′W
             </p>
           </div>
           <div className="flex flex-col items-start justify-end md:col-span-4 md:items-end">
-            <p className="text-left font-mono text-xs uppercase tracking-widest text-[var(--color-muted)] md:text-right">
+            <p className="text-left font-mono text-[11px] uppercase tracking-[0.28em] text-[var(--color-muted)] md:text-right">
               Simulation, tooling, and systems UX.
               <br />
               © {new Date().getFullYear()} Alex Figueroa.

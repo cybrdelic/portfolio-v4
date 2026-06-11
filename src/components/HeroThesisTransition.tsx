@@ -184,7 +184,7 @@ function MobileHero() {
 
       <div className="relative z-10 px-6 pb-8 pt-16">
         <motion.p
-          className="mb-5 font-mono text-sm uppercase tracking-widest text-[var(--color-muted)]"
+          className="mb-5 font-mono text-[11px] uppercase tracking-[0.28em] text-[var(--color-muted)]"
           initial={prefersReducedMotion ? false : { opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.5, delay: 0.05 }}

@@ -48,12 +48,6 @@ export const ethosParagraphs: SectionParagraph[] = [
     text: 'I want to know where the cost is, where the uncertainty is, and where the brittleness lives. That usually means decomposing a problem until the real boundaries are explicit: memory movement, render cost, search quality, synchronization overhead, false context, or weak state models.',
   },
   {
-    text: 'Once those boundaries are visible, the design usually gets simpler. Good systems get better when the failure modes are legible instead of hidden behind abstraction.',
-  },
-  {
-    text: 'I also care about context quality. Most automation fails because it runs on thin or noisy inputs. A recurring part of my work is building the context pipeline first so the downstream reasoning has something solid to work from.',
-  },
-  {
     tone: 'closing',
     text: 'The objective is not novelty. It is software that becomes more capable and more useful under real constraints.',
   },

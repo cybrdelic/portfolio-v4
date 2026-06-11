@@ -69,7 +69,7 @@ export default function ProjectDetail() {
               <p className="mb-5 font-mono text-xs uppercase tracking-[0.24em] text-[var(--color-muted)]">
                 {project.type} / {project.year}
               </p>
-              <h1 className="max-w-5xl text-[clamp(3.75rem,10vw,8.5rem)] font-normal leading-[0.86] tracking-tight">
+              <h1 className="max-w-5xl text-[clamp(3.75rem,10vw,8.5rem)] font-bold leading-[0.86] tracking-[-0.04em]">
                 {project.title}
               </h1>
               <p className="mt-6 max-w-3xl text-2xl leading-snug text-[var(--color-ink)] md:text-3xl">

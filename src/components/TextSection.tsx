@@ -50,7 +50,7 @@ export default function TextSection({
                   ? 'mb-8 text-[var(--color-ink)]'
                   : paragraph.tone === 'closing'
                     ? 'text-[var(--color-ink)]'
-                    : 'mb-8'
+                    : 'mb-8 text-[var(--color-muted)]'
               }
             >
               {paragraph.text}
