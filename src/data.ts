@@ -3,108 +3,273 @@ export interface Project {
   title: string;
   subtitle: string;
   type: string;
+  status: 'Featured' | 'Research' | 'Active';
+  year: string;
   tech: string;
-  animationType: 'network' | 'pipeline' | 'system' | 'timeseries';
+  role: string;
+  bestFor: string;
+  repoUrl: string;
+  homepageSummary: string;
+  detailSummary: string;
+  primaryMedia?: {
+    src: string;
+    alt: string;
+    caption: string;
+  };
+  media?: {
+    src: string;
+    alt: string;
+    caption: string;
+  }[];
+  artifactLinks?: {
+    label: string;
+    href: string;
+    type: string;
+  }[];
+  proofPoints: string[];
   overview: string;
   whyItExists: string;
+  challenge: string;
+  approach: string;
   coreMechanisms: string[];
-  roleInWork: string;
+  outcomes: string[];
 }
 
 export const projects: Project[] = [
   {
-    id: 'drone-sim-studio',
-    title: 'DroneSim Studio',
-    subtitle: 'Flight-to-fabrication engineering bench for quadcopter frames',
-    type: 'Engineering Workbench',
-    tech: 'React, Three.js, Rapier, TypeScript',
-    animationType: 'system',
-    overview: 'DroneSim Studio is a browser engineering lab for designing, inspecting, and flying quadcopter frames. It connects geometry, assembly views, fabrication checks, flight telemetry, controller tuning, and debug overlays into one dense operator surface.',
-    whyItExists: 'Most drone configurators stop at a static model or a toy flight scene. This project is stronger because the UI treats the drone as an engineering object: fit, wiring, prop clearance, control mode, telemetry, and print readiness all live in the same loop.',
-    coreMechanisms: [
-      'Parametric frame generator',
-      'Flight-to-fabrication gate',
-      'Assembly and print-layout views',
-      'Optional PID assist modes',
-      'Live telemetry readouts',
-      'Local debug-bridge protocol'
-    ],
-    roleInWork: 'This is the strongest portfolio project in the current corpus because it has a believable product surface, a real technical loop, and screenshots that immediately explain the work.'
-  },
-  {
-    id: 'amber-lab',
-    title: 'AmberLab',
-    subtitle: 'WebGPU specimen renderer for translucent amber and material capture',
-    type: 'Material Rendering',
-    tech: 'Three.js, WebGPU, TSL, TypeScript',
-    animationType: 'timeseries',
-    overview: 'AmberLab is a material capture and rendering rig for amber-like translucent specimens. It combines procedural nodule geometry, inclusions, HDRI lighting, WebGPU volume materials, fallback reporting, and canvas-to-reference comparison.',
-    whyItExists: 'The interesting part is not just that it renders a pretty object. The project turns material lookdev into a measurable workflow: capture profile, lighting state, renderer backend, specimen geometry, and diff metrics are all surfaced instead of hidden behind a single canvas.',
-    coreMechanisms: [
-      'Procedural amber geometry',
-      'WebGPU volume material path',
-      'Renderer fallback reporting',
-      'HDRI calibration presets',
-      'Inclusion and caustic layers',
-      'Canvas/reference diff export'
-    ],
-    roleInWork: 'This should replace the weaker gemstone/rendering placeholders because it has a specific subject, visible output, and real renderer-state mechanics.'
-  },
-  {
-    id: 'cnt-workbench',
-    title: 'CNTWorkbench',
-    subtitle: 'Carbon nanotube geometry builder with simulation export paths',
-    type: 'Scientific Tooling',
-    tech: 'React, Three.js, TypeScript, Vite',
-    animationType: 'pipeline',
-    overview: 'CNTWorkbench turns carbon-nanotube chirality and length parameters into inspectable molecular geometry. The useful part is the export path: finite segments, periodic unit cells, ExtXYZ, LAMMPS data, POSCAR, and JSON specs.',
-    whyItExists: 'A visual nanotech demo is easy to fake. This one is more portfolio-worthy because it exposes the bridge between a browser workbench and real simulation tooling, so the output can leave the UI and survive in external analysis pipelines.',
-    coreMechanisms: [
-      'Chirality-driven geometry',
-      'Finite segment generation',
-      'Periodic unit-cell export',
-      'LAMMPS and POSCAR writers',
-      'OVITO-friendly handoff',
-      'Cinematic inspection stage'
-    ],
-    roleInWork: 'This is a better scientific-project candidate than another generic renderer because the workflow has an external technical contract, not just a scene.'
-  },
-  {
-    id: 'firesim',
-    title: 'FireSim',
-    subtitle: 'Combustion workbench for browser fire simulation and validation',
+    id: 'firesim-native',
+    title: 'FireSim Native',
+    subtitle: 'CUDA-native fire simulation engine with validation-oriented tooling and systems UX',
     type: 'Simulation Platform',
-    tech: 'React, WebGPU, WGSL, Vite',
-    animationType: 'timeseries',
-    overview: 'FireSim is the combustion platform line in the corpus: a WebGPU fire/fluid simulation with a V2 consumer route, control-deck UI work, debug overlays, field exports, benchmark scaffolds, and a clean launcher path.',
-    whyItExists: 'The strongest angle is not the flame visual by itself. It is the attempt to make browser combustion testable: runtime controls, high-quality defaults, field exports, performance measurement, and a staged benchmark suite based on NIST, UL FSRI, and RxCADRE sources.',
-    coreMechanisms: [
-      'WebGPU fluid/fire solver',
-      'V2 consumer route',
-      'Control deck and diagnostics',
-      'Projected field exports',
-      'Benchmark sync scaffold',
-      'Quality-preserving launcher path'
+    status: 'Featured',
+    year: '2026',
+    tech: 'CUDA, C++, Python, Native tooling',
+    role: 'Native simulation architecture, CUDA implementation, validation workflow, product framing',
+    bestFor: 'Native GPU systems work, simulation-engine architecture, and validation-oriented product thinking.',
+    repoUrl: 'https://github.com/cybrdelic/firesim',
+    homepageSummary: 'CUDA fire simulation with native tooling, validation gates, worker isolation, and inspection artifacts.',
+    detailSummary: 'A native fire-simulation system built around GPU computation, crash isolation, diagnostics, and validation evidence.',
+    primaryMedia: {
+      src: '/projects/firesim/live-fire-window.png',
+      alt: 'FireSim Native live fire render in the native Windows viewport',
+      caption: 'Live native FireSim render captured from the CUDA/native UI path.',
+    },
+    artifactLinks: [
+      {
+        label: 'Lab-grade readiness JSON',
+        href: '/projects/firesim/lab-grade-readiness.json',
+        type: 'Validation artifact',
+      },
+      {
+        label: 'Repository',
+        href: 'https://github.com/cybrdelic/firesim',
+        type: 'Source',
+      },
     ],
-    roleInWork: 'FireSim is worth showing as a platform-in-progress because it combines simulation, UX, performance diagnosis, and validation strategy in one real project line.'
+    proofPoints: [
+      'CUDA-native simulation work rather than browser-only rendering',
+      'Validation-oriented workflow beyond the render itself',
+      'Engine framing that supports diagnostics, tooling, and iteration',
+    ],
+    overview: 'FireSim Native is a CUDA-based fire-simulation system shaped around iteration, diagnostics, validation thinking, and the supporting interfaces needed to make heavy compute work usable instead of opaque.',
+    whyItExists: 'The goal is a native simulation system that can be tested, tuned, inspected, and extended under real computational constraints.',
+    challenge: 'Simulation work can look serious while still being hard to operate, hard to validate, and hard to iterate on. The risk is ending up with a technically impressive core that has weak tooling, weak observability, and no product surface around it.',
+    approach: 'I have been treating FireSim Native as both an engine problem and a systems-UX problem: building the CUDA-side simulation core while also thinking about diagnostics, iteration loops, validation hooks, and the operator-facing surfaces that make the system legible.',
+    coreMechanisms: [
+      'CUDA-native simulation core',
+      'Diagnostics and iteration workflow',
+      'Validation-oriented engine framing',
+      'Supporting tooling for inspection and tuning',
+      'Operator-surface product thinking',
+      'Native-system architecture decisions'
+    ],
+    outcomes: [
+      'Positions the project as native systems work with visible runtime evidence',
+      'Shows I can connect heavy GPU engineering with usability and validation concerns',
+      'Connects the simulation case study to concrete runtime and validation evidence',
+    ],
   },
   {
-    id: 'llmwiki',
-    title: 'LLMWiki',
-    subtitle: 'Local-first second brain built from project evidence and authored pages',
-    type: 'Knowledge System',
-    tech: 'Node, Markdown, Static Site',
-    animationType: 'network',
-    overview: 'LLMWiki is a local-first personal knowledge system that scans project folders, reads profile/repo metadata, imports archives, and builds a lightweight wiki. The accepted direction is an article-first second brain with authored pages and explicit provenance.',
-    whyItExists: 'The portfolio problem itself points at why this matters: a directory full of projects does not automatically become a coherent body of work. LLMWiki exists to turn messy local evidence into durable pages that can explain what is real, what repeats, and what should be extracted next.',
-    coreMechanisms: [
-      'Local project root scanning',
-      'GitHub/profile metadata ingest',
-      'Archive import hooks',
-      'Hand-authored canonical pages',
-      'Backlinks and source panels',
-      'Static browser wiki output'
+    id: 'filelight-explorer',
+    title: 'Filelight Explorer',
+    subtitle: 'Native Windows file explorer focused on preview depth, evidence, and safer local file work',
+    type: 'Native Systems UX',
+    status: 'Featured',
+    year: '2026',
+    tech: 'C, Win32, Direct2D, D3D11, WIC, CMake',
+    role: 'Native app architecture, preview pipeline, systems UX, Direct2D/D3D integration',
+    bestFor: 'Native Windows product engineering, local-first tooling, and precise interfaces for messy real-world files.',
+    repoUrl: 'https://github.com/cybrdelic/filelight-explorer',
+    homepageSummary: 'Native Windows file explorer with preview-first inspection for images, code, archives, executables, SQLite, WAV, and GLB models.',
+    detailSummary: 'A native file browser that keeps the Explorer mental model and makes each selected file easier to inspect before acting.',
+    primaryMedia: {
+      src: '/projects/filelight/filelight-preview-loop.gif',
+      alt: 'Animated Filelight Explorer preview loop showing file inspection states',
+      caption: 'Preview loop across local file types in the native app.',
+    },
+    media: [
+      {
+        src: '/projects/filelight/filelight-shell.png',
+        alt: 'Filelight Explorer shell with sidebar, command bar, file list, and preview pane',
+        caption: 'Explorer-shaped native shell with the preview pane treated as first-class workspace.',
+      },
+      {
+        src: '/projects/filelight/filelight-model-preview.png',
+        alt: 'Filelight Explorer 3D model preview with embedded texture support',
+        caption: 'D3D11 GLB preview path with orbit inspection and embedded texture rendering.',
+      },
+      {
+        src: '/projects/filelight/filelight-ui-polish-check.png',
+        alt: 'Filelight Explorer polish check screenshot',
+        caption: 'Current native UI polish pass captured from the local app.',
+      },
     ],
-    roleInWork: 'This is the most honest tooling/project extraction candidate because it directly addresses the recurring problem: making a large local corpus legible without turning it into another generic dashboard.'
+    artifactLinks: [
+      {
+        label: 'Preview loop GIF',
+        href: '/projects/filelight/filelight-preview-loop.gif',
+        type: 'Media',
+      },
+      {
+        label: 'Repository',
+        href: 'https://github.com/cybrdelic/filelight-explorer',
+        type: 'Source',
+      },
+    ],
+    proofPoints: [
+      'Native Windows app built around real file inspection workflows',
+      'Preview stack covers images, shell thumbnails, source text, archives, audio, executables, SQLite, and GLB models',
+      'Clear product constraint: keep Explorer familiar while making file evidence faster to inspect',
+    ],
+    overview: 'Filelight Explorer is a native Windows file explorer built around preview depth and local evidence. It keeps the familiar Explorer shape, then improves the parts that slow people down: file previews, project context, inspection, and safer file operations.',
+    whyItExists: 'Local files are still where a lot of real work lives, but the default file browser often hides the evidence needed to act confidently. Filelight exists to make file inspection faster without turning the browser into a dashboard or chat shell.',
+    challenge: 'A file explorer can easily become either too plain to be useful or too overloaded to trust. The challenge is adding power only where the selected file or folder justifies it, while preserving a calm native workflow.',
+    approach: 'I treated the app as a native systems-UX problem: keep the base shell predictable, then build deeper preview paths for the file types that benefit from immediate inspection. The app consumes the sibling native UI engine and uses native rendering paths instead of a web wrapper.',
+    coreMechanisms: [
+      'Native Win32 application shell',
+      'Direct2D-driven interface rendering',
+      'WIC-backed image previews',
+      'Shell thumbnail integration',
+      'Native code and structured-text preview panels',
+      'D3D11 GLB model preview with orbit controls'
+    ],
+    outcomes: [
+      'Adds a concrete native product with real preview and inspection workflows',
+      'Shows systems UX judgment around familiar workflows and selective power features',
+      'Connects the native UI engine work to a visible app with real screenshots and proof media',
+    ],
+  },
+  {
+    id: 'fuzzaholic',
+    title: 'Fuzzaholic',
+    subtitle: 'Shader-fuzzing lab with health scoring, repair loops, and invariant-safe WGSL generation',
+    type: 'Shader Toolchain',
+    status: 'Featured',
+    year: '2025',
+    tech: 'React, WebGPU, WGSL, TypeScript',
+    role: 'Shader tooling, generator design, heuristic analysis, graphics R&D',
+    bestFor: 'Graphics-tooling instincts, shader diagnostics, and original technical framing.',
+    repoUrl: 'https://github.com/cybrdelic/Fuzzaholic',
+    homepageSummary: 'Shader fuzzing workbench that scores visual health, mutates WGSL under guardrails, and exports usable shader results.',
+    detailSummary: 'A WebGPU shader-generation lab that treats visual usefulness as a first-class quality signal, not just compilation success.',
+    primaryMedia: {
+      src: '/projects/fuzzaholic/desktop-discover.png',
+      alt: 'Fuzzaholic desktop discovery lane screenshot',
+      caption: 'Desktop discovery lane from the local visual verification pass.',
+    },
+    media: [
+      {
+        src: '/projects/fuzzaholic/desktop-effects.png',
+        alt: 'Fuzzaholic desktop effects lane screenshot',
+        caption: 'Effects lane showing shader variation controls.',
+      },
+      {
+        src: '/projects/fuzzaholic/desktop-export.png',
+        alt: 'Fuzzaholic desktop export lane screenshot',
+        caption: 'Export lane for moving generated shader work out of the lab.',
+      },
+      {
+        src: '/projects/fuzzaholic/contact-sheet.png',
+        alt: 'Fuzzaholic visual check contact sheet',
+        caption: 'Contact sheet from the local visual verification pass.',
+      },
+    ],
+    artifactLinks: [
+      {
+        label: 'Visual contact sheet',
+        href: '/projects/fuzzaholic/contact-sheet.png',
+        type: 'Proof media',
+      },
+      {
+        label: 'Repository',
+        href: 'https://github.com/cybrdelic/Fuzzaholic',
+        type: 'Source',
+      },
+    ],
+    proofPoints: [
+      'Shader health scoring beyond compile success',
+      'Repair loop for blank, static, or unstable outputs',
+      'Invariant-safe builders and frozen-zone AST mutation',
+    ],
+    overview: 'Fuzzaholic is a shader-generation and fuzzing lab built around the question "does this output stay visually useful?" It generates, mutates, stores, and evaluates WGSL programs while tracking whether the output is likely blank, static, cursor-only, unstable, or visually dead.',
+    whyItExists: 'The generator encodes visual failure modes and recovery policy directly into the loop, turning shader exploration into a bounded search problem instead of random noise.',
+    challenge: 'Generated shader systems usually fail in one of two ways: they produce illegal code, or they produce legal code that is visually useless. Standard tooling rarely helps with the second category, which is often the harder product problem.',
+    approach: 'I framed the project around visual-health policy. Instead of only validating syntax, the system scores probable failure modes, mutates the AST under guardrails, and repairs unhealthy outputs so the generator explores useful parts of shader space more often.',
+    coreMechanisms: [
+      'Shader health analysis',
+      'Repair loop for unhealthy outputs',
+      'Invariant-safe WGSL builders',
+      'Frozen-zone AST mutation policy',
+      'Local shader persistence and export',
+      'Reflection-aware fuzzing workflow'
+    ],
+    outcomes: [
+      'Shows custom reasoning about generated-program quality, not just syntax',
+      'Makes graphics tooling feel like a product system instead of a raw experiment',
+      'Adds a specific shader-tooling angle with visible verification artifacts',
+    ],
+  },
+  {
+    id: 'singularity-caustics',
+    title: 'Singularity Caustics',
+    subtitle: 'WebGPU optics study modeling caustics through catastrophe singularities',
+    type: 'Optical Rendering Research',
+    status: 'Research',
+    year: '2025',
+    tech: 'React, WebGPU, TypeScript, Gemini API',
+    role: 'Rendering research, interaction design, mathematical framing',
+    bestFor: 'Rendering research, theory-backed visualization, and distinctive visual computation.',
+    repoUrl: 'https://github.com/cybrdelic/singularity-caustics',
+    homepageSummary: 'WebGPU optics study for fold, cusp, and caustic structures with a specific catastrophe-theory frame.',
+    detailSummary: 'A compact rendering-research surface for studying caustic singularities as interactive visual structures.',
+    artifactLinks: [
+      {
+        label: 'Repository',
+        href: 'https://github.com/cybrdelic/singularity-caustics',
+        type: 'Source',
+      },
+    ],
+    proofPoints: [
+      'Catastrophe-theory framing for optical caustics',
+      'Real-time visualization of fold and cusp structures',
+      'Specific optical structure beyond material or lighting presets',
+    ],
+    overview: 'Singularity Caustics is a WebGPU rendering study focused on optical caustics through the language of catastrophe theory. It treats folds, cusps, and umbilic-like structures as first-class visual objects.',
+    whyItExists: 'The study connects mathematical singularity structure, interactive rendering, and real-time visual intuition in one compact research surface.',
+    challenge: 'The challenge was to anchor the visuals in a specific theoretical lens so the project communicates structure, not just surface beauty.',
+    approach: 'I used catastrophe singularities as the conceptual backbone for the interaction and rendering language. That gives the project a clearer research identity and makes the visuals legible as an exploration of structure, not just an aesthetic effect.',
+    coreMechanisms: [
+      'Catastrophe-theory caustic framing',
+      'Real-time singularity visualization',
+      'Fold, cusp, and umbilic exploration',
+      'Interactive WebGPU optics surface',
+      'Research-oriented parameter study',
+      'Cinematic light-structure inspection'
+    ],
+    outcomes: [
+      'Introduces a clear rendering-research voice',
+      'Shows mathematical framing and visual-system design working together',
+      'Broadens the project set beyond product surfaces into rendering inquiry',
+    ],
   }
 ];

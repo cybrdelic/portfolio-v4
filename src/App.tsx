@@ -5,7 +5,6 @@ import Home from './pages/Home';
 import ProjectDetail from './pages/ProjectDetail';
 import PageTransition from './components/PageTransition';
 import ScrollToTop from './components/ScrollToTop';
-import BootSequence from './components/BootSequence';
 import CustomCursor from './components/CustomCursor';
 import RouteTransitionCapture from './components/RouteTransitionCapture';
 import SmoothScroll from './components/SmoothScroll';
@@ -30,9 +29,8 @@ export default function App() {
   }, []);
 
   return (
-    <div className="relative isolate text-[var(--color-ink)] selection:bg-[var(--color-ink)] selection:text-[var(--color-bg)]">
+    <div className="relative isolate text-[var(--color-ink)]">
       <SmoothScroll />
-      <BootSequence />
       <CustomCursor />
       <RouteTransitionCapture />
 

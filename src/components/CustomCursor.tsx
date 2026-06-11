@@ -55,6 +55,7 @@ function getFieldTarget(target: EventTarget | null): FieldTarget | null {
 export default function CustomCursor() {
   const canUseFinePointer = useFinePointer();
   const routeReleaseAt = useRef(0);
+  const isRouteCommittingRef = useRef(false);
   const pressureX = useMotionValue(-200);
   const pressureY = useMotionValue(-200);
   const springX = useSpring(pressureX, { stiffness: 320, damping: 34, mass: 0.2 });
@@ -110,7 +111,8 @@ export default function CustomCursor() {
     const handlePointerMove = (event: PointerEvent) => {
       nextPointer = { x: event.clientX, y: event.clientY };
       setIsVisible(true);
-      if (isRouteCommitting && performance.now() >= routeReleaseAt.current) {
+      if (isRouteCommittingRef.current && performance.now() >= routeReleaseAt.current) {
+        isRouteCommittingRef.current = false;
         setIsRouteCommitting(false);
       }
       scheduleFlush();
@@ -162,7 +164,7 @@ export default function CustomCursor() {
       document.documentElement.style.removeProperty('--field-x');
       document.documentElement.style.removeProperty('--field-y');
     };
-  }, [canUseFinePointer, isRouteCommitting, pressureX, pressureY]);
+  }, [canUseFinePointer, pressureX, pressureY]);
 
   useEffect(() => {
     if (!canUseFinePointer) {
@@ -171,6 +173,7 @@ export default function CustomCursor() {
 
     const handleRouteCommit = () => {
       routeReleaseAt.current = performance.now() + 520;
+      isRouteCommittingRef.current = true;
       setIsRouteCommitting(true);
       setFieldTarget(null);
     };

@@ -1,11 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;800&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Inter", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", monospace;
   --font-display: "Inter", system-ui, sans-serif;
-  
+
   --color-bg: #bababa;
   --color-ink: #060606;
   --color-accent: #060606;
@@ -16,6 +16,7 @@
 
 html {
   position: relative;
+  overflow-x: clip;
 }
 
 body {
@@ -24,7 +25,7 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 #work,
@@ -161,7 +162,7 @@ html.lenis, html.lenis body {
 
 .section-shell {
   position: relative;
-  padding: 6rem 1.5rem;
+  padding: 4rem 1.25rem;
   border-bottom: 1px solid var(--color-line);
 }
 
@@ -259,90 +260,33 @@ html.lenis, html.lenis body {
   transform: translate(2px, -2px);
 }
 
-.project-pressure-face {
-  transform-origin: center;
+.project-artifact-stage {
+  width: 100%;
+  border: 1px solid rgba(6, 6, 6, 0.24);
+  background: #070707;
+  box-shadow:
+    0 38px 120px rgba(6, 6, 6, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.project-cube-shell-face {
+  border: 1px solid rgba(6, 6, 6, 0.16);
+  background:
+    linear-gradient(90deg, transparent 0 34%, rgba(6, 6, 6, 0.05) 34% calc(34% + 1px), transparent calc(34% + 1px)),
+    linear-gradient(0deg, transparent 0 48%, rgba(6, 6, 6, 0.045) 48% calc(48% + 1px), transparent calc(48% + 1px)),
+    rgba(186, 186, 186, 0.16);
 }
 
 .project-cube-depth-map {
   position: absolute;
-  inset: 5vh 7vw;
-  border: 1px solid rgba(6, 6, 6, 0.16);
+  inset: 8vh 9vw;
+  border: 1px solid rgba(6, 6, 6, 0.1);
   background:
     radial-gradient(circle at 50% 50%, rgba(6, 6, 6, 0.12) 0 2px, transparent 3px),
     linear-gradient(90deg, transparent 0 18%, rgba(6, 6, 6, 0.08) 18% calc(18% + 1px), transparent calc(18% + 1px) 50%, rgba(6, 6, 6, 0.14) 50% calc(50% + 1px), transparent calc(50% + 1px) 82%, rgba(6, 6, 6, 0.08) 82% calc(82% + 1px), transparent calc(82% + 1px)),
     linear-gradient(0deg, transparent 0 24%, rgba(6, 6, 6, 0.08) 24% calc(24% + 1px), transparent calc(24% + 1px) 50%, rgba(6, 6, 6, 0.12) 50% calc(50% + 1px), transparent calc(50% + 1px) 76%, rgba(6, 6, 6, 0.08) 76% calc(76% + 1px), transparent calc(76% + 1px));
   pointer-events: none;
   transform: translateZ(calc(var(--cube-size) / 2 + 1px));
-}
-
-.project-cube-wireframe {
-  position: absolute;
-  inset: 10vh 8vw 16vh;
-  z-index: 5;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  gap: 1rem;
-  pointer-events: none;
-  color: var(--color-ink);
-  font-family: var(--font-mono);
-  text-transform: uppercase;
-  mix-blend-mode: multiply;
-}
-
-.project-cube-wireframe span {
-  font-size: 0.7rem;
-  letter-spacing: 0.34em;
-  color: var(--color-muted);
-}
-
-.project-cube-wireframe strong {
-  align-self: start;
-  font-family: var(--font-mono);
-  font-size: clamp(3.5rem, 12vw, 13rem);
-  font-weight: 300;
-  line-height: 0.78;
-  letter-spacing: 0;
-  color: rgba(6, 6, 6, 0.28);
-  transform: translateY(16vh);
-}
-
-.project-cube-wireframe i {
-  display: block;
-  align-self: end;
-  width: min(24rem, 38vw);
-  height: 4rem;
-  border-left: 1px solid rgba(6, 6, 6, 0.28);
-  border-bottom: 1px solid rgba(6, 6, 6, 0.2);
-  transform: skewY(-7deg) translateX(2vw);
-}
-
-.project-pressure-face:hover {
-  filter: contrast(1.06);
-  transform: translate3d(0, -2px, 0);
-}
-
-.project-pressure-face::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  opacity: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(
-      380px ellipse at var(--field-x, 50%) var(--field-y, 50%),
-      rgba(6, 6, 6, 0.065),
-      rgba(6, 6, 6, 0.025) 34%,
-      transparent 68%
-    ),
-    linear-gradient(90deg, transparent 0 calc(var(--field-x, 50%) - 92px), rgba(6, 6, 6, 0.08) calc(var(--field-x, 50%) - 92px) calc(var(--field-x, 50%) - 91px), transparent calc(var(--field-x, 50%) - 91px) calc(var(--field-x, 50%) + 92px), rgba(6, 6, 6, 0.08) calc(var(--field-x, 50%) + 92px) calc(var(--field-x, 50%) + 93px), transparent calc(var(--field-x, 50%) + 93px)),
-    linear-gradient(0deg, transparent 0 calc(var(--field-y, 50%) - 58px), rgba(6, 6, 6, 0.06) calc(var(--field-y, 50%) - 58px) calc(var(--field-y, 50%) - 57px), transparent calc(var(--field-y, 50%) - 57px) calc(var(--field-y, 50%) + 58px), rgba(6, 6, 6, 0.06) calc(var(--field-y, 50%) + 58px) calc(var(--field-y, 50%) + 59px), transparent calc(var(--field-y, 50%) + 59px));
-  mix-blend-mode: multiply;
-  transition: opacity 160ms ease;
-}
-
-.project-pressure-face:hover::after {
-  opacity: 1;
 }
 
 .field-axes {
@@ -635,6 +579,8 @@ html.lenis, html.lenis body {
 
 @media (min-width: 768px) {
   .section-shell {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
     padding-left: 3rem;
     padding-right: 3rem;
   }

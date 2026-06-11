@@ -4,36 +4,34 @@ export type SectionParagraph = {
 };
 
 export const heroIdentity =
-  'Alex Figueroa - Autonomous Systems & Simulation Engineer';
+  'Alex Figueroa — Autonomous Systems & Simulation Engineer';
 
 export const heroTitle =
   'I build perceptual systems, recursive tooling, and simulation infrastructure that push software beyond static interfaces.';
 
+export const heroTagline = 'Simulation engines, tooling, and systems UX.';
+
+export const heroMobileSubtitle =
+  'CUDA fire simulation, native file inspection, shader generation, and WebGPU rendering studies.';
+
 export const heroStats = [
-  { label: 'Coordinates', value: 'Dayton, OH / California roots' },
   {
-    label: 'Focus',
-    value: 'Perception systems, simulation infrastructure, autonomous tooling',
+    label: 'Simulation',
+    value: 'CUDA fire simulation and native validation tooling',
   },
   {
-    label: 'Availability',
-    value: 'Open to high-leverage engineering roles and frontier technical collaborations',
+    label: 'Focus',
+    value: 'GPU systems, graphics tooling, operator-facing systems UX',
   },
 ] as const;
 
 export const thesisParagraphs: SectionParagraph[] = [
   {
     tone: 'lead',
-    text: 'I do not build software as isolated screens. I build systems that observe, interpret, and respond.',
+    text: 'I build systems that observe, interpret, and respond under real constraints.',
   },
   {
-    text: 'I am interested in software that carries more of the work: systems that watch state, infer context, model behavior, and help drive action in real time.',
-  },
-  {
-    text: 'That shows up in local-first agent tooling, perceptual systems built from gaze and geometry, and simulation infrastructure where the behavior matters as much as the rendering.',
-  },
-  {
-    text: 'The common thread is operational cognition. I care about products that can perceive more, synthesize more, and reduce operator burden without hiding the real constraints.',
+    text: 'That shows up most clearly in native simulation work, graphics tooling, and interface-heavy technical products where diagnostics, control, and usability matter as much as the rendering.',
   },
   {
     tone: 'closing',
@@ -95,7 +93,7 @@ export const technicalIntro: SectionParagraph[] = [
 ] as const;
 
 export const technicalRows = [
-  ['Primary languages', 'Rust, Python, TypeScript, JavaScript, GLSL'],
+  ['Primary languages', 'Rust, Python, TypeScript, JavaScript, WGSL, CUDA'],
   ['Systems and infrastructure', 'PostgreSQL, Redis, Docker, Kubernetes, RabbitMQ, Terraform'],
   ['Frontend and interface', 'React, WebGL, shader systems, interaction architecture, visual systems design'],
   ['Current technical interests', 'Perceptual interfaces, local-first AI tooling, GPU-driven simulation, embodied computing systems'],

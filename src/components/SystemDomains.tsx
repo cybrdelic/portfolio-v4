@@ -140,7 +140,7 @@ export default function SystemDomains() {
       >
         <motion.div className="section-rail" style={prefersReducedMotion ? undefined : { x: introLabelX }}>
           <h2 className="section-label">
-            <ScrambleText text="3.0 / System Domains" />
+            <ScrambleText text="System Domains" />
           </h2>
         </motion.div>
 

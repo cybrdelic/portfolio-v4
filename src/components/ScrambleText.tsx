@@ -1,49 +1,55 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useInView, useReducedMotion } from 'motion/react';
 
-const CHARS = '!<>-_\\/[]{}—=+*^?#________';
+const CHARSET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#@&_.:/-';
+const DURATION = 750;
 
-export default function ScrambleText({ text, className }: { text: string, className?: string }) {
-  const [displayText, setDisplayText] = useState(text.replace(/./g, ' '));
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-50px" });
+export default function ScrambleText({ text, className }: { text: string; className?: string }) {
   const prefersReducedMotion = useReducedMotion();
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true, amount: 0 });
+  const [display, setDisplay] = useState(text);
+  const rafRef = useRef(0);
 
   useEffect(() => {
     if (prefersReducedMotion) {
-      setDisplayText(text);
+      setDisplay(text);
       return;
     }
-
     if (!isInView) return;
-    
-    let iteration = 0;
-    let interval: ReturnType<typeof setInterval> | null = null;
-    
-    interval = setInterval(() => {
-      setDisplayText(text.split('').map((letter, index) => {
-        if (letter === ' ') {
-          return letter;
-        }
-        if (index < iteration) {
-          return text[index];
-        }
-        return CHARS[Math.floor(Math.random() * CHARS.length)];
-      }).join(''));
-      
-      if (iteration >= text.length) {
-        clearInterval(interval);
-      }
-      
-      iteration += 1;
-    }, 22);
-    
-    return () => {
-      if (interval) {
-        clearInterval(interval);
+
+    let start = 0;
+    const chars = text.split('');
+
+    const tick = (now: number) => {
+      if (!start) start = now;
+      const progress = Math.min((now - start) / DURATION, 1);
+      const lockedCount = Math.round(progress * chars.length);
+
+      setDisplay(
+        chars
+          .map((ch, i) => {
+            if (/[\s\-—&]/.test(ch)) return ch;
+            if (i < lockedCount) return ch;
+            return CHARSET[Math.floor(Math.random() * CHARSET.length)];
+          })
+          .join(''),
+      );
+
+      if (progress < 1) {
+        rafRef.current = requestAnimationFrame(tick);
+      } else {
+        setDisplay(text);
       }
     };
-  }, [text, isInView, prefersReducedMotion]);
 
-  return <span ref={ref} className={className}>{displayText}</span>;
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [isInView, text, prefersReducedMotion]);
+
+  return (
+    <span ref={ref} className={className} aria-label={text}>
+      {display}
+    </span>
+  );
 }

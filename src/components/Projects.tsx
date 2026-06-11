@@ -2,7 +2,6 @@ import { CSSProperties, useRef, useState } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import {
-  MotionValue,
   motion,
   useMotionTemplate,
   useMotionValueEvent,
@@ -10,111 +9,78 @@ import {
   useScroll,
   useTransform,
 } from 'motion/react';
-import { Project, projects } from '../data';
+import type { MotionValue } from 'motion/react';
+import { projects } from '../data';
+import { DesktopProjectStage, ProjectCubeFacePreview, ProjectMediaStage } from './projects/ProjectStages';
 
 const PROJECT_TRANSITIONS = Math.max(1, projects.length - 1);
-const PROJECT_STAGE_VH = 120;
+const PROJECT_STAGE_VH = 92;
+
+const PROJECT_AMBIENT = [
+  'rgba(180, 75, 15, 0.22)',   // firesim — ember
+  'rgba(25, 85, 115, 0.22)',   // filelight — steel
+  'rgba(90, 45, 160, 0.22)',   // fuzzaholic — violet
+  'rgba(15, 70, 140, 0.22)',   // singularity — optical
+];
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }
 
-function ProjectFace({
-  contentOpacity = 1,
-  isInteractive,
+function ContinuousProjectFace({
+  activeIndex,
   index,
-  project,
-  wireOpacity = 0,
+  phase,
 }: {
-  contentOpacity?: MotionValue<number> | number;
-  isInteractive: boolean;
+  activeIndex: number;
   index: number;
-  project: Project;
-  wireOpacity?: MotionValue<number> | number;
+  phase: MotionValue<number>;
 }) {
+  const opacity = useTransform(phase, (value) => {
+    const distance = Math.abs(value - index);
+    return clamp(1 - distance * 1.55, 0, 1);
+  });
+  const y = useTransform(phase, (value) => {
+    const delta = index - value;
+    return clamp(delta * 260, -320, 320);
+  });
+  const scale = useTransform(phase, (value) => {
+    const distance = Math.abs(value - index);
+    return 1 - Math.min(distance, 1) * 0.035;
+  });
+
   return (
-    <Link
-      aria-hidden={!isInteractive}
-      tabIndex={isInteractive ? 0 : -1}
-      to={`/project/${project.id}`}
-      data-field-target={isInteractive ? true : undefined}
-      data-field-kind="inspect"
-      data-field-label={`${project.title} dossier`}
-      className="group project-pressure-face relative block h-full w-full text-[var(--color-ink)] focus-visible:outline-none"
-    >
-      <div className="absolute inset-x-0 top-0 h-px bg-[var(--color-line)]" />
-      <div className="absolute inset-x-0 bottom-0 h-px bg-[var(--color-line)]" />
-      <div className="absolute inset-y-0 left-0 w-px bg-[var(--color-line)]" />
-      <div className="absolute inset-y-0 right-0 w-px bg-[var(--color-line)]" />
-      <div className="absolute inset-y-0 left-[58.333333%] hidden w-px bg-[var(--color-line)] lg:block" />
-      <div className="absolute left-10 right-10 top-10 hidden h-px bg-[var(--color-line)] md:block" />
-      <div className="absolute bottom-10 left-10 right-10 hidden h-px bg-[var(--color-line)] md:block" />
-
-      <motion.div className="project-cube-wireframe" style={{ opacity: wireOpacity }}>
-        <span>{project.type}</span>
-        <strong>{String(index + 1).padStart(2, '0')}</strong>
-        <i />
-      </motion.div>
-
-      <motion.div
-        className="relative z-10 grid h-full grid-cols-1 lg:grid-cols-12"
-        style={{ opacity: contentOpacity }}
-      >
-        <div className="flex flex-col justify-between gap-10 px-6 py-8 md:px-10 md:py-10 lg:col-span-7 lg:pr-12">
-          <div className="flex items-center justify-between gap-4 font-mono text-[11px] uppercase tracking-[0.34em] text-[var(--color-muted)]">
-            <span>{project.type}</span>
-            <span>{String(index + 1).padStart(2, '0')}</span>
-          </div>
-
-          <div className="space-y-6">
-            <h3 className="max-w-5xl text-4xl font-normal leading-[0.92] tracking-[-0.05em] transition-transform duration-300 ease-out group-hover:-translate-y-1 md:text-6xl lg:text-7xl">
-              {project.title}
-            </h3>
-            <p className="max-w-3xl text-lg leading-relaxed text-[var(--color-muted)] transition-colors duration-300 group-hover:text-[var(--color-ink)] md:text-2xl">
-              {project.subtitle}
-            </p>
-          </div>
-
-          <div className="flex items-center justify-between gap-6 border-t border-[var(--color-line)] pt-6">
-            <span className="font-mono text-[11px] uppercase tracking-[0.34em] text-[var(--color-muted)]">
-              View project
-            </span>
-            <ArrowUpRight
-              size={18}
-              className="text-[var(--color-muted)] transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:text-[var(--color-ink)]"
-            />
-          </div>
-        </div>
-
-        <div className="flex flex-col justify-between gap-10 border-t border-[var(--color-line)] px-6 py-8 md:px-10 md:py-10 lg:col-span-5 lg:border-l lg:border-t-0 lg:pl-12">
-          <div>
-            <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.34em] text-[var(--color-muted)]">
-              Stack
-            </p>
-            <p className="max-w-xl text-xl leading-relaxed text-[var(--color-ink)] transition-transform duration-300 ease-out group-hover:translate-x-1 md:text-2xl">
-              {project.tech}
-            </p>
-          </div>
-
-          <div>
-            <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.34em] text-[var(--color-muted)]">
-              Overview
-            </p>
-            <p className="max-w-xl text-base leading-relaxed text-[var(--color-muted)] md:text-lg">
-              {project.overview}
-            </p>
-          </div>
-        </div>
-      </motion.div>
-    </Link>
+    <div className="absolute inset-0">
+      <DesktopProjectStage
+        index={index}
+        isInteractive={activeIndex === index}
+        project={projects[index]}
+        style={{ opacity, scale, y }}
+      />
+    </div>
   );
+}
+
+function ContinuousCubeFacePreview({
+  faceIndex,
+  phase,
+}: {
+  faceIndex: number;
+  phase: MotionValue<number>;
+}) {
+  const opacity = useTransform(phase, (value) => {
+    const distance = Math.abs(value - faceIndex);
+    return clamp(distance * 0.035, 0, 0.035);
+  });
+
+  return <ProjectCubeFacePreview faceIndex={faceIndex} opacity={opacity} project={projects[faceIndex]} />;
 }
 
 export default function Projects() {
   const prefersReducedMotion = Boolean(useReducedMotion());
   const ref = useRef<HTMLElement>(null);
   const [baseIndex, setBaseIndex] = useState(0);
-  const totalHeightVh = projects.length * PROJECT_STAGE_VH;
+  const totalHeightVh = Math.max(260, projects.length * PROJECT_STAGE_VH);
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -125,37 +91,76 @@ export default function Projects() {
   const localProgress = useTransform(phase, (value) => clamp(value - Math.floor(value), 0, 1));
   const rotation = useTransform(phase, (value) => (prefersReducedMotion ? 0 : -90 * value));
   const cubePitch = useTransform(localProgress, [0, 0.5, 1], [0, -1.4, 0]);
-  const frontOpacity = useTransform(localProgress, (value) =>
-    prefersReducedMotion ? 1 : 1 - value * 0.08
+  const cubeDepthOpacity = useTransform(localProgress, [0, 0.25, 0.5, 0.75, 1], [0.04, 0.1, 0.16, 0.09, 0.04]);
+  const gridOpacity = useTransform(scrollYProgress, [0, 1], [0.02, 0.035]);
+  const ambientBg = useTransform(
+    phase,
+    PROJECT_AMBIENT.map((_, i) => i),
+    PROJECT_AMBIENT
   );
-  const nextOpacity = useTransform(localProgress, (value) =>
-    prefersReducedMotion ? 1 : 0.82 + value * 0.18
-  );
-  const frontContentOpacity = useTransform(localProgress, [0, 0.14, 0.28, 1], [1, 1, 0, 0]);
-  const nextContentOpacity = useTransform(localProgress, [0, 0.7, 0.88, 0.97, 1], [0, 0, 0.18, 1, 1]);
-  const frontWireOpacity = useTransform(localProgress, [0, 0.24, 0.42, 0.64, 1], [0, 0, 0.68, 0, 0]);
-  const nextWireOpacity = useTransform(localProgress, [0, 0.18, 0.52, 0.72, 0.86, 1], [0, 0.36, 0.82, 0.28, 0, 0]);
-  const cubeDepthOpacity = useTransform(localProgress, [0, 0.2, 0.5, 0.82, 1], [0, 0, 0.62, 0.16, 0]);
-  const gridOpacity = useTransform(scrollYProgress, [0, 1], [0.04, 0.08]);
 
   useMotionValueEvent(phase, 'change', (value) => {
     const nextBaseIndex = clamp(Math.floor(value + 0.0001), 0, projects.length - 1);
     setBaseIndex((current) => (current === nextBaseIndex ? current : nextBaseIndex));
   });
 
-  const nextIndex = clamp(baseIndex + 1, 0, projects.length - 1);
   const cubeStyle = {
     transform: useMotionTemplate`translateZ(calc(var(--cube-size) / -2)) rotateX(${cubePitch}deg) rotateY(${rotation}deg)`,
   };
 
   return (
-    <section
-      id="work"
-      ref={ref}
-      className="bridge-section relative border-b border-[var(--color-line)]"
-      style={{ height: `${totalHeightVh}vh`, position: 'relative' }}
-    >
-      <div className="sticky top-0 h-[100svh] overflow-hidden">
+    <div id="work">
+      <section className="relative border-b border-[var(--color-line)] lg:hidden">
+        <div className="px-4 py-10">
+          <div className="mb-8 border-b border-[var(--color-line)] pb-5">
+            <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.3em] text-[var(--color-muted)]">Selected work</p>
+            <h2 className="max-w-[10ch] text-5xl leading-[0.92] tracking-[-0.055em]">Selected systems.</h2>
+          </div>
+
+          <div className="grid gap-8">
+            {projects.map((project, index) => (
+              <Link
+                key={project.id}
+                to={`/project/${project.id}`}
+                data-field-target
+                data-field-kind="inspect"
+                data-field-label={`${project.title} mobile case study`}
+                className="group block border-b border-[var(--color-line)] pb-8 text-[var(--color-ink)] last:border-b-0"
+              >
+                <div className="mb-4 flex items-center justify-between gap-4 font-mono text-[10px] uppercase tracking-[0.26em] text-[var(--color-muted)]">
+                  <span>{project.type}</span>
+                  <span>{String(index + 1).padStart(2, '0')}</span>
+                </div>
+                <div className="mt-5 grid gap-3">
+                  <h3 className="text-4xl leading-[0.94] tracking-[-0.055em]">{project.title}</h3>
+                  <p className="text-base leading-relaxed text-[var(--color-muted)]">{project.subtitle}</p>
+                  <div className="flex items-center justify-between border-t border-[var(--color-line)] pt-4 font-mono text-[11px] uppercase tracking-[0.28em] text-[var(--color-muted)]">
+                    <span>Open case</span>
+                    <ArrowUpRight size={16} />
+                  </div>
+                </div>
+                {project.primaryMedia && (
+                  <div className="mt-5">
+                    <ProjectMediaStage index={index} project={project} />
+                  </div>
+                )}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section
+        ref={ref}
+        className="bridge-section relative hidden border-b border-[var(--color-line)] lg:block"
+        style={{ height: `${totalHeightVh}vh`, position: 'relative' }}
+      >
+        <div className="sticky top-0 h-[100svh] overflow-hidden">
+        <motion.div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0"
+          style={{ backgroundColor: ambientBg }}
+        />
         <motion.div
           className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:48px_48px]"
           style={{ opacity: gridOpacity }}
@@ -172,54 +177,33 @@ export default function Projects() {
                 } as CSSProperties
               }
             >
-              <motion.div className="absolute inset-0 [transform-style:preserve-3d]" style={cubeStyle}>
+              <motion.div aria-hidden="true" className="absolute inset-0 [transform-style:preserve-3d]" style={cubeStyle}>
                 <motion.div className="project-cube-depth-map" style={{ opacity: cubeDepthOpacity }} />
-                <motion.div
-                  className="absolute inset-0 [backface-visibility:hidden]"
-                  style={{
-                    opacity: frontOpacity,
-                    transform: `rotateY(${baseIndex * 90}deg) translateZ(calc(var(--cube-size) / 2))`,
-                  }}
-                >
-                  <div className="absolute inset-y-0 left-0 z-10 w-[2px] bg-[var(--color-bg)]" />
-                  <div className="absolute inset-y-0 right-0 z-10 w-[2px] bg-[var(--color-bg)]" />
-                  <ProjectFace
-                    contentOpacity={frontContentOpacity}
-                    isInteractive
-                    index={baseIndex}
-                    project={projects[baseIndex]}
-                    wireOpacity={frontWireOpacity}
-                  />
-                </motion.div>
-
-                {!prefersReducedMotion && nextIndex !== baseIndex && (
-                  <motion.div
-                    aria-hidden="true"
-                    className="pointer-events-none absolute inset-0 [backface-visibility:hidden]"
-                    style={{
-                      opacity: nextOpacity,
-                      transform: `rotateY(${nextIndex * 90}deg) translateZ(calc(var(--cube-size) / 2))`,
-                    }}
-                  >
-                    <div className="absolute inset-y-0 left-0 z-10 w-[2px] bg-[var(--color-bg)]" />
-                    <div className="absolute inset-y-0 right-0 z-10 w-[2px] bg-[var(--color-bg)]" />
-                    <ProjectFace
-                      contentOpacity={nextContentOpacity}
-                      isInteractive={false}
-                      index={nextIndex}
-                      project={projects[nextIndex]}
-                      wireOpacity={nextWireOpacity}
-                    />
-                  </motion.div>
-                )}
+                {projects.map((project, faceIndex) => (
+                  <div key={project.id} className="contents">
+                    <ContinuousCubeFacePreview faceIndex={faceIndex} phase={phase} />
+                  </div>
+                ))}
               </motion.div>
 
               <div className="pointer-events-none absolute inset-y-0 left-0 w-px bg-[var(--color-line)]" />
               <div className="pointer-events-none absolute inset-y-0 right-0 w-px bg-[var(--color-line)]" />
+              <div className="relative z-10 h-full">
+                {projects.map((project, index) => (
+                  <div key={project.id} className="absolute inset-0">
+                    <ContinuousProjectFace
+                      activeIndex={baseIndex}
+                      index={index}
+                      phase={phase}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </section>
+      </section>
+    </div>
   );
 }

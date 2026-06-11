@@ -32,7 +32,7 @@ export default function TechnicalProfile() {
       <div className="section-intro">
         <div className="section-rail">
           <h2 className="section-label">
-            <ScrambleText text="5.0 / Technical Profile" />
+            <ScrambleText text="Technical Profile" />
           </h2>
         </div>
         <div className="section-content">
