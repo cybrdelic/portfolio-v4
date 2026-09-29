@@ -14,6 +14,9 @@ export const motionState = {
   routeTarget: 0,
   routeMotif: null as Motif | null,
   hoverMotif: null as Motif | null,
+  frame: 1,
+  frameTarget: 1,
+  chirality: [10, 4],
   time: 0,
   enabled: true,
   reduced: false,
@@ -43,6 +46,7 @@ export function stepTimeline(dt: number) {
   state.previousScroll = state.scroll;
   state.velocity = damp(state.velocity, Math.max(-2, Math.min(2, delta / Math.max(1, dt * 1000))), 8, dt);
   state.route = damp(state.route, state.routeTarget, state.reduced ? 100 : 7, dt);
+  state.frame = damp(state.frame, state.frameTarget, 5, dt);
 }
 
 export function getMotionSnapshot() {

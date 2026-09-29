@@ -41,7 +41,7 @@ test('same GPU canvas and clock survive route navigation, return and history', a
   expect(after.time).toBeGreaterThan(before.time);
   expect(after.contextLosses).toBe(0);
   await page.getByRole('link', { name: 'All selected work', exact: true }).click();
-  await expect(page.locator('.work-intro')).toBeInViewport();
+  await expect(page.locator('.featured-aqua')).toBeInViewport();
   await page.goBack(); await expect(page.locator('h1')).toHaveText('AQUA');
 });
 test('scroll continuously interpolates between project motifs', async ({ page }) => {
@@ -90,8 +90,8 @@ test('motion switch persists and restores visible DOM headings', async ({ page }
 test('mobile menu, keyboard escape and all detail routes work', async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 800 }); await ready(page);
   await page.getByRole('button', { name: 'Menu', exact: true }).click();
-  await expect(page.getByRole('navigation')).toBeVisible();
-  await page.keyboard.press('Escape'); await expect(page.getByRole('navigation')).not.toBeVisible();
+  await expect(page.getByRole('navigation', { name: 'Main navigation' })).toBeVisible();
+  await page.keyboard.press('Escape'); await expect(page.getByRole('navigation', { name: 'Main navigation' })).not.toBeVisible();
   for (const id of ['aqua','ignia','drone-sim-studio','amber-lab','cnt-workbench','firesim','llmwiki']) {
     await page.goto(`/project/${id}`); await expect(page.locator('.dossier')).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy();
@@ -113,4 +113,33 @@ test('resume is complete and print stylesheet excludes navigation', async ({ pag
   await expect(page.getByText('September 2021—present')).toBeVisible();
   await page.emulateMedia({ media: 'print' });
   await expect(page.locator('.site-header')).not.toBeVisible(); await expect(page.locator('.resume-actions')).not.toBeVisible();
+});
+
+test('all project scenes fit narrow screens and retain project-specific content', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await ready(page);
+  for (const id of ['ignia', 'drone-sim-studio', 'amber-lab', 'cnt-workbench', 'firesim', 'llmwiki']) {
+    const scene = page.locator(`#${id}-scene`);
+    await scene.evaluate(el => el.scrollIntoView({ block: 'start', behavior: 'instant' }));
+    await page.waitForTimeout(500);
+    await page.evaluate(() => window.__portfolioMotion?.freeze(4));
+    await expect(scene.locator('.chapter-description')).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy();
+    await test.info().attach(`${id}-mobile`, { body: await page.screenshot(), contentType: 'image/png' });
+    await page.evaluate(() => window.__portfolioMotion?.resume());
+  }
+});
+
+test('chirality changes the rendered lattice even with reduced motion', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await ready(page);
+  await page.locator('#cnt-workbench-scene').evaluate(el => el.scrollIntoView({ block: 'start', behavior: 'instant' }));
+  await page.waitForTimeout(700);
+  const before = await page.locator('canvas.motion-world').screenshot();
+  const armchair = page.getByRole('button', { name: '(8, 8)', exact: true });
+  await armchair.click();
+  await expect(armchair).toHaveAttribute('aria-pressed', 'true');
+  await page.waitForTimeout(250);
+  const after = await page.locator('canvas.motion-world').screenshot();
+  expect(after.equals(before)).toBeFalsy();
 });

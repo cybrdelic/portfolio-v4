@@ -14,6 +14,7 @@ export default function MotionWorld({ enabled }: { enabled: boolean }) {
       ? projects.find(project => `/project/${project.id}` === location.pathname)?.motif || 'water'
       : null;
     if (motionState.routeMotif) setMotif(motionState.routeMotif);
+    motionState.frameTarget = location.pathname.includes('cnt-workbench') ? 0 : 1;
   }, [location.pathname]);
 
   useEffect(() => {
@@ -24,12 +25,12 @@ export default function MotionWorld({ enabled }: { enabled: boolean }) {
     let renderer: Renderer | null = null;
     let raf = 0, lastTime = 0, accumulated = 0, samples = 0;
     let invalidated = true, stopped = false, anchorDirty = true;
-    let anchors: { center: number; motif: Motif }[] = [];
+    let anchors: { center: number; motif: Motif; frame: number }[] = [];
 
     const measure = () => {
       anchors = [...document.querySelectorAll<HTMLElement>('[data-scene]')].map(element => {
         const rect = element.getBoundingClientRect();
-        return { center: rect.top + scrollY + rect.height * 0.42, motif: element.dataset.scene as Motif };
+        return { center: rect.top + scrollY + rect.height * 0.42, motif: element.dataset.scene as Motif, frame: element.dataset.geometry === 'tube' ? 0 : 1 };
       }).sort((a, b) => a.center - b.center);
       anchorDirty = false;
     };
@@ -45,8 +46,10 @@ export default function MotionWorld({ enabled }: { enabled: boolean }) {
         if (anchors[i].center >= position) { b = anchors[i]; break; }
       }
       const fraction = a.center === b.center ? 0 : Math.max(0, Math.min(1, (position - a.center) / (b.center - a.center)));
-      const blend = fraction * fraction * (3 - 2 * fraction);
+      const travel = Math.max(0, Math.min(1, (fraction - 0.28) / 0.44));
+      const blend = travel * travel * (3 - 2 * travel);
       motionState.targets = motifs.map(motif => (a.motif === motif ? 1 - blend : 0) + (b.motif === motif ? blend : 0));
+      motionState.frameTarget = a.frame * (1 - blend) + b.frame * blend;
     };
     const onScroll = () => { motionState.scroll = scrollY; invalidated = true; };
     const onPointer = (event: PointerEvent) => {
@@ -58,7 +61,7 @@ export default function MotionWorld({ enabled }: { enabled: boolean }) {
     const onResize = () => { invalidated = true; anchorDirty = true; };
     const onMotion = () => { motionState.reduced = media.matches; invalidated = true; root.dataset.reducedMotion = String(media.matches); };
     const onVisibility = () => {
-      if (document.hidden) cancelAnimationFrame(raf);
+      if (document.hidden) { cancelAnimationFrame(raf); document.querySelectorAll<HTMLVideoElement>('[data-world-media]').forEach(video => video.pause()); }
       else { lastTime = 0; invalidated = true; raf = requestAnimationFrame(frame); }
     };
     const activate = () => {
@@ -85,12 +88,13 @@ export default function MotionWorld({ enabled }: { enabled: boolean }) {
     function frame(now: number) {
       if (stopped || document.hidden) return;
       const frameMs = lastTime ? now - lastTime : 16.67;
-      const dt = Math.min(0.05, frameMs / 1000);
+      const dt = Math.min(0.1, frameMs / 1000);
       lastTime = now;
       const start = performance.now();
       updateScene();
+      if (motionState.reduced && invalidated) { motionState.weights = [...motionState.targets]; motionState.frame = motionState.frameTarget; }
       if (!motionState.frozen) stepTimeline(dt);
-      if (renderer && (!motionState.reduced || invalidated) && (!motionState.frozen || invalidated)) {
+      if (renderer && (!motionState.reduced || invalidated || !motionState.ready) && (!motionState.frozen || invalidated || !motionState.ready)) {
         renderer.draw(); invalidated = false;
       }
       if (!motionState.frozen && !motionState.reduced && renderer) {
@@ -118,13 +122,14 @@ export default function MotionWorld({ enabled }: { enabled: boolean }) {
     addEventListener('scroll', onScroll, { passive: true });
     addEventListener('pointermove', onPointer, { passive: true });
     addEventListener('resize', onResize, { passive: true });
+    addEventListener('portfolio-invalidate', onResize);
     media.addEventListener('change', onMotion);
     document.addEventListener('visibilitychange', onVisibility);
     canvas.current?.addEventListener('webglcontextlost', onLost);
     canvas.current?.addEventListener('webglcontextrestored', onRestored);
     window.__portfolioMotion = {
       snapshot: getMotionSnapshot,
-      freeze: (time = 4) => { motionState.time = time; motionState.frozen = true; motionState.pointer = [0, 0]; motionState.velocity = 0; motionState.weights = [...motionState.targets]; invalidated = true; },
+      freeze: (time = 4) => { motionState.time = time; motionState.frozen = true; motionState.pointer = [0, 0]; motionState.velocity = 0; motionState.weights = [...motionState.targets]; motionState.frame = motionState.frameTarget; invalidated = true; },
       resume: () => { motionState.frozen = false; invalidated = true; },
     };
     raf = requestAnimationFrame(frame);
@@ -132,6 +137,7 @@ export default function MotionWorld({ enabled }: { enabled: boolean }) {
       stopped = true; cancelAnimationFrame(raf);
       observer.disconnect(); resizeObserver.disconnect();
       removeEventListener('scroll', onScroll); removeEventListener('pointermove', onPointer); removeEventListener('resize', onResize);
+      removeEventListener('portfolio-invalidate', onResize);
       media.removeEventListener('change', onMotion); document.removeEventListener('visibilitychange', onVisibility);
       canvas.current?.removeEventListener('webglcontextlost', onLost); canvas.current?.removeEventListener('webglcontextrestored', onRestored);
       renderer?.dispose(); motionState.ready = false;
@@ -139,5 +145,5 @@ export default function MotionWorld({ enabled }: { enabled: boolean }) {
     };
   }, [enabled]);
 
-  return <canvas ref={canvas} className="motion-world" aria-hidden="true" />;
+  return <><canvas ref={canvas} className="motion-world" aria-hidden="true" /><div className="world-sources" aria-hidden="true"><video data-world-media="water" src="/media/aqua.mp4" poster="/media/aqua.webp" muted loop playsInline preload="none"/><video data-world-media="fire" src="/media/ignia.mp4" poster="/media/ignia.webp" muted loop playsInline preload="none"/></div></>;
 }

@@ -1,5 +1,7 @@
-import { fieldFragment, fullscreenVertex, typeFragment, typeVertex } from './shaders';
+import { fieldFragment, fullscreenVertex, particleFragment, particleVertex, typeFragment, typeVertex } from './shaders';
 import { motionState } from './state';
+import { MediaTexture } from './MediaTexture';
+import { nanotube } from './nanotube';
 
 type TextLayer = { element: HTMLElement; texture: WebGLTexture; width: number; height: number; signature: string };
 
@@ -32,6 +34,11 @@ export class Renderer {
   private gl: WebGL2RenderingContext;
   private field: WebGLProgram;
   private typography: WebGLProgram;
+  private particles: WebGLProgram;
+  private particleVao: WebGLVertexArrayObject;
+  private tubeBuffer: WebGLBuffer;
+  private tubeKey = '';
+  private media: MediaTexture[];
   private vao: WebGLVertexArrayObject;
   private layers: TextLayer[] = [];
   private locations = new Map<string, WebGLUniformLocation | null>();
@@ -58,7 +65,16 @@ export class Renderer {
     this.gl = gl;
     this.field = program(gl, fullscreenVertex, fieldFragment);
     this.typography = program(gl, typeVertex, typeFragment);
+    this.particles = program(gl, particleVertex, particleFragment);
     this.vao = gl.createVertexArray()!;
+    this.particleVao = gl.createVertexArray()!;
+    this.tubeBuffer = gl.createBuffer()!;
+    gl.bindVertexArray(this.particleVao);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.tubeBuffer);
+    gl.enableVertexAttribArray(0);
+    gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+    gl.bindVertexArray(this.vao);
+    this.media = ['water', 'fire'].map(motif => new MediaTexture(gl, document.querySelector<HTMLVideoElement>(`[data-world-media=${motif}]`)!));
     this.framebuffer = gl.createFramebuffer()!;
     this.fieldTexture = gl.createTexture()!;
     gl.bindTexture(gl.TEXTURE_2D, this.fieldTexture);
@@ -76,9 +92,9 @@ export class Renderer {
     document.fonts.ready.then(() => { if (!this.disposed) this.measureNeeded = true; });
   }
 
-  private uniform(which: 'field' | 'type', name: string) {
+  private uniform(which: 'field' | 'type' | 'particles', name: string) {
     const key = `${which}:${name}`;
-    if (!this.locations.has(key)) this.locations.set(key, this.gl.getUniformLocation(which === 'field' ? this.field : this.typography, name));
+    if (!this.locations.has(key)) this.locations.set(key, this.gl.getUniformLocation(which === 'field' ? this.field : which === 'type' ? this.typography : this.particles, name));
     return this.locations.get(key)!;
   }
 
@@ -169,6 +185,13 @@ export class Renderer {
     const state = motionState;
     this.resize();
     if (this.measureNeeded) this.measureType();
+    this.media.forEach((media, i) => media.update(state.weights[i]));
+    const key = state.chirality.join(',');
+    if (key !== this.tubeKey) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.tubeBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, nanotube(state.chirality[0], state.chirality[1]), gl.STATIC_DRAW);
+      this.tubeKey = key;
+    }
     gl.bindVertexArray(this.vao);
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
     gl.viewport(0, 0, this.fieldWidth, this.fieldHeight);
@@ -181,14 +204,34 @@ export class Renderer {
     gl.uniform1f(this.uniform('field', 'uRoute'), state.reduced ? 0 : state.route);
     ['uWater', 'uFire', 'uAmber', 'uGeometry', 'uSystems'].forEach((name, index) => gl.uniform1f(this.uniform('field', name), state.weights[index]));
     gl.uniform1f(this.uniform('field', 'uQuality'), state.quality);
+    this.media.forEach((media, i) => {
+      gl.activeTexture(gl.TEXTURE0 + i);
+      gl.bindTexture(gl.TEXTURE_2D, media.texture);
+      gl.uniform1i(this.uniform('field', i ? 'uFlame' : 'uOcean'), i);
+      gl.uniform2f(this.uniform('field', i ? 'uFlameSize' : 'uOceanSize'), media.size[0], media.size[1]);
+    });
     gl.drawArrays(gl.TRIANGLES, 0, 3);
-    // Resolve only the sculpture from a cheaper field buffer. Typography stays sharp.
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+    gl.useProgram(this.particles);
+    gl.bindVertexArray(this.particleVao);
+    gl.uniform2f(this.uniform('particles', 'uResolution'), this.fieldWidth, this.fieldHeight);
+    gl.uniform2f(this.uniform('particles', 'uPointer'), state.reduced ? 0 : state.pointer[0], state.reduced ? 0 : state.pointer[1]);
+    gl.uniform1f(this.uniform('particles', 'uTime'), state.time);
+    gl.uniform1f(this.uniform('particles', 'uVelocity'), state.reduced ? 0 : state.velocity);
+    gl.uniform1f(this.uniform('particles', 'uRoute'), state.reduced ? 0 : state.route);
+    gl.uniform1f(this.uniform('particles', 'uFrame'), state.frame);
+    gl.uniform1f(this.uniform('particles', 'uPixelRatio'), this.fieldHeight / this.bounds.height);
+    ['uWater', 'uFire', 'uAmber', 'uGeometry', 'uSystems'].forEach((name, index) => gl.uniform1f(this.uniform('particles', name), state.weights[index]));
+    gl.drawArrays(gl.POINTS, 0, 32768);
+    gl.bindVertexArray(this.vao);
+    // Resolve imagery and particles from the cheaper field buffer. Type stays sharp.
     gl.bindFramebuffer(gl.READ_FRAMEBUFFER, this.framebuffer);
     gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER, null);
     gl.blitFramebuffer(0, 0, this.fieldWidth, this.fieldHeight, 0, 0, this.width, this.height, gl.COLOR_BUFFER_BIT, gl.LINEAR);
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.viewport(0, 0, this.width, this.height);
-    state.drawCalls = 1;
+    state.drawCalls = 2;
     if (!state.reduced) {
       gl.enable(gl.BLEND);
       gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
@@ -209,7 +252,7 @@ export class Renderer {
         state.drawCalls++;
       }
     }
-    state.ready = true;
+    state.ready = this.media.every(media => media.loaded);
     state.frames++;
   }
 
@@ -224,6 +267,10 @@ export class Renderer {
     });
     this.gl.deleteProgram(this.field);
     this.gl.deleteProgram(this.typography);
+    this.gl.deleteProgram(this.particles);
+    this.gl.deleteVertexArray(this.particleVao);
+    this.gl.deleteBuffer(this.tubeBuffer);
+    this.media.forEach(media => media.dispose());
     this.gl.deleteVertexArray(this.vao);
     this.gl.deleteFramebuffer(this.framebuffer);
     this.gl.deleteTexture(this.fieldTexture);

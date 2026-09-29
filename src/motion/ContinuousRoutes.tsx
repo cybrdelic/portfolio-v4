@@ -34,7 +34,7 @@ export default function ContinuousRoutes({ children }: { children: (location: Lo
         restore(); motionState.routeTarget = 0;
         document.documentElement.dataset.route = 'arrive';
       }, 45));
-    }, 230));
+    }, 360));
     return () => { pending.current.forEach(clearTimeout); motionState.routeTarget = 0; delete document.documentElement.dataset.route; };
     // displayed deliberately follows the requested route after the shared transition.
     // eslint-disable-next-line react-hooks/exhaustive-deps

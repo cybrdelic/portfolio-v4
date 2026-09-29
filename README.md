@@ -2,7 +2,7 @@
 
 Alejandro Figueroa's graphics, simulation, and systems portfolio. This reworks the existing React/Vite repository; it is not a standalone mockup.
 
-The original five project records and URLs remain, with public AQUA and IGNIA renderer recordings added as featured work. Professional engineering experience, contact links, and a printable résumé establish a direct path from project discovery to a hiring conversation.
+The opening shows AQUA's real ocean renderer. Seven full-screen project scenes share a GPU particle field, with actual AQUA/IGNIA recordings, an actual FireSim application capture, and clearly labeled procedural geometry/material studies. The nanotube scene has working chirality controls. Production work and a printable résumé establish a direct path from project discovery to a hiring conversation.
 
 ## Development
 
@@ -26,7 +26,7 @@ See [motion architecture](docs/MOTION-ARCHITECTURE.md) and [media provenance](pu
 
 ## Routes
 
-- `/` — selected work, production experience, approach, and contact
+- `/` — seven project scenes, production experience, and contact
 - `/project/:id` — seven project breakdowns, retaining the original five IDs
 - `/resume` — accessible résumé with print / save-PDF support
 
