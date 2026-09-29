@@ -1,0 +1,17 @@
+import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { gzipSync } from 'node:zlib';
+import assert from 'node:assert/strict';
+const files = readdirSync('dist/assets');
+const js = files.filter(f => f.endsWith('.js'));
+const html = readFileSync('dist/index.html', 'utf8');
+const initial = [...html.matchAll(/src="\/assets\/(index-[^"]+\.js)"/g)].map(match => match[1]);
+const imports = initial.map(file => readFileSync(`dist/assets/${file}`, 'utf8')).join('');
+const world = js.filter(file => file.startsWith('MotionWorld-') && imports.includes(file));
+const size = paths => paths.reduce((total, name) => total + gzipSync(readFileSync(`dist/assets/${name}`)).length, 0);
+const initialGzip = size(initial), worldGzip = size(world);
+assert(initial.length > 0 && world.length > 0, 'Main and lazy GPU chunks must exist');
+assert(initialGzip < 120_000, `Initial JavaScript exceeds 120 KB gzip: ${initialGzip}`);
+assert(worldGzip < 25_000, `GPU system exceeds 25 KB gzip: ${worldGzip}`);
+assert(statSync('dist/media/aqua.mp4').size < 1_500_000, 'Ocean preview exceeds 1.5 MB');
+assert(statSync('dist/media/ignia.mp4').size < 1_500_000, 'Fire preview exceeds 1.5 MB');
+console.log(JSON.stringify({ initialGzipBytes: initialGzip, gpuGzipBytes: worldGzip, status: 'passed' }));

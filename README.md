@@ -1,20 +1,33 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Cybrdelic — portfolio-v4
 
-# Run and deploy your AI Studio app
+Alejandro Figueroa's graphics, simulation, and systems portfolio. This reworks the existing React/Vite repository; it is not a standalone mockup.
 
-This contains everything you need to run your app locally.
+The original five project records and URLs remain, with public AQUA and IGNIA renderer recordings added as featured work. Professional engineering experience, contact links, and a printable résumé establish a direct path from project discovery to a hiring conversation.
 
-View your app in AI Studio: https://ai.studio/apps/e837bfbc-e81c-451f-bc24-79e261c5210a
+## Development
 
-## Run Locally
+```sh
+npm ci
+npm run dev
+```
 
-**Prerequisites:**  Node.js
+No API key is needed. The existing package manager and lockfile are preserved.
 
+## Verify
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+```sh
+npx playwright install chromium --only-shell
+npm run verify
+```
+
+`npm run test:update` deliberately regenerates visual baselines. Review changed screenshots before committing them. The test server serves the production build, not a development placeholder. CI runs the same build, bundle budgets, and browser checks.
+
+See [motion architecture](docs/MOTION-ARCHITECTURE.md) and [media provenance](public/media/PROVENANCE.md) for the rendering system, performance boundaries, and the original project recording sources.
+
+## Routes
+
+- `/` — selected work, production experience, approach, and contact
+- `/project/:id` — seven project breakdowns, retaining the original five IDs
+- `/resume` — accessible résumé with print / save-PDF support
+
+Static hosting must rewrite application routes to `index.html`. The Sites manifest uses the `dist` build output. The original dependencies remain declared for repository compatibility; the active application no longer imports Motion, Lenis, Lottie, custom-cursor, boot-sequence, or per-route transition components.

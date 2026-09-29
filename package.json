@@ -1,5 +1,5 @@
 {
-  "name": "react-example",
+  "name": "cybrdelic-portfolio-v4",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -8,7 +8,13 @@
     "build": "vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "test": "playwright test",
+    "test:visual": "playwright test --grep visual",
+    "test:update": "playwright test --update-snapshots",
+    "check:budget": "node scripts/check-budget.mjs",
+    "verify": "npm run typecheck && npm run build && npm run check:budget && npm test"
   },
   "dependencies": {
     "@google/genai": "^1.29.0",
@@ -27,6 +33,7 @@
     "vite": "^6.2.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.51.1",
     "@types/express": "^4.17.21",
     "@types/node": "^22.14.0",
     "autoprefixer": "^10.4.21",
