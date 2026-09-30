@@ -14,4 +14,6 @@ assert(initialGzip < 120_000, `Initial JavaScript exceeds 120 KB gzip: ${initial
 assert(worldGzip < 25_000, `GPU system exceeds 25 KB gzip: ${worldGzip}`);
 assert(statSync('dist/media/aqua.mp4').size < 1_500_000, 'Ocean preview exceeds 1.5 MB');
 assert(statSync('dist/media/ignia.mp4').size < 1_500_000, 'Fire preview exceeds 1.5 MB');
+assert(statSync('dist/media/forest.mp4').size < 1_500_000, 'Forest preview exceeds 1.5 MB');
+for (const image of ['geo', 'light', 'scenes', 'forest']) assert(statSync(`dist/media/${image}.webp`).size < 500_000, `${image} poster exceeds 500 KB`);
 console.log(JSON.stringify({ initialGzipBytes: initialGzip, gpuGzipBytes: worldGzip, status: 'passed' }));

@@ -56,6 +56,7 @@ em { font-style: normal; }
 .hero-capture { opacity: .7; }
 .availability { border-bottom: 1px solid #fff6; padding: 6px 0; }
 .scene-fallback { display: none; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; filter: brightness(.35); }
+.project-chapter[data-framed] .scene-fallback { filter: brightness(.07); }
 .work-index { display: flex; flex-wrap: wrap; gap: 16px 30px; padding: 34px var(--pad); background: #080d12; border-top: 1px solid #fff3; border-bottom: 1px solid #fff3; }
 .work-index a { font-size: 13px; display: flex; gap: 12px; }
 .work-index span { font-size: 10px; opacity: .45; padding-top: 3px; }
@@ -69,6 +70,17 @@ em { font-style: normal; }
 .chapter-title .eyebrow { margin-bottom: 18px; color: #d3d7d6; }
 .chapter-title h2 { font-size: clamp(70px, 7.5vw, 126px); font-weight: 500; line-height: .97; letter-spacing: -.065em; white-space: nowrap; }
 .chapter-title a { display: block; }
+.chapter-render { position: absolute; top: 130px; left: 44%; right: var(--pad); margin: 0; height: 340px; }
+.chapter-render img { width: 100%; height: calc(100% - 34px); object-fit: contain; }
+.chapter-render figcaption { font-size: 12px; margin-top: 12px; color: #d3d7d6; text-align: right; }
+.project-chapter[data-framed] .chapter-body { padding-top: 380px; }
+.render-gallery { background: #080d12; padding-top: 36px; padding-bottom: 56px; }
+.gallery-tabs { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
+.gallery-tabs button { border: 1px solid #fff5; padding: 10px 18px; font-size: 14px; min-height: 44px; }
+.gallery-tabs button[aria-pressed=true] { background: var(--ink); color: var(--bg); }
+.render-gallery figure { margin: 0; }
+.render-gallery img { max-height: 80svh; object-fit: contain; }
+.render-gallery figcaption { margin-top: 20px; font-size: 14px; color: var(--muted); }
 .chapter-info { max-width: 455px; }
 .chapter-description { font-size: clamp(18px, 1.6vw, 24px); line-height: 1.5; letter-spacing: -.025em; }
 .chapter-info dl { margin: 24px 0; font-size: 12px; }
@@ -212,6 +224,11 @@ html[data-route=arrive] .route-content { opacity: 1; transform: none; transition
   .chapter-body { display: grid; grid-template-columns: 1fr; gap: 28px; padding-top: 245px; padding-bottom: 30px; }
   .chapter-title .eyebrow { font-size: 11px; margin-bottom: 12px; }
   .chapter-title h2 { font-size: clamp(48px, 14vw, 84px); line-height: 1; }
+  .chapter-render { top: 140px; left: var(--pad); height: 240px; }
+  .chapter-render figcaption { text-align: left; font-size: 12px; }
+  .project-chapter[data-framed] .chapter-body { padding-top: 330px; }
+  .gallery-tabs { gap: 8px; }
+  .gallery-tabs button { font-size: 13px; padding: 10px 14px; }
   .chapter-description { font-size: 17px; line-height: 1.55; }
   .chapter-info dl { margin: 18px 0 12px; font-size: 11px; }
   .chapter-info dl > div { grid-template-columns: 65px 1fr; gap: 12px; padding: 10px 0; }

@@ -25,7 +25,7 @@ test('visual: real project footage and source links', async ({ page }) => {
   await page.evaluate(() => document.getElementById('work')!.scrollIntoView({ block: 'start', behavior: 'instant' }));
   await freeze(page);
   await expect(page).toHaveScreenshot('selected-work.png');
-  for (const name of ['aqua', 'ignia']) {
+  for (const name of ['aqua', 'ignia', 'forest']) {
     const response = await page.request.get(`/media/${name}.mp4`);
     expect(response.ok()).toBeTruthy(); expect(response.headers()['content-type']).toBe('video/mp4');
   }
@@ -92,7 +92,7 @@ test('mobile menu, keyboard escape and all detail routes work', async ({ page })
   await page.getByRole('button', { name: 'Menu', exact: true }).click();
   await expect(page.getByRole('navigation', { name: 'Main navigation' })).toBeVisible();
   await page.keyboard.press('Escape'); await expect(page.getByRole('navigation', { name: 'Main navigation' })).not.toBeVisible();
-  for (const id of ['aqua','ignia','drone-sim-studio','amber-lab','cnt-workbench','firesim','llmwiki']) {
+  for (const id of ['cybr-light','cybr-geo','cybr-scenes','aqua','ignia','cybr-forest','drone-sim-studio','amber-lab','cnt-workbench','firesim','llmwiki']) {
     await page.goto(`/project/${id}`); await expect(page.locator('.dossier')).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy();
   }
@@ -118,7 +118,7 @@ test('resume is complete and print stylesheet excludes navigation', async ({ pag
 test('all project scenes fit narrow screens and retain project-specific content', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await ready(page);
-  for (const id of ['ignia', 'drone-sim-studio', 'amber-lab', 'cnt-workbench', 'firesim', 'llmwiki']) {
+  for (const id of ['cybr-light', 'cybr-geo', 'cybr-scenes', 'aqua', 'ignia', 'cybr-forest']) {
     const scene = page.locator(`#${id}-scene`);
     await scene.evaluate(el => el.scrollIntoView({ block: 'start', behavior: 'instant' }));
     await page.waitForTimeout(500);
@@ -130,16 +130,32 @@ test('all project scenes fit narrow screens and retain project-specific content'
   }
 });
 
-test('chirality changes the rendered lattice even with reduced motion', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
+test('curation puts complete systems first and keeps shorter studies out of selected work', async ({ page }) => {
   await ready(page);
-  await page.locator('#cnt-workbench-scene').evaluate(el => el.scrollIntoView({ block: 'start', behavior: 'instant' }));
-  await page.waitForTimeout(700);
-  const before = await page.locator('canvas.motion-world').screenshot();
-  const armchair = page.getByRole('button', { name: '(8, 8)', exact: true });
-  await armchair.click();
-  await expect(armchair).toHaveAttribute('aria-pressed', 'true');
-  await page.waitForTimeout(250);
-  const after = await page.locator('canvas.motion-world').screenshot();
-  expect(after.equals(before)).toBeFalsy();
+  await expect(page.locator('.work-index a')).toHaveText(['01CYBR LIGHT', '02CYBR GEO', '03CYBR SCENES', '04AQUA', '05IGNIA', '06CYBR FOREST']);
+  for (const id of ['drone-sim-studio', 'amber-lab', 'cnt-workbench', 'firesim', 'llmwiki']) {
+    await expect(page.locator(`.featured-${id}`)).toHaveCount(0);
+  }
+  for (const id of ['cybr-light', 'cybr-geo', 'cybr-scenes']) {
+    const image = page.locator(`.featured-${id} .chapter-render img`);
+    await image.scrollIntoViewIfNeeded();
+    await expect(image).toBeVisible();
+    await expect.poll(() => image.evaluate((el: HTMLImageElement) => el.naturalWidth)).toBeGreaterThan(600);
+  }
+  await page.goto('/resume');
+  await expect(page.locator('.resume-projects h3')).toHaveText(['CYBR LIGHT','CYBR GEO','CYBR SCENES','AQUA','IGNIA','CYBR FOREST']);
+});
+
+test('native gallery switches assembled, exploded and raw output with reduced motion', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  for (const [id, label, asset] of [['cybr-geo', 'Exploded assembly', '/media/geo-exploded.webp'], ['cybr-light', 'Unfiltered', '/media/light-raw.webp']]) {
+    await page.goto(`/project/${id}`);
+    const control = page.getByRole('button', { name: label, exact: true });
+    await control.click();
+    await expect(control).toHaveAttribute('aria-pressed', 'true');
+    const image = page.locator('.render-gallery img');
+    await expect(image).toHaveAttribute('src', asset);
+    await expect.poll(() => image.evaluate((el: HTMLImageElement) => el.naturalWidth)).toBeGreaterThan(600);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy();
+  }
 });

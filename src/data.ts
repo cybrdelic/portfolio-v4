@@ -9,14 +9,15 @@ export interface Project {
   whyItExists: string;
   coreMechanisms: string[];
   roleInWork: string;
-  motif?: 'water' | 'fire' | 'amber' | 'geometry' | 'systems';
+  motif?: 'water' | 'fire' | 'amber' | 'geometry' | 'systems' | 'light' | 'geo' | 'scenes' | 'forest';
   source?: string;
   video?: string;
   poster?: string;
   number?: string;
+  gallery?: { label: string; src: string; alt: string; caption: string }[];
 }
 
-export const projects: Project[] = [
+const previousProjects: Project[] = [
   {
     id: 'aqua', title: 'AQUA', number: '01',
     subtitle: 'Spectral oceans. Persistent whitewater. A world above and below the surface.',
@@ -138,3 +139,63 @@ export const projects: Project[] = [
     roleInWork: 'I built the local evidence ingestion and publishing workflow. The system keeps canonical authored pages and source provenance explicit so a large project corpus becomes useful knowledge.'
   }
 ];
+
+/** Featured work is curated separately from compatibility routes. */
+export const projects: Project[] = [
+  {
+    id: 'cybr-light', title: 'CYBR LIGHT', number: '01', motif: 'light',
+    subtitle: 'A native spectral renderer, from light transport to scene authoring.',
+    type: 'Rendering Engine', tech: 'C++ · Python · Spectral transport', animationType: 'pipeline', poster: '/media/light.webp',
+    overview: 'CYBR LIGHT is an offline rendering engine with a native C++ core and a Python scene API. It traces wavelength packets through surfaces and volumes, with dispersive glass, anisotropic metals, participating media, and explicit material and camera models.',
+    whyItExists: 'A renderer needs a consistent contract between geometry, sampling, materials, and film accumulation. CYBR LIGHT puts those systems behind one scene API, with numerical checks and inspectable render outputs.',
+    coreMechanisms: ['Spectral path tracing, multiple importance sampling, and wavelength packets', 'SAH BVH traversal for analytic shapes and triangle meshes', 'Anisotropic GGX conductors, absorbing dielectrics, and nested boundaries', 'Dispersive surface photon mapping and participating-media transport', 'Thin-lens cameras, shutter sampling, and checkpointed film accumulation', 'Material shader compilation, image derivatives, and parameter fitting'],
+    roleInWork: 'I work across the C++ transport core, Python authoring layer, optical models, diagnostics, and numerical verification. The default renderer runs on the CPU. Optional GPU paths are separate work; the images here are native CPU renders.',
+    gallery: [
+      { label: 'Rendered', src: '/media/light.webp', alt: 'Native CYBR LIGHT render of a quartz armillary globe, brass telescope, and sunlit workbench', caption: 'Refractive transport study · Native 720 × 480 · Non-neural guided reconstruction' },
+      { label: 'Unfiltered', src: '/media/light-raw.webp', alt: 'Unfiltered Monte Carlo film from the same CYBR LIGHT scene', caption: 'The same native film before reconstruction · Sampling noise retained' },
+      { label: 'Dielectrics', src: '/media/light-dielectrics.webp', alt: 'Smooth and rough absorbing glass spheres over a checkerboard, rendered by CYBR LIGHT', caption: 'Nested dielectric example · Native 480 × 320 · 64 packets × 8 wavelengths · Unfiltered' },
+    ],
+  },
+  {
+    id: 'cybr-geo', title: 'CYBR GEO', number: '02', motif: 'geo',
+    subtitle: 'Reusable CAD, assemblies, kinematics, and technical drawings.',
+    type: 'Geometry & CAD System', tech: 'Python · OpenCascade · C++ · STEP / GLB', animationType: 'system',
+    source: 'https://github.com/cybrdelic/cybr-geo', poster: '/media/geo.webp',
+    overview: 'CYBR GEO turns model recipes into named parts, analytic CAD, assemblies, motion studies, rendered views, and manufacturing-format exports. The same tooling supports mechanisms, robotic assemblies, and larger procedural environments.',
+    whyItExists: 'Geometry becomes useful when it survives more than one renderer. Parts need identities, motion needs constraints, and exports and drawings need to agree with the authored assembly.',
+    coreMechanisms: ['Shared recipe and named-part APIs across two geometry toolkits', 'Analytic solids, lofted housings, shafts, raceways, and spline conduits', 'STEP, STL, and GLB exports from the same assembly', 'Kinematic motion, service sequences, and reversible assembly animation', 'OpenCascade hidden-line drawings in SVG, PDF, DXF, and PNG', 'Shared native rendering, cameras, materials, and catalogue tooling'],
+    roleInWork: 'I built the modelling and delivery pipeline and the assembly studies it supports. ORBIT revision 3 has 148 components and a 331-operation service procedure. These are CAD and prescribed-kinematics studies; contact simulation and manufacturing qualification are separate.',
+    gallery: [
+      { label: 'ORBIT assembled', src: '/media/geo.webp', alt: 'ORBIT inspection wrist with its parallel gripper, hollow palm, bearing housing, and service conduit', caption: 'ORBIT revision 3 · 148 components · Analytic CAD assembly' },
+      { label: 'Exploded assembly', src: '/media/geo-exploded.webp', alt: 'Exploded ORBIT assembly showing separated shafts, housing sections, bearings, and gripper parts', caption: 'ORBIT exploded view · Named components and explicit assembly structure' },
+    ],
+  },
+  {
+    id: 'cybr-scenes', title: 'CYBR SCENES', number: '03', motif: 'scenes',
+    subtitle: 'Procedural environments with reproducible native render pipelines.',
+    type: 'Scene & Environment System', tech: 'Python · C++ · Procedural geometry · Spectral rendering', animationType: 'pipeline',
+    source: 'https://github.com/cybrdelic/cybr-scenes', poster: '/media/scenes-sandstone.webp',
+    overview: 'CYBR SCENES packages complete environments with their authoring recipes, geometry inputs, material transfer, native rendering code, and delivered frames. Observatory IV sits alongside six landscape scenes, including Sandstone Passage, Basalt Tide, and Fernwater.',
+    whyItExists: 'A finished frame should lead back to a recoverable scene. The work joins procedural geometry and materials to executable builds, repeatable camera setups, and preserved raw and reconstructed output.',
+    coreMechanisms: ['Scene recipes and named geometry for seven environments', 'Native spectral lighting, anisotropic metals, and quartz refraction', 'Mesh and material transfer with texture and identity preservation', 'Separate direct, indirect, emission, and volume lighting components', 'Geometry- and variance-guided reconstruction with preserved raw films', 'Rebuildable native engines, scene inputs, and verification captures'],
+    roleInWork: 'I work across environment authoring, geometry, material transfer, native render integration, and reproducible delivery. Observatory IV was rendered at 1800 × 1200. The landscapes are authored environments; they are not measured terrain reconstructions.',
+    gallery: [
+      { label: 'Sandstone Passage', src: '/media/scenes-sandstone.webp', alt: 'Procedural sandstone canyon with stratified walls, scattered rocks, and a sunlit passage', caption: 'Sandstone Passage · Original delivered environment render' },
+      { label: 'Observatory IV', src: '/media/scenes.webp', alt: 'Observatory IV, a brass and quartz armillary on a wood desk beside a vaulted window', caption: 'Observatory IV · Native 1800 × 1200 original · Resized for this page' },
+    ],
+  },
+  { ...previousProjects[0], number: '04' },
+  { ...previousProjects[1], number: '05' },
+  {
+    id: 'cybr-forest', title: 'CYBR FOREST', number: '06', motif: 'forest',
+    subtitle: 'Native scene traversal, instancing, and moving-camera film capture.',
+    type: 'Native Environment Renderer', tech: 'C++20 · Instancing · BVH · Offline film', animationType: 'system',
+    source: 'https://github.com/cybrdelic/forest-threejs', poster: '/media/forest.webp', video: '/media/forest.mp4',
+    overview: 'CYBR FOREST renders a dense authored woodland through a native C++20 pipeline. Reusable mesh buffers, instanced placement, ray traversal, textured shading, and camera motion produce the delivered forest film.',
+    whyItExists: 'A large scene needs to remain tractable across geometry, lighting, and capture. The renderer reuses mesh buffers and instances while preserving the original scene, rather than substituting a screen-space imitation.',
+    coreMechanisms: ['25 mesh buffers reused across 9,810 placed instances', 'Native geometry traversal, textures, and scene bounds', 'Cached diffuse illumination with approximate volumetric lighting', 'Two moving-camera shots through static forest geometry', '96 rendered frames at native 1920 × 1080 and 24 fps', 'Scene integrity checks and repeatable capture records'],
+    roleInWork: 'I work across the native renderer, geometry import, instancing, scene integrity, and film delivery. The four-second film uses cached diffuse lighting and approximate volumes. Trees are static; it is not a fully converged dynamic path-tracing benchmark.',
+  },
+];
+
+export const allProjects: Project[] = [...projects, ...previousProjects.filter(project => !projects.some(featured => featured.id === project.id))];

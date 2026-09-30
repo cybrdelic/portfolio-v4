@@ -10,7 +10,7 @@ export class MediaTexture {
   private imageDirty = false;
   private blocked = false;
   private disposed = false;
-  constructor(private gl: WebGL2RenderingContext, private video: HTMLVideoElement) {
+  constructor(private gl: WebGL2RenderingContext, private poster: string, private video?: HTMLVideoElement) {
     this.texture = gl.createTexture()!;
     gl.bindTexture(gl.TEXTURE_2D, this.texture);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
@@ -25,7 +25,6 @@ export class MediaTexture {
       this.loaded = true;
     };
     this.image.onerror = () => { this.loaded = true; };
-    this.image.src = video.poster;
   }
   private upload(source: TexImageSource) {
     const gl = this.gl;
@@ -36,13 +35,14 @@ export class MediaTexture {
   }
   update(weight: number) {
     const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
-    const play = weight > 0.025 && motionState.enabled && !motionState.reduced && !motionState.frozen && !document.hidden && !connection?.saveData;
-    if (play && !this.blocked && this.video.paused) this.video.play().catch(error => { if (error?.name === 'NotAllowedError') this.blocked = true; });
-    if (!play) this.video.pause();
+    if (weight > 0.01 && !this.image.src) this.image.src = this.poster;
+    const play = !!this.video && weight > 0.025 && motionState.enabled && !motionState.reduced && !motionState.frozen && !document.hidden && !connection?.saveData;
+    if (play && !this.blocked && this.video?.paused) this.video!.play().catch(error => { if (error?.name === 'NotAllowedError') this.blocked = true; });
+    if (!play) this.video?.pause();
     if (this.imageDirty || (!play && !this.posterVisible && this.image.complete && this.image.naturalWidth)) {
       this.upload(this.image); this.imageDirty = false; this.posterVisible = true;
     }
-    if (play && this.video.readyState >= 2 && this.video.currentTime !== this.lastFrame) {
+    if (play && this.video && this.video.readyState >= 2 && this.video.currentTime !== this.lastFrame) {
       this.upload(this.video);
       this.size = [this.video.videoWidth, this.video.videoHeight];
       this.lastFrame = this.video.currentTime;
@@ -51,7 +51,7 @@ export class MediaTexture {
   }
   dispose() {
     this.disposed = true;
-    this.video.pause();
+    this.video?.pause();
     this.image.onload = null;
     this.image.onerror = null;
     this.gl.deleteTexture(this.texture);

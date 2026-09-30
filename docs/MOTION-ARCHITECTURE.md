@@ -1,27 +1,28 @@
 # Continuous GPU motion
 
-One lazy WebGL2 canvas lives outside the route tree. One animation loop advances time, normalized scene weights, scroll velocity, pointer response, geometry selection, and route travel. Routes keep the context, GPU resources, point identities, and clock alive.
+One lazy WebGL2 canvas lives outside the route tree. One animation loop advances time, seven normalized scene weights, scroll velocity, pointer response, and route travel. Routes preserve the context, GPU resources, 32,768 point identities, and clock.
 
 ## Visual layers
 
-`Renderer.ts` uses a full-screen program to sample the real AQUA and IGNIA recordings and render the separate procedural amber study. During transitions, the recordings dissolve as one 32,768-point field interpolates between screen-space water, a fire vortex, amber, parametric frame geometry, a rolled graphene lattice, and a systems lattice. These are designed transition geometries, not embedded numerical fluid solvers. Source recordings retain their own simulation clocks; the portfolio field and typography share the site's timeline.
+A full-screen program composites actual project output: AQUA, IGNIA, CYBR LIGHT, CYBR GEO, CYBR SCENES, and CYBR FOREST. Source pixels feed the persistent particle field too. Between sections, the image plane dissolves into displaced, source-colored points before resolving into the next project's output. Scroll and route travel warp the field and typography together. Settled project views use the original images or recordings, with a readability gradient. These transitions are a portfolio rendering effect; they do not reimplement the underlying numerical solvers or native engines.
 
-The amber silhouette follows the public project's procedural specimen formula. Its optical approximation is a portfolio shader, not the original Three.js volume renderer. `nanotube.ts` generates a graphene basis, projects it onto the chiral vector and perpendicular axis, rolls it into a cylinder, identifies nearest-neighbor bonds, and samples those bonds for the shared point field. Chirality changes rebuild the geometry buffer outside the draw loop.
+The previous portfolio-only amber, quadcopter, and nanotube render substitutes are no longer active. Actual assembled/exploded images and finished/unfiltered films remain available in the project galleries.
 
-A typography program rasterizes the local font and warps glyph UVs with scroll and route travel. The DOM remains authoritative for semantics and accessibility. Visible DOM ink returns on reduced motion, disabled motion, or context loss. Removed route headings release their textures.
+Typography rasterizes the local font and warps glyph UVs with the shared timeline. The DOM remains authoritative for semantics and accessibility. Visible DOM ink returns on reduced motion, disabled motion, or context loss. Removed headings release their textures.
 
-`MotionWorld.tsx` measures section anchors outside the draw path and blends adjacent visual states through the scroll. `ContinuousRoutes.tsx` carries the departing content through the field's travel, swaps the page, restores the hash or top position, and focuses its heading. The field never remounts during navigation.
+Section anchors are measured outside the draw path. Adjacent project weights interpolate through the middle portion of each scroll interval. Route travel carries the departing content through the field, swaps the page, restores its hash or top position, and focuses the heading without remounting the canvas.
 
 ## Resource constraints
 
-- A maximum 1.7 million-pixel final buffer, with a cheaper field buffer and sharp type on top.
-- Two field/particle draws, plus visible typography layers.
-- Lower initial resolution for mobile/coarse input; sustained slow frames reduce quality further.
-- Media textures update only when their video frame changes. Videos play only while their scene contributes, and pause with hidden documents, reduced motion, disabled motion, or data saving.
-- Reduced motion renders immediately at the requested scene and redraws only for invalidation, including chirality changes. Actual still captures remain available with no WebGL.
-- Local fonts and media; no runtime CDN, API keys, or new framework dependencies.
-- Initial JavaScript below 120 KB gzip, lazy motion below 25 KB gzip, each video below 1.5 MB.
+- Maximum 1.7 million-pixel final buffer; adaptive cheaper field buffer; sharp type on top.
+- Two image/particle draws plus visible typography layers.
+- Mobile/coarse input starts at lower field resolution. Sustained slow frames reduce it further.
+- Textures load as their scenes approach; videos update only on changed frames and play only while contributing.
+- Hidden documents, reduced motion, disabled motion, and data saving pause video playback.
+- Reduced motion redraws only for scene or layout invalidation and media readiness. Real stills remain available with no WebGL.
+- Local fonts/media, no runtime CDN or API keys, and no new framework dependencies.
+- Initial JavaScript under 120 KB gzip, motion under 25 KB gzip, each video under 1.5 MB, each primary native still under 500 KB.
 
-The browser suite covers desktop/mobile visual baselines, seven narrow-screen project routes and scenes, persistent context/clock/history, continuous scroll weights, reduced motion, chirality redraws, no-WebGL presentation, context restoration, motion preference persistence, resource budgets, and printable résumé content. Software-GPU test frame times do not establish physical-device frame rates.
+Browser verification covers visual baselines, selected-work curation, actual render galleries, six narrow-screen scenes, all selected and legacy detail routes, persistent context/clock/history, continuous scene weights, reduced motion, no-WebGL presentation, context restoration, motion persistence, resource budgets, and printable résumé content. Software-GPU timings are not physical-device frame-rate claims.
 
-Recording and screenshot provenance is in `public/media/PROVENANCE.md`. The screenshot and scene captions distinguish actual applications from portfolio studies.
+See `public/media/PROVENANCE.md` for original assets and processing.

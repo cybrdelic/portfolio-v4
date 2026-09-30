@@ -4,7 +4,7 @@ import Home from './pages/Home';
 import ProjectDetail from './pages/ProjectDetail';
 import Resume from './pages/Resume';
 import ContinuousRoutes from './motion/ContinuousRoutes';
-import { projects } from './data';
+import { allProjects } from './data';
 const MotionWorld = lazy(() => import('./motion/MotionWorld'));
 
 export default function App() {
@@ -16,7 +16,7 @@ export default function App() {
   const [year] = useState(() => new Date().getFullYear());
   useEffect(() => {
     setMenuOpen(false);
-    const project = projects.find(p => `/project/${p.id}` === location.pathname);
+    const project = allProjects.find(p => `/project/${p.id}` === location.pathname);
     document.title = `${project ? `${project.title} · ` : ''}Alejandro Figueroa — Graphics, Simulation & Systems`;
     const description = document.querySelector<HTMLMetaElement>('meta[name="description"]');
     if (description) description.content = project?.overview || 'Alejandro Figueroa builds GPU simulations, rendering systems, developer tools, and production software. Based in Dayton, Ohio. Open to engineering roles.';

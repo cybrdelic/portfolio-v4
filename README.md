@@ -2,7 +2,7 @@
 
 Alejandro Figueroa's graphics, simulation, and systems portfolio. This reworks the existing React/Vite repository; it is not a standalone mockup.
 
-The opening shows AQUA's real ocean renderer. Seven full-screen project scenes share a GPU particle field, with actual AQUA/IGNIA recordings, an actual FireSim application capture, and clearly labeled procedural geometry/material studies. The nanotube scene has working chirality controls. Production work and a printable résumé establish a direct path from project discovery to a hiring conversation.
+Six selected projects lead with CYBR LIGHT, CYBR GEO, and CYBR SCENES, followed by AQUA, IGNIA, and CYBR FOREST. The opening uses the actual ORBIT assembly render. Native scene renders and original simulation recordings share a persistent GPU image and particle field. Project galleries expose assembled/exploded geometry and reconstructed/unfiltered films. Production work and a printable résumé connect that work to a hiring conversation.
 
 ## Development
 
@@ -26,8 +26,8 @@ See [motion architecture](docs/MOTION-ARCHITECTURE.md) and [media provenance](pu
 
 ## Routes
 
-- `/` — seven project scenes, production experience, and contact
-- `/project/:id` — seven project breakdowns, retaining the original five IDs
+- `/` — six selected project scenes, production experience, and contact
+- `/project/:id` — six selected breakdowns, with the original five IDs retained as unlisted archive routes
 - `/resume` — accessible résumé with print / save-PDF support
 
 Static hosting must rewrite application routes to `index.html`. The Sites manifest uses the `dist` build output. The original dependencies remain declared for repository compatibility; the active application no longer imports Motion, Lenis, Lottie, custom-cursor, boot-sequence, or per-route transition components.

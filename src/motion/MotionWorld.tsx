@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import { projects } from '../data';
+import { allProjects } from '../data';
 import { Renderer } from './Renderer';
-import { getMotionSnapshot, motionState, motifs, setMotif, stepTimeline, type Motif } from './state';
+import { getMotionSnapshot, motionState, motifs, normalizeMotif, setMotif, stepTimeline, type Motif } from './state';
 
 export default function MotionWorld({ enabled }: { enabled: boolean }) {
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -11,10 +11,9 @@ export default function MotionWorld({ enabled }: { enabled: boolean }) {
   useEffect(() => {
     motionState.hoverMotif = null;
     motionState.routeMotif = location.pathname.startsWith('/project/')
-      ? projects.find(project => `/project/${project.id}` === location.pathname)?.motif || 'water'
+      ? normalizeMotif(allProjects.find(project => `/project/${project.id}` === location.pathname)?.motif)
       : null;
-    if (motionState.routeMotif) setMotif(motionState.routeMotif);
-    motionState.frameTarget = location.pathname.includes('cnt-workbench') ? 0 : 1;
+    if (motionState.routeMotif) { setMotif(motionState.routeMotif); motionState.framedTarget = 0; }
   }, [location.pathname]);
 
   useEffect(() => {
@@ -25,17 +24,17 @@ export default function MotionWorld({ enabled }: { enabled: boolean }) {
     let renderer: Renderer | null = null;
     let raf = 0, lastTime = 0, accumulated = 0, samples = 0;
     let invalidated = true, stopped = false, anchorDirty = true;
-    let anchors: { center: number; motif: Motif; frame: number }[] = [];
+    let anchors: { center: number; motif: Motif; framed: number }[] = [];
 
     const measure = () => {
       anchors = [...document.querySelectorAll<HTMLElement>('[data-scene]')].map(element => {
         const rect = element.getBoundingClientRect();
-        return { center: rect.top + scrollY + rect.height * 0.42, motif: element.dataset.scene as Motif, frame: element.dataset.geometry === 'tube' ? 0 : 1 };
+        return { center: rect.top + scrollY + rect.height * 0.42, motif: element.dataset.scene as Motif, framed: element.hasAttribute('data-framed') ? 1 : 0 };
       }).sort((a, b) => a.center - b.center);
       anchorDirty = false;
     };
     const updateScene = () => {
-      if (motionState.routeMotif) { setMotif(motionState.routeMotif); return; }
+      if (motionState.routeMotif) { setMotif(motionState.routeMotif); motionState.framedTarget = 0; return; }
       if (motionState.hoverMotif) { setMotif(motionState.hoverMotif); return; }
       if (anchorDirty) measure();
       if (!anchors.length) return;
@@ -48,8 +47,8 @@ export default function MotionWorld({ enabled }: { enabled: boolean }) {
       const fraction = a.center === b.center ? 0 : Math.max(0, Math.min(1, (position - a.center) / (b.center - a.center)));
       const travel = Math.max(0, Math.min(1, (fraction - 0.28) / 0.44));
       const blend = travel * travel * (3 - 2 * travel);
+      motionState.framedTarget = a.framed * (1 - blend) + b.framed * blend;
       motionState.targets = motifs.map(motif => (a.motif === motif ? 1 - blend : 0) + (b.motif === motif ? blend : 0));
-      motionState.frameTarget = a.frame * (1 - blend) + b.frame * blend;
     };
     const onScroll = () => { motionState.scroll = scrollY; invalidated = true; };
     const onPointer = (event: PointerEvent) => {
@@ -92,7 +91,7 @@ export default function MotionWorld({ enabled }: { enabled: boolean }) {
       lastTime = now;
       const start = performance.now();
       updateScene();
-      if (motionState.reduced && invalidated) { motionState.weights = [...motionState.targets]; motionState.frame = motionState.frameTarget; }
+      if ((motionState.reduced || motionState.frozen) && invalidated) { motionState.weights = [...motionState.targets]; motionState.framed = motionState.framedTarget; }
       if (!motionState.frozen) stepTimeline(dt);
       if (renderer && (!motionState.reduced || invalidated || !motionState.ready) && (!motionState.frozen || invalidated || !motionState.ready)) {
         renderer.draw(); invalidated = false;
@@ -129,7 +128,7 @@ export default function MotionWorld({ enabled }: { enabled: boolean }) {
     canvas.current?.addEventListener('webglcontextrestored', onRestored);
     window.__portfolioMotion = {
       snapshot: getMotionSnapshot,
-      freeze: (time = 4) => { motionState.time = time; motionState.frozen = true; motionState.pointer = [0, 0]; motionState.velocity = 0; motionState.weights = [...motionState.targets]; motionState.frame = motionState.frameTarget; invalidated = true; },
+      freeze: (time = 4) => { motionState.time = time; motionState.frozen = true; motionState.pointer = [0, 0]; motionState.velocity = 0; motionState.weights = [...motionState.targets]; invalidated = true; },
       resume: () => { motionState.frozen = false; invalidated = true; },
     };
     raf = requestAnimationFrame(frame);
@@ -145,5 +144,5 @@ export default function MotionWorld({ enabled }: { enabled: boolean }) {
     };
   }, [enabled]);
 
-  return <><canvas ref={canvas} className="motion-world" aria-hidden="true" /><div className="world-sources" aria-hidden="true"><video data-world-media="water" src="/media/aqua.mp4" poster="/media/aqua.webp" muted loop playsInline preload="none"/><video data-world-media="fire" src="/media/ignia.mp4" poster="/media/ignia.webp" muted loop playsInline preload="none"/></div></>;
+  return <><canvas ref={canvas} className="motion-world" aria-hidden="true" /><div className="world-sources" aria-hidden="true"><video data-world-media="water" src="/media/aqua.mp4" poster="/media/aqua.webp" muted loop playsInline preload="none"/><video data-world-media="fire" src="/media/ignia.mp4" poster="/media/ignia.webp" muted loop playsInline preload="none"/><video data-world-media="forest" src="/media/forest.mp4" poster="/media/forest.webp" muted loop playsInline preload="none"/></div></>;
 }
