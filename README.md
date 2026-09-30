@@ -1,20 +1,35 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Cybrdelic — portfolio-v4
 
-# Run and deploy your AI Studio app
+Alejandro Figueroa's graphics, simulation, and systems portfolio. This reworks the existing React/Vite repository; it is not a standalone mockup.
 
-This contains everything you need to run your app locally.
+Four selected projects feature CYBR LIGHT, CYBR GEO, CYBR SCENES, and CYBR FOREST. The opening uses the actual ORBIT assembly render. Native scene renders and the forest recording share a persistent GPU image and particle field. Project galleries expose assembled/exploded geometry and reconstructed/unfiltered films. Production work and a printable résumé connect that work to a hiring conversation.
 
-View your app in AI Studio: https://ai.studio/apps/e837bfbc-e81c-451f-bc24-79e261c5210a
+## Development
 
-## Run Locally
+```sh
+npm ci
+npm run dev
+```
 
-**Prerequisites:**  Node.js
+No API key is needed. The existing package manager and lockfile are preserved.
 
+## Verify
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+```sh
+npx playwright install chromium --only-shell
+npm run verify
+```
+
+`npm run test:update` deliberately regenerates visual baselines. Review changed screenshots before committing them. The test server serves the production build, not a development placeholder. CI runs the same build, bundle budgets, and browser checks.
+
+See [motion architecture](docs/MOTION-ARCHITECTURE.md) and [media provenance](public/media/PROVENANCE.md) for the rendering system, performance boundaries, and the original project recording sources.
+
+## Routes
+
+- `/` — four selected project scenes, production experience, and contact
+- `/project/:id` — four selected breakdowns; AQUA, IGNIA, DroneSim Studio, AmberLab, CNTWorkbench, FireSim, and LLMWiki remain available as unlisted archive routes
+- `/resume` — accessible résumé with print / save-PDF support
+
+Static hosting must rewrite application routes to `index.html`. The Sites manifest uses the `dist` build output. The original dependencies remain declared for repository compatibility; the active application no longer imports Motion, Lenis, Lottie, custom-cursor, boot-sequence, or per-route transition components.
+
+AQUA and IGNIA recordings and posters remain in the production output because their archive pages still use them. They are absent from the landing page, selected-work navigation, and résumé; their GPU video sources mount only on their own detail routes.

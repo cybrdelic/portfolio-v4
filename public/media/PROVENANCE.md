@@ -1,0 +1,17 @@
+# Actual project output
+
+All project imagery is rendered or recorded output from Alejandro Figueroa's projects. The portfolio adds GPU transitions to these source pixels; it does not substitute generated project scenes.
+
+- `geo.webp`: `cybrdelic/cybr-geo`, `media/orbit_v3_hero.jpg`, native 960 × 720. `geo-exploded.webp`: the same repository's `media/orbit_exploded.jpg`, 1280 × 960. JPEGs are encoded as WebP without geometric modification. The exploded view documents the ORBIT assembly; it is not labeled as a revision-3 service animation.
+- `light.webp` / `light-raw.webp`: the new finished and unfiltered films in the saved `CYBR_LIGHT_Refractive_Repair_Gallery.html`. Both are native 720 × 480 renders from the C++ CPU engine. The finished frame uses the delivery's non-neural reconstruction. Images are encoded as WebP without upscaling or further filtering. This private engine's source is available through a requested walkthrough, rather than a publicly inaccessible source link.
+- `light-dielectrics.webp`: `cybrdelic/cybr-light`, `docs/media/dielectrics.png`. `docs/media/index.json` records native 480 × 320, 64 packets per pixel, 8 wavelengths per packet, depth 36, and unfiltered output. This is a numerical renderer example, not a converged photorealism claim.
+- `scenes.webp`: `cybrdelic/cybr-scenes`, `scenes/observatory-iv/renders/Observatory_IV.png`. The original delivered native 1800 × 1200 frame is resized to 1600 pixels wide and encoded as WebP. The reconstructed delivery is preserved; no new rendering, neural generation, or upscaling is applied.
+- `scenes-sandstone.webp`: the same repository's `environments/renders/sandstone-passage/hero/hero.png`, native 1280 × 854. Encoded as WebP without resizing. This is the historical delivered scene render, not the later low-budget recovery smoke test.
+- `forest.mp4` / `forest.webp`: saved originals `CYBR_FOREST_3D_Restored.mp4` and `CYBR_FOREST_3D_Restored_Frame.png`. The original film contains 96 native 1920 × 1080 frames at 24 fps (4 seconds). FFmpeg makes a 1280 × 720 web preview with the same frame cadence. The still is resized to 1600 × 900. The renderer uses static trees, cached diffuse lighting, and approximate volumes.
+- `aqua.mp4` / `aqua.webp`: retained solely for the unlisted AQUA archive route. FFmpeg conversion of `cybrdelic/aqua-threejs-open`, `docs/media/dawn-swells.gif`. Original preview provenance is in that repository's `docs/media/manifest.json`.
+- `ignia.mp4` / `ignia.webp`: retained solely for the unlisted IGNIA archive route. Excerpt from `cybrdelic/ignia-threejs`, `docs/media/baseline/catalogue/01_hearth.mp4`. FFmpeg crops the catalogue header/footer and resizes the native 1920 × 1080 / 24 fps capture to a 1280-pixel-wide preview. Poster extracted at two seconds.
+- `firesim.webp`: a cropped application screenshot from `cybrdelic/firesim`, `output/playwright/firesim-app-window.png`, retained solely for the unlisted legacy project route.
+
+AQUA is a spectral ocean with local depth-averaged interactions. IGNIA uses normalized graphics-oriented combustion parameters. Native spectral rendering, CAD export, and scene construction are distinct systems with different validation scopes. Recordings are not live frame-rate benchmarks.
+
+Source code and original asset/license notices remain in their respective repositories. These excerpts are used in the project owner's portfolio. The active motion field uses pixels from these images and recordings, rather than illustrative amber, quadcopter, or nanotube substitutes.
