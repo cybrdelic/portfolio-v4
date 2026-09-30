@@ -25,7 +25,7 @@ test('visual: real project footage and source links', async ({ page }) => {
   await page.evaluate(() => document.getElementById('work')!.scrollIntoView({ block: 'start', behavior: 'instant' }));
   await freeze(page);
   await expect(page).toHaveScreenshot('selected-work.png');
-  for (const name of ['aqua', 'ignia', 'forest']) {
+  for (const name of ['forest']) {
     const response = await page.request.get(`/media/${name}.mp4`);
     expect(response.ok()).toBeTruthy(); expect(response.headers()['content-type']).toBe('video/mp4');
   }
@@ -34,22 +34,29 @@ test('same GPU canvas and clock survive route navigation, return and history', a
   await ready(page);
   await page.evaluate(() => { (window as any).__originalCanvas = document.querySelector('canvas.motion-world'); });
   const before = await page.evaluate(() => window.__portfolioMotion!.snapshot());
-  await page.getByRole('link', { name: 'Explore AQUA', exact: true }).click();
-  await expect(page.locator('h1')).toHaveText('AQUA');
+  await page.getByRole('link', { name: 'Explore CYBR GEO', exact: true }).click();
+  await expect(page.locator('h1')).toHaveText(/CYBR\s*GEO/);
   expect(await page.evaluate(() => (window as any).__originalCanvas === document.querySelector('canvas.motion-world'))).toBeTruthy();
   const after = await page.evaluate(() => window.__portfolioMotion!.snapshot());
   expect(after.time).toBeGreaterThan(before.time);
   expect(after.contextLosses).toBe(0);
   await page.getByRole('link', { name: 'All selected work', exact: true }).click();
-  await expect(page.locator('.featured-aqua')).toBeInViewport();
-  await page.goBack(); await expect(page.locator('h1')).toHaveText('AQUA');
+  await expect(page.locator('.featured-cybr-geo')).toBeInViewport();
+  await page.goBack(); await expect(page.locator('h1')).toHaveText(/CYBR\s*GEO/);
 });
 test('scroll continuously interpolates between project motifs', async ({ page }) => {
   await ready(page);
-  await page.locator('.featured-ignia').scrollIntoViewIfNeeded();
+  await page.evaluate(() => {
+    const center = (id: string) => { const rect = document.getElementById(`${id}-scene`)!.getBoundingClientRect(); return rect.top + scrollY + rect.height * 0.42; };
+    window.scrollTo({ top: (center('cybr-geo') + center('cybr-scenes')) / 2 - innerHeight * 0.42, behavior: 'instant' });
+  });
   await page.waitForTimeout(900);
   const state = await page.evaluate(() => window.__portfolioMotion!.snapshot());
-  expect(state.weights[1]).toBeGreaterThan(0.35);
+  expect(state.weights[3]).toBeGreaterThan(0.3);
+  expect(state.weights[3]).toBeLessThan(0.7);
+  expect(state.weights[4]).toBeGreaterThan(0.3);
+  expect(state.weights[4]).toBeLessThan(0.7);
+  expect(state.weights.slice(0, 2)).toEqual([0, 0]);
   expect(state.weights.reduce((a, b) => a + b, 0)).toBeCloseTo(1, 3);
 });
 test('reduced motion is static, keeps text readable, and does not autoplay footage', async ({ page }) => {
@@ -60,16 +67,16 @@ test('reduced motion is static, keeps text readable, and does not autoplay foota
   expect(second.time).toBe(first.time);
   expect(second.frames - first.frames).toBeLessThan(3);
   expect(await page.locator('h1').evaluate(el => getComputedStyle(el).color)).not.toBe('rgba(0, 0, 0, 0)');
-  await page.locator('.featured-aqua').scrollIntoViewIfNeeded();
-  expect(await page.locator('video').first().evaluate((el: HTMLVideoElement) => el.paused)).toBeTruthy();
+  await page.locator('.featured-cybr-forest').scrollIntoViewIfNeeded();
+  expect(await page.locator('video[data-world-media="forest"]').evaluate((el: HTMLVideoElement) => el.paused)).toBeTruthy();
 });
 test('WebGL unavailable: all content and navigation remain usable', async ({ page }) => {
   await page.addInitScript(() => { const original = HTMLCanvasElement.prototype.getContext; HTMLCanvasElement.prototype.getContext = function(kind: any, ...rest: any[]) { return kind === 'webgl2' ? null : original.call(this, kind, ...rest); } as any; });
   await page.goto('/'); await expect(page.locator('html')).toHaveAttribute('data-gpu', 'fallback');
   await expect(page.locator('h1')).toBeVisible();
   expect(await page.locator('h1').evaluate(el => getComputedStyle(el).color)).not.toBe('rgba(0, 0, 0, 0)');
-  await page.getByRole('link', { name: 'Explore AQUA', exact: true }).click();
-  await expect(page.locator('h1')).toHaveText('AQUA');
+  await page.getByRole('link', { name: 'Explore CYBR GEO', exact: true }).click();
+  await expect(page.locator('h1')).toHaveText(/CYBR\s*GEO/);
 });
 test('GPU context loss restores the same presentation safely', async ({ page }) => {
   await ready(page);
@@ -118,7 +125,7 @@ test('resume is complete and print stylesheet excludes navigation', async ({ pag
 test('all project scenes fit narrow screens and retain project-specific content', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await ready(page);
-  for (const id of ['cybr-light', 'cybr-geo', 'cybr-scenes', 'aqua', 'ignia', 'cybr-forest']) {
+  for (const id of ['cybr-light', 'cybr-geo', 'cybr-scenes', 'cybr-forest']) {
     const scene = page.locator(`#${id}-scene`);
     await scene.evaluate(el => el.scrollIntoView({ block: 'start', behavior: 'instant' }));
     await page.waitForTimeout(500);
@@ -130,20 +137,89 @@ test('all project scenes fit narrow screens and retain project-specific content'
   }
 });
 
-test('curation puts complete systems first and keeps shorter studies out of selected work', async ({ page }) => {
+test('curation features four CYBR systems with consecutive numbering and no archive requests', async ({ page }) => {
+  const archiveRequests: string[] = [];
+  page.on('request', request => { if (/\/media\/(aqua|ignia)\.(mp4|webp)(?:\?|$)/.test(request.url())) archiveRequests.push(request.url()); });
   await ready(page);
-  await expect(page.locator('.work-index a')).toHaveText(['01CYBR LIGHT', '02CYBR GEO', '03CYBR SCENES', '04AQUA', '05IGNIA', '06CYBR FOREST']);
-  for (const id of ['drone-sim-studio', 'amber-lab', 'cnt-workbench', 'firesim', 'llmwiki']) {
+  await expect(page.locator('.work-index a')).toHaveText(['01CYBR LIGHT', '02CYBR GEO', '03CYBR SCENES', '04CYBR FOREST']);
+  await expect(page.locator('.chapter-top > span:first-child')).toHaveText(['01 / 04', '02 / 04', '03 / 04', '04 / 04']);
+  for (const id of ['aqua', 'ignia', 'drone-sim-studio', 'amber-lab', 'cnt-workbench', 'firesim', 'llmwiki']) {
     await expect(page.locator(`.featured-${id}`)).toHaveCount(0);
+    await expect(page.locator(`a[href="/project/${id}"]`)).toHaveCount(0);
   }
+  await expect(page.locator('[data-world-media="water"], [data-world-media="fire"]')).toHaveCount(0);
   for (const id of ['cybr-light', 'cybr-geo', 'cybr-scenes']) {
     const image = page.locator(`.featured-${id} .chapter-render img`);
     await image.scrollIntoViewIfNeeded();
     await expect(image).toBeVisible();
     await expect.poll(() => image.evaluate((el: HTMLImageElement) => el.naturalWidth)).toBeGreaterThan(600);
   }
+  await page.locator('.featured-cybr-forest').scrollIntoViewIfNeeded();
+  await expect.poll(() => page.evaluate(() => window.__portfolioMotion!.snapshot().weights[5])).toBeGreaterThan(0.35);
+  await page.locator('#experience').scrollIntoViewIfNeeded();
   await page.goto('/resume');
-  await expect(page.locator('.resume-projects h3')).toHaveText(['CYBR LIGHT','CYBR GEO','CYBR SCENES','AQUA','IGNIA','CYBR FOREST']);
+  await expect(page.locator('.resume-projects h3')).toHaveText(['CYBR LIGHT','CYBR GEO','CYBR SCENES','CYBR FOREST']);
+  expect(archiveRequests).toEqual([]);
+  await page.goto('/project/cybr-scenes');
+  await expect(page.locator('.next-project')).toHaveAttribute('href', '/project/cybr-forest');
+  await expect(page.locator('.next-project .eyebrow')).toHaveText('Next project / 04');
+  await page.locator('.next-project').click();
+  await expect(page.locator('.next-project')).toHaveAttribute('href', '/project/cybr-light');
+  await expect(page.locator('.next-project .eyebrow')).toHaveText('Next project / 01');
+});
+
+test('AQUA and IGNIA archive routes retain footage without remounting the GPU canvas', async ({ page }) => {
+  for (const [id, motif] of [['aqua', 'water'], ['ignia', 'fire']]) {
+    await page.goto(`/project/${id}`);
+    await page.waitForFunction(() => window.__portfolioMotion?.snapshot().ready);
+    await page.evaluate(() => { (window as any).__originalCanvas = document.querySelector('canvas.motion-world'); });
+    await expect(page.locator('h1')).toHaveText(id.toUpperCase());
+    await expect(page.locator('.detail-hero > .eyebrow')).toContainText('Archive /');
+    await expect(page.getByRole('link', { name: 'View source', exact: true })).toHaveAttribute('href', /https:\/\/github\.com\/cybrdelic\//);
+    await expect(page.getByRole('link', { name: 'Watch video', exact: true })).toHaveAttribute('href', `/media/${id}.mp4`);
+    await expect(page.locator('.detail-media video')).toHaveAttribute('src', `/media/${id}.mp4`);
+    await expect(page.locator('.detail-media video')).toHaveAttribute('poster', `/media/${id}.webp`);
+    const source = page.locator(`video[data-world-media="${motif}"]`);
+    const decodesH264 = await source.evaluate((video: HTMLVideoElement) => !!video.canPlayType('video/mp4; codecs="avc1.64001f"'));
+    const expectVideoOrPoster = async () => {
+      if (decodesH264) await expect.poll(() => source.evaluate((video: HTMLVideoElement) => video.currentTime)).toBeGreaterThan(0);
+      else await expect.poll(() => source.evaluate((video: HTMLVideoElement) => video.error?.code)).toBe(4);
+    };
+    await expectVideoOrPoster();
+    await test.info().attach(`${id}-codec-support`, { body: JSON.stringify({ decodesH264 }), contentType: 'application/json' });
+    if (!decodesH264) {
+      // Playwright's open Chromium build lacks H.264; verify the real-poster fallback too.
+      await page.locator('.detail-media').scrollIntoViewIfNeeded();
+      const poster = page.locator('.detail-media img');
+      await expect(poster).toHaveAttribute('src', `/media/${id}.webp`);
+      await expect.poll(() => poster.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
+    }
+    await expect(page.locator('.next-project')).toHaveAttribute('href', '/project/cybr-light');
+    const response = await page.request.get(`/media/${id}.mp4`);
+    expect(response.ok()).toBeTruthy(); expect(response.headers()['content-type']).toBe('video/mp4');
+    await page.getByRole('link', { name: 'All selected work', exact: true }).click();
+    await expect(page.locator('.featured-cybr-light')).toBeInViewport();
+    await expect(page.locator('[data-world-media="water"], [data-world-media="fire"]')).toHaveCount(0);
+    expect(await page.evaluate(() => (window as any).__originalCanvas === document.querySelector('canvas.motion-world'))).toBeTruthy();
+    await page.goBack();
+    await expect(page.locator('h1')).toHaveText(id.toUpperCase());
+    await expectVideoOrPoster();
+    expect(await page.evaluate(() => (window as any).__originalCanvas === document.querySelector('canvas.motion-world'))).toBeTruthy();
+    await page.getByRole('link', { name: 'All selected work', exact: true }).click();
+    await expect(page.locator('.featured-cybr-light')).toBeInViewport();
+    await expect(page.locator('[data-world-media="water"], [data-world-media="fire"]')).toHaveCount(0);
+    expect(await page.evaluate(() => window.__portfolioMotion!.snapshot().contextLosses)).toBe(0);
+  }
+});
+
+test('visual: four-project index and final forest scene', async ({ page }) => {
+  await ready(page);
+  await page.locator('.work-index').scrollIntoViewIfNeeded();
+  await expect(page.locator('.work-index')).toHaveScreenshot('featured-index.png');
+  await page.locator('.featured-cybr-forest').evaluate(el => el.scrollIntoView({ block: 'start', behavior: 'instant' }));
+  await page.waitForTimeout(500);
+  await freeze(page);
+  await expect(page).toHaveScreenshot('featured-forest.png');
 });
 
 test('native gallery switches assembled, exploded and raw output with reduced motion', async ({ page }) => {

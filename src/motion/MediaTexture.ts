@@ -10,7 +10,8 @@ export class MediaTexture {
   private imageDirty = false;
   private blocked = false;
   private disposed = false;
-  constructor(private gl: WebGL2RenderingContext, private poster: string, private video?: HTMLVideoElement) {
+  private video?: HTMLVideoElement;
+  constructor(private gl: WebGL2RenderingContext, private poster: string, private videoSelector: string) {
     this.texture = gl.createTexture()!;
     gl.bindTexture(gl.TEXTURE_2D, this.texture);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
@@ -35,6 +36,14 @@ export class MediaTexture {
   }
   update(weight: number) {
     const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+    if (this.video && !this.video.isConnected) {
+      this.video.pause();
+      this.video = undefined;
+      this.lastFrame = -1;
+      this.posterVisible = false;
+      this.blocked = false;
+    }
+    if (!this.video && weight > 0.025) this.video = document.querySelector<HTMLVideoElement>(this.videoSelector) || undefined;
     if (weight > 0.01 && !this.image.src) this.image.src = this.poster;
     const play = !!this.video && weight > 0.025 && motionState.enabled && !motionState.reduced && !motionState.frozen && !document.hidden && !connection?.saveData;
     if (play && !this.blocked && this.video?.paused) this.video!.play().catch(error => { if (error?.name === 'NotAllowedError') this.blocked = true; });

@@ -184,10 +184,8 @@ export const projects: Project[] = [
       { label: 'Observatory IV', src: '/media/scenes.webp', alt: 'Observatory IV, a brass and quartz armillary on a wood desk beside a vaulted window', caption: 'Observatory IV · Native 1800 × 1200 original · Resized for this page' },
     ],
   },
-  { ...previousProjects[0], number: '04' },
-  { ...previousProjects[1], number: '05' },
   {
-    id: 'cybr-forest', title: 'CYBR FOREST', number: '06', motif: 'forest',
+    id: 'cybr-forest', title: 'CYBR FOREST', number: '04', motif: 'forest',
     subtitle: 'Native scene traversal, instancing, and moving-camera film capture.',
     type: 'Native Environment Renderer', tech: 'C++20 · Instancing · BVH · Offline film', animationType: 'system',
     source: 'https://github.com/cybrdelic/forest-threejs', poster: '/media/forest.webp', video: '/media/forest.mp4',

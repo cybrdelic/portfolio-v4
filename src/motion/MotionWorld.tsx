@@ -1,12 +1,18 @@
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import { allProjects } from '../data';
+import { allProjects, projects } from '../data';
 import { Renderer } from './Renderer';
 import { getMotionSnapshot, motionState, motifs, normalizeMotif, setMotif, stepTimeline, type Motif } from './state';
+
+const featuredVideos = projects.filter(project => project.video);
 
 export default function MotionWorld({ enabled }: { enabled: boolean }) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const location = useLocation();
+  const routeProject = allProjects.find(project => `/project/${project.id}` === location.pathname);
+  // Archive footage is mounted only while its detail route is active.
+  const videoProjects = routeProject?.video && !featuredVideos.some(project => project.id === routeProject.id)
+    ? [...featuredVideos, routeProject] : featuredVideos;
 
   useEffect(() => {
     motionState.hoverMotif = null;
@@ -144,5 +150,5 @@ export default function MotionWorld({ enabled }: { enabled: boolean }) {
     };
   }, [enabled]);
 
-  return <><canvas ref={canvas} className="motion-world" aria-hidden="true" /><div className="world-sources" aria-hidden="true"><video data-world-media="water" src="/media/aqua.mp4" poster="/media/aqua.webp" muted loop playsInline preload="none"/><video data-world-media="fire" src="/media/ignia.mp4" poster="/media/ignia.webp" muted loop playsInline preload="none"/><video data-world-media="forest" src="/media/forest.mp4" poster="/media/forest.webp" muted loop playsInline preload="none"/></div></>;
+  return <><canvas ref={canvas} className="motion-world" aria-hidden="true" /><div className="world-sources" aria-hidden="true">{videoProjects.map(project => <video key={project.id} data-world-media={normalizeMotif(project.motif)} src={project.video} poster={project.poster} muted loop playsInline preload="none"/>)}</div></>;
 }

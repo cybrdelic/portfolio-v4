@@ -66,9 +66,8 @@ export class Renderer {
     this.vao = gl.createVertexArray()!;
     this.particleVao = gl.createVertexArray()!;
     this.media = ['water', 'fire', 'light', 'geo', 'scenes', 'forest'].map(motif => {
-      const video = document.querySelector<HTMLVideoElement>(`[data-world-media=${motif}]`);
       const poster = motif === 'water' ? 'aqua' : motif === 'fire' ? 'ignia' : motif === 'scenes' ? 'scenes-sandstone' : motif;
-      return new MediaTexture(gl, `/media/${poster}.webp`, video || undefined);
+      return new MediaTexture(gl, `/media/${poster}.webp`, `[data-world-media=${motif}]`);
     });
     this.framebuffer = gl.createFramebuffer()!;
     this.fieldTexture = gl.createTexture()!;
